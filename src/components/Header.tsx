@@ -25,7 +25,7 @@ const Header = () => {
               <Globe className="w-5 h-5 text-white" />
             </div>
             <span className="text-2xl font-bold bg-green-gradient bg-clip-text text-transparent">
-              عندنا
+              Learn academy
             </span>
           </Link>
 
