@@ -11,20 +11,23 @@ import Courses from "./pages/Courses";
 import Teachers from "./pages/Teachers";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import NotFound from "./pages/NotFound";
+import ContactPage from "./pages/ContactPage";
+import { useAppData } from "./hooks/useAppData";
+import { use } from "i18next";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  useAppData();
+  
+  return(
+  <>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/courses" element={<Courses />} />
+          <Route path="/inscription" element={<Contact />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -32,7 +35,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
-);
+  </>
+)};
 
 export default App;

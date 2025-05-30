@@ -1,0 +1,42 @@
+{
+  "header": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "courses": "الدورات",
+    "inscription": "التسجيل",
+    "contact": "اتصل بنا"
+  },
+  "inscription": {
+    "full_name": "الاسم الكامل",
+    "age": "العمر",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "level": {
+      "title": "المستوى",
+      "description": "يرجى اختيار مستواك الحالي في البرمجة",
+      "beginner": "مبتدئ",
+      "intermediate": "متوسط",
+      "advanced": "متقدم",
+      "register": "سجل الآن"
+    },
+    "language": "اللغة",
+    "preference": "الاختيار",
+    "password": "كلمة المرور",
+    "confirm_password": "تأكيد كلمة المرور",
+    "submit": "إرسال",
+    "password_mismatch": "كلمتا المرور غير متطابقتين",
+    "success_title": "تم الإرسال بنجاح",
+    "success_description": "سنتواصل معك قريباً"
+  },
+  "contact": {
+    "title": "اتصل بنا",
+    "description": "إذا كان لديك أي أسئلة أو تحتاج إلى مساعدة، يرجى التواصل معنا باستخدام النموذج أدناه.",
+    "form": {
+      "name": "اسمك",
+      "email": "بريدك الإلكتروني",
+      "message": "رسالتك",
+      "submit": "إرسال الرسالة"
+    },
+    "successMessage": "شكراً لتواصلك معنا! سنتواصل معك قريباً."
+  }
+}

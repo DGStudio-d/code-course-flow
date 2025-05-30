@@ -1,153 +1,181 @@
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
+import api from "@/config/axios";
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
+
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    level: '',
-    language: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    level: "",
+    age:"",
+    language_id: "",
+    type: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const register = useMutation({
+    mutationFn: async (data: unknown) => {
+      const res = await api.post("/register", data);
+      console.log("Response from API:", res.data);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "تم التسجيل بنجاح",
+        description: `مرحباً ${data.name}! تم إنشاء حسابك بنجاح.`,
+      });
+      localStorage.setItem("user", JSON.stringify(data));
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "خطأ",
+        description: "كلمتا المرور غير متطابقتين",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "تم إرسال الرسالة بنجاح",
       description: "سنتواصل معك قريباً",
     });
+    register.mutate(formData);
 
+    // Reset form
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      level: '',
-      language: '',
-      message: ''
+      name: "",
+      email: "",
+      phone: "",
+      level: "",
+      language_id: "",
+      age: "",
+      type: "",
+      password: "",
+      confirmPassword: "",
     });
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-primary-50">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Contact Info */}
-          <div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              تواصل معنا
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              ابدأ الآن تعلم لغتك المفضلة في بيئة تعليمية مريحة وبأسعار مناسبة!
-            </p>
-
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-gradient rounded-lg flex items-center justify-center">
-                  <Phone className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">الهاتف</h3>
-                  <p className="text-gray-600">+966 50 123 4567</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-gradient rounded-lg flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">البريد الإلكتروني</h3>
-                  <p className="text-gray-600">info@learnacademy.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-gradient rounded-lg flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">العنوان</h3>
-                  <p className="text-gray-600">الرياض، المملكة العربية السعودية</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Form */}
+        <div className="max-w-4xl mx-auto">
           <Card className="border-green-100 shadow-xl">
             <CardHeader>
-              <CardTitle className="text-2xl text-center">شنو خنسنا!</CardTitle>
+              <CardTitle className="text-3xl text-center mb-2">
+                شنو خنسنا!
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="name">الإسم الكامل *</Label>
+                    <Label htmlFor="name">{t("inscription.full_name")} *</Label>
                     <Input
                       id="name"
-                      placeholder="الإسم والنسب"
                       value={formData.name}
-                      onChange={(e) => handleChange('name', e.target.value)}
+                      onChange={(e) => handleChange("name", e.target.value)}
+                      placeholder="الإسم الكامل"
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email">العمر *</Label>
+                    <Label htmlFor="email">{t("inscription.email")} *</Label>
                     <Input
                       id="email"
-                      placeholder="العمر"
                       value={formData.email}
-                      onChange={(e) => handleChange('email', e.target.value)}
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      placeholder="example@email.com"
+                      type="email"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="phone">البريد الإلكتروني *</Label>
+                    <Label htmlFor="phone">{t("inscription.phone")} *</Label>
                     <Input
                       id="phone"
-                      placeholder="البريد الإلكتروني"
                       value={formData.phone}
-                      onChange={(e) => handleChange('phone', e.target.value)}
+                      onChange={(e) => handleChange("phone", e.target.value)}
+                      placeholder="06XXXXXXXX"
                       required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="level">الهاتف *</Label>
+                    <Label htmlFor="age">{t("inscription.age")} *</Label>
                     <Input
-                      id="level"
-                      placeholder="الهاتف"
-                      value={formData.level}
-                      onChange={(e) => handleChange('level', e.target.value)}
+                      id="age"
+                      value={formData.age}
+                      onChange={(e) => handleChange("age", e.target.value)}
+                      placeholder="العمر"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <Label>حدد المستوى *</Label>
-                    <Select onValueChange={(value) => handleChange('level', value)}>
+                    <Label htmlFor="password">كلمة المرور *</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => handleChange("password", e.target.value)}
+                      placeholder="********"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="confirmPassword">تأكيد كلمة المرور *</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        handleChange("confirmPassword", e.target.value)
+                      }
+                      placeholder="********"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Label>المستوى الدراسي *</Label>
+                    <Select
+                      value={formData.level}
+                      onValueChange={(value) => handleChange("level", value)}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="إبتدائي" />
+                        <SelectValue placeholder="اختر المستوى" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="beginner">إبتدائي</SelectItem>
@@ -157,10 +185,13 @@ const ContactForm = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label>حدد اللغة *</Label>
-                    <Select onValueChange={(value) => handleChange('language', value)}>
+                    <Label>اللغة المفضلة *</Label>
+                    <Select
+                      value={formData.language_id}
+                      onValueChange={(value) => handleChange("language_id", value)}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="الإنجليزية" />
+                        <SelectValue placeholder="اختر اللغة" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="english">الإنجليزية</SelectItem>
@@ -174,21 +205,26 @@ const ContactForm = () => {
                 </div>
 
                 <div>
-                  <Label>حدد الاختيار *</Label>
-                  <Select onValueChange={(value) => handleChange('preference', value)}>
+                  <Label>نمط الدراسة *</Label>
+                  <Select
+                    value={formData.type}
+                    onValueChange={(value) => handleChange("type", value)}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="فردي" />
+                      <SelectValue placeholder="اختر النمط" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="individual">فردي</SelectItem>
                       <SelectItem value="group">جماعي</SelectItem>
-                      <SelectItem value="online">أونلاين</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <Button type="submit" className="w-full bg-green-gradient hover:opacity-90 text-lg py-6">
-                  Send
+                <Button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-6 rounded-xl shadow"
+                >
+                  {t("inscription.register") || "سجل الآن"}
                 </Button>
               </form>
             </CardContent>

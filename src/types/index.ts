@@ -1,12 +1,10 @@
 
 export interface Language {
+  code: string;
+  teachers: Array<object>;
   id: string;
   name: string;
-  code: string;
-  difficultyLevels: string[];
-  icon?: string;
-  teacherCount: number;
-  studentCount: number;
+  flag: string;
 }
 
 export interface Question {

@@ -2,17 +2,18 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {t}= useTranslation();
+  const navigate = useNavigate();
 
-  const navigation = [
-    { name: 'الرئيسية', href: '/' },
-    { name: 'الدورات', href: '/courses' },
-    { name: 'المعلمون', href: '/teachers' },
-    { name: 'الاختبارات', href: '/quiz' },
-    { name: 'تواصل معنا', href: '/contact' },
+  const navigation = [  
+    { name: t("header.home"), href: "/" },
+    { name: t("header.teachers"), href: "/teachers" },
+    { name: t("header.contact"), href: "/contact" },
   ];
 
   return (
@@ -20,7 +21,10 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 rtl:space-x-reverse">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 rtl:space-x-reverse"
+          >
             <div className="w-8 h-8 bg-green-gradient rounded-lg flex items-center justify-center">
               <Globe className="w-5 h-5 text-white" />
             </div>
@@ -48,8 +52,12 @@ const Header = () => {
               <User className="w-4 h-4 ml-2" />
               تسجيل الدخول
             </Button>
-            <Button size="sm" className="bg-green-gradient hover:opacity-90">
-              إنشاء حساب
+            <Button
+              onClick={() => navigate("/inscription")}
+              size="sm"
+              className="bg-green-gradient hover:opacity-90"
+            >
+              {t("header.inscription")}
             </Button>
           </div>
 
@@ -60,7 +68,11 @@ const Header = () => {
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {isMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </Button>
         </div>
 
@@ -79,11 +91,18 @@ const Header = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-2">
-                <Button variant="ghost" size="sm" className="w-full justify-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-center"
+                >
                   <User className="w-4 h-4 ml-2" />
                   تسجيل الدخول
                 </Button>
-                <Button size="sm" className="w-full bg-green-gradient hover:opacity-90">
+                <Button
+                  size="sm"
+                  className="w-full bg-green-gradient hover:opacity-90"
+                >
                   إنشاء حساب
                 </Button>
               </div>
