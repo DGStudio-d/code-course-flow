@@ -71,7 +71,7 @@ const Auth = () => {
 
           <TabsContent value="register" className="mt-6">
             <RegisterForm
-              userType={userType}
+              userType={userType as "student" | "teacher"}
               onSwitchToLogin={handleSwitchToLogin}
             />
           </TabsContent>
