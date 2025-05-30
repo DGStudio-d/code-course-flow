@@ -21,6 +21,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { useSelector } from "react-redux";
+import PaymentInfo from "./PaymentInfo";
 
 interface RegisterFormProps {
   userType: "student" | "teacher";
@@ -37,7 +39,7 @@ export const RegisterForm = ({
     email: "",
     password: "",
     confirmPassword: "",
-    languagePreference: "en",
+    languagePreference: "1", // Default to English ID
     phone: "",
     age: "",
     level: "beginner" as "beginner" | "intermediate" | "advanced",
@@ -47,8 +49,22 @@ export const RegisterForm = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const languages = useSelector((state: any) => state.appData.languages);
+  console.log("RegisterForm rendered for userType:", languages);
 
   const { register } = useAuth();
+
+  // Default languages fallback in case Redux state is empty
+  const defaultLanguages = [
+    { id: "1", code: "en", name: "English" },
+    { id: "2", code: "fr", name: "French" },
+    { id: "3", code: "es", name: "Spanish" },
+    { id: "4", code: "ar", name: "Arabic" },
+    { id: "5", code: "zh", name: "Chinese" },
+  ];
+
+  const availableLanguages =
+    languages && languages.length > 0 ? languages : defaultLanguages;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -276,11 +292,11 @@ export const RegisterForm = ({
                 <SelectValue placeholder="Select your language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="es">Spanish</SelectItem>
-                <SelectItem value="fr">French</SelectItem>
-                <SelectItem value="de">German</SelectItem>
-                <SelectItem value="zh">Chinese</SelectItem>
+                {availableLanguages.map((lang: any) => (
+                  <SelectItem key={lang.id} value={String(lang.id)}>
+                    {lang.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -335,7 +351,6 @@ export const RegisterForm = ({
                 variant="ghost"
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
                   <EyeOff className="h-4 w-4" />
@@ -345,6 +360,9 @@ export const RegisterForm = ({
               </Button>
             </div>
           </div>
+          {userType === "student" && (
+            <PaymentInfo/>
+          )}
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-3">

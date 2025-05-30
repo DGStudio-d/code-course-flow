@@ -40,9 +40,9 @@ const Index = () => {
           </div>
 
           <div
-            className={`grid md:grid-cols-2 lg:grid-cols-${languages?.data?.length} xl:grid-cols-${languages?.data?.length} gap-6`}
+            className={`grid md:grid-cols-2 lg:grid-cols-${languages?.length} xl:grid-cols-${languages?.length} gap-6`}
           >
-            {languages?.data?.map((language) => (
+            {languages?.map((language) => (
               <LanguageCard
                 key={language.id}
                 language={language}

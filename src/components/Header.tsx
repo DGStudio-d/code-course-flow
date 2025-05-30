@@ -110,13 +110,7 @@ const Header = () => {
                     تسجيل الدخول
                   </Link>
                 </Button>
-                <Button
-                  onClick={() => navigate("/inscription")}
-                  size="sm"
-                  className="bg-green-gradient hover:opacity-90"
-                >
-                  {t("header.inscription")}
-                </Button>
+                
               </>
             )}
           </div>
