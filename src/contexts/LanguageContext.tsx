@@ -1,10 +1,14 @@
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
+export type SupportedLanguage = 'ar' | 'en' | 'es';
 
 interface LanguageContextType {
-  currentLanguage: string;
-  setLanguage: (language: string) => void;
-  translations: Record<string, string>;
+  language: SupportedLanguage;
+  setLanguage: (language: SupportedLanguage) => void;
+  t: (key: string) => string;
+  dir: 'ltr' | 'rtl';
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -18,25 +22,27 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [currentLanguage, setCurrentLanguage] = useState("ar");
+  const { i18n, t } = useTranslation();
   
-  const setLanguage = (language: string) => {
-    setCurrentLanguage(language);
+  const setLanguage = (language: SupportedLanguage) => {
+    i18n.changeLanguage(language);
     localStorage.setItem("language", language);
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   };
 
-  // Mock translations
-  const translations: Record<string, string> = {
-    "home": currentLanguage === "ar" ? "الرئيسية" : "Home",
-    "courses": currentLanguage === "ar" ? "الدورات" : "Courses",
-    "teachers": currentLanguage === "ar" ? "المعلمون" : "Teachers",
-    "contact": currentLanguage === "ar" ? "اتصل بنا" : "Contact"
-  };
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language") as SupportedLanguage;
+    if (savedLanguage && ['ar', 'en', 'es'].includes(savedLanguage)) {
+      i18n.changeLanguage(savedLanguage);
+      document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    }
+  }, [i18n]);
 
   const value: LanguageContextType = {
-    currentLanguage,
+    language: i18n.language as SupportedLanguage,
     setLanguage,
-    translations
+    t,
+    dir: i18n.language === 'ar' ? 'rtl' : 'ltr'
   };
 
   return (

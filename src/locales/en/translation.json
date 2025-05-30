@@ -1,3 +1,4 @@
+
 {
   "header": {
     "home": "Home",
@@ -7,6 +8,16 @@
     "contact": "Contact Us",
     "teachers": "Teachers",
     "login": "Login"
+  },
+  "nav": {
+    "home": "Home",
+    "professors": "Professors",
+    "languages": "Languages",
+    "register": "Register",
+    "contact": "Contact"
+  },
+  "button": {
+    "register": "Register"
   },
   "payment":{
     "title": "Payment",

@@ -1,10 +1,30 @@
+
 {
   "header": {
     "home": "الرئيسية",
     "about": "من نحن",
     "courses": "الدورات",
     "inscription": "التسجيل",
+    "contact": "اتصل بنا",
+    "teachers": "المعلمون",
+    "login": "تسجيل الدخول"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "professors": "الأساتذة",
+    "languages": "اللغات",
+    "register": "التسجيل",
     "contact": "اتصل بنا"
+  },
+  "button": {
+    "register": "سجل الآن"
+  },
+  "payment": {
+    "title": "الدفع",
+    "description": "يرجى إكمال عملية الدفع للوصول إلى مواد الدورة.",
+    "bank2": "CIH",
+    "bank1": "بريد بنك",
+    "holder": "الاسم"
   },
   "inscription": {
     "full_name": "الاسم الكامل",
