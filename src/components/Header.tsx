@@ -1,20 +1,46 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe, User } from 'lucide-react';
+import { Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {t}= useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const navigation = [  
     { name: t("header.home"), href: "/" },
     { name: t("header.teachers"), href: "/teachers" },
     { name: t("header.contact"), href: "/contact" },
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const getUserDashboardLink = () => {
+    if (!user) return '/';
+    
+    switch (user.role) {
+      case 'admin': return '/admin';
+      case 'teacher': return '/teacher-dashboard';
+      case 'student': return '/';
+      default: return '/';
+    }
+  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
@@ -46,19 +72,51 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Auth Buttons */}
+          {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
-            <Button variant="ghost" size="sm">
-              <User className="w-4 h-4 ml-2" />
-              تسجيل الدخول
-            </Button>
-            <Button
-              onClick={() => navigate("/inscription")}
-              size="sm"
-              className="bg-green-gradient hover:opacity-90"
-            >
-              {t("header.inscription")}
-            </Button>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                    <User className="w-4 h-4" />
+                    <span>{user?.firstName || 'User'}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    {user?.firstName} {user?.lastName}
+                    <div className="text-xs text-gray-500 capitalize">{user?.role}</div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to={getUserDashboardLink()}>
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/auth">
+                    <User className="w-4 h-4 ml-2" />
+                    تسجيل الدخول
+                  </Link>
+                </Button>
+                <Button
+                  onClick={() => navigate("/inscription")}
+                  size="sm"
+                  className="bg-green-gradient hover:opacity-90"
+                >
+                  {t("header.inscription")}
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -91,20 +149,51 @@ const Header = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-center"
-                >
-                  <User className="w-4 h-4 ml-2" />
-                  تسجيل الدخول
-                </Button>
-                <Button
-                  size="sm"
-                  className="w-full bg-green-gradient hover:opacity-90"
-                >
-                  إنشاء حساب
-                </Button>
+                {isAuthenticated ? (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link to={getUserDashboardLink()}>
+                        <User className="w-4 h-4 mr-2" />
+                        Dashboard ({user?.role})
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-red-600"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-center"
+                      asChild
+                    >
+                      <Link to="/auth">
+                        <User className="w-4 h-4 ml-2" />
+                        تسجيل الدخول
+                      </Link>
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="w-full bg-green-gradient hover:opacity-90"
+                      onClick={() => navigate("/inscription")}
+                    >
+                      إنشاء حساب
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
-// import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
 interface RegisterFormProps {
@@ -48,7 +48,7 @@ export const RegisterForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // const { register } = useAuth();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,24 +89,25 @@ export const RegisterForm = ({
         age: userType === "student" ? parseInt(formData.age) : undefined,
       };
 
-      // const success = await register(registrationData);
+      const success = await register(registrationData);
 
-      // if (success) {
-      //   if (userType === "teacher") {
-      //     toast({
-      //       title: "Registration submitted",
-      //       description:
-      //         "Your teacher account is pending admin approval. You'll receive an email when approved.",
-      //     });
-      //   } else {
-      //     toast({
-      //       title: "Registration successful",
-      //       description: "Welcome! Your student account has been created.",
-      //     });
-      //   }
-      // } else {
-      //   setError("Registration failed. Please try again.");
-      // }
+      if (success) {
+        if (userType === "teacher") {
+          toast({
+            title: "Registration submitted",
+            description:
+              "Your teacher account is pending admin approval. You'll receive an email when approved.",
+          });
+          onSwitchToLogin();
+        } else {
+          toast({
+            title: "Registration successful",
+            description: "Welcome! Your student account has been created.",
+          });
+        }
+      } else {
+        setError("Registration failed. Please try again.");
+      }
     } catch (err) {
       setError("Registration failed. Please try again.");
     } finally {
