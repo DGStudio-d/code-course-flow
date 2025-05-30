@@ -14,6 +14,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
   userType: "student" | "teacher" | "admin";
@@ -28,7 +29,7 @@ export const LoginForm = ({ userType, onSwitchToRegister }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const {loginMutation}=useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,10 +40,14 @@ export const LoginForm = ({ userType, onSwitchToRegister }: LoginFormProps) => {
       setIsLoading(false);
       return;
     }
+    
 
     try {
       // TODO: Implement actual login logic
       console.log("Login attempt:", { ...formData, userType });
+      loginMutation.mutate(formData);
+      console.log("User type:", loginMutation.data);
+      
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));

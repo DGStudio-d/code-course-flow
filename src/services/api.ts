@@ -1,67 +1,37 @@
 
+import api from "@/config/axios";
 import { Language } from "@/types";
 
-// Mock data for languages
-const mockLanguages: Language[] = [
-  {
-    id: "1",
-    code: "en",
-    name: "English",
-    flag: "🇺🇸",
-    teachers: []
-  },
-  {
-    id: "2",
-    code: "fr",
-    name: "French", 
-    flag: "🇫🇷",
-    teachers: []
-  },
-  {
-    id: "3",
-    code: "de",
-    name: "German",
-    flag: "🇩🇪", 
-    teachers: []
-  },
-  {
-    id: "4",
-    code: "es",
-    name: "Spanish",
-    flag: "🇪🇸",
-    teachers: []
-  },
-  {
-    id: "5",
-    code: "it",
-    name: "Italian",
-    flag: "🇮🇹",
-    teachers: []
-  }
-];
+
 
 export const fetchLanguages = async (): Promise<Language[]> => {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return mockLanguages;
+  const res = await api.get<Language[]>("/languages");
+  return res.data;
 };
 
 export const addLanguage = async (language: Omit<Language, "id">): Promise<Language> => {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const newLanguage = {
-    ...language,
-    id: (mockLanguages.length + 1).toString()
-  };
-  mockLanguages.push(newLanguage);
-  return newLanguage;
+  const res= await api.post<Language>("/languages", language);
+  return res.data;
 };
 
 export const deleteLanguage = async (id: string): Promise<void> => {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const index = mockLanguages.findIndex(lang => lang.id === id);
-  if (index > -1) {
-    mockLanguages.splice(index, 1);
-  }
-};
+  await api.delete(`/languages/${id}`);
+}
+export const  registerUser = async (userData:any): Promise<any> => {
+  // Simulate API call delay
+  const res = await api.post("/register", userData);
+  return res;
+}
+export const loginUser = async (credentials: { email: string; password: string }): Promise<any> => {
+  // Simulate API call delay
+  const res = await api.post("/login", credentials);
+  return res;
+}
+export const resetPassword = async (email: string): Promise<any> => {
+  // Simulate API call delay
+  const res = await api.post("/reset-password", { email });
+  return res.data;
+}

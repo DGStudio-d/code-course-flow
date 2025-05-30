@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import {
   DropdownMenu,

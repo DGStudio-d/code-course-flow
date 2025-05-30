@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { useSelector } from "react-redux";
 import PaymentInfo from "./PaymentInfo";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RegisterFormProps {
   userType: "student" | "teacher";
@@ -52,7 +52,7 @@ export const RegisterForm = ({
   const languages = useSelector((state: any) => state.appData.languages);
   console.log("RegisterForm rendered for userType:", languages);
 
-  const { register } = useAuth();
+  const { registerMutation } = useAuth();
 
   // Default languages fallback in case Redux state is empty
   const defaultLanguages = [
@@ -105,9 +105,9 @@ export const RegisterForm = ({
         age: userType === "student" ? parseInt(formData.age) : undefined,
       };
 
-      const success = await register(registrationData);
+       registerMutation.mutate(registrationData);
 
-      if (success) {
+      if (registerMutation.isSuccess) {
         if (userType === "teacher") {
           toast({
             title: "Registration submitted",

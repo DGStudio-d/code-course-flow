@@ -66,3 +66,8 @@ export interface ApiResponse<T> {
   message?: string;
   success?: boolean;
 }
+export interface ApiResponseRegister<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
+}

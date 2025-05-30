@@ -3,18 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AppDataState {
   languages: unknown[];
-  countries: unknown[];
-  categories: unknown[];
-  roles: unknown[];
-  settings: Record<string, unknown>;
+  
 }
 
 const initialState: AppDataState = {
-  languages: [],
-  countries: [],
-  categories: [],
-  roles: [],
-  settings: {},
+  languages: []
 };
 
 const appDataSlice = createSlice({
