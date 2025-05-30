@@ -5,6 +5,7 @@ import { Menu, X, Globe, User, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +75,7 @@ const Header = () => {
 
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -149,6 +151,7 @@ const Header = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-2">
+                <LanguageSwitcher />
                 {isAuthenticated ? (
                   <>
                     <Button
