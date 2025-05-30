@@ -42,7 +42,7 @@ const AdminLanguages = () => {
     queryFn: getLanguages
   });
 
-  const languages = languagesResponse?.data?.data || [];
+  const languages = languagesResponse?.data || [];
   
   const form = useForm<LanguageFormValues>({
     defaultValues: {

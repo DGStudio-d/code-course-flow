@@ -1,10 +1,14 @@
 
 export interface Language {
-  code: string;
-  teachers: Array<object>;
   id: string;
+  code: string;
   name: string;
+  nativeName?: string;
   flag: string;
+  teachers: Array<object>;
+  difficultyLevels?: string[];
+  teacherCount?: number;
+  studentCount?: number;
 }
 
 export interface Question {
@@ -55,4 +59,10 @@ export interface QuizSubmission {
   answers: { questionId: string; answer: string }[];
   startTime: Date;
   endTime: Date;
+}
+
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success?: boolean;
 }

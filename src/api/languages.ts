@@ -1,11 +1,12 @@
 
-import { Language } from "@/types";
+import { Language, ApiResponse } from "@/types";
 
 const mockLanguages: Language[] = [
   {
     id: "1",
     code: "en", 
     name: "English",
+    nativeName: "English",
     flag: "🇺🇸",
     teachers: []
   },
@@ -13,6 +14,7 @@ const mockLanguages: Language[] = [
     id: "2",
     code: "fr",
     name: "French",
+    nativeName: "Français",
     flag: "🇫🇷", 
     teachers: []
   },
@@ -20,21 +22,27 @@ const mockLanguages: Language[] = [
     id: "3",
     code: "de", 
     name: "German",
+    nativeName: "Deutsch",
     flag: "🇩🇪",
     teachers: []
   }
 ];
 
-export const getLanguages = async (): Promise<Language[]> => {
+export const getLanguages = async (): Promise<ApiResponse<Language[]>> => {
   await new Promise(resolve => setTimeout(resolve, 500));
-  return mockLanguages;
+  return {
+    data: mockLanguages,
+    success: true
+  };
 };
 
-export const createLanguage = async (language: Omit<Language, "id">): Promise<Language> => {
+export const createLanguage = async (languageData: { name: string; nativeName: string; flag: string }): Promise<Language> => {
   await new Promise(resolve => setTimeout(resolve, 500));
-  const newLanguage = {
-    ...language,
-    id: (mockLanguages.length + 1).toString()
+  const newLanguage: Language = {
+    ...languageData,
+    id: (mockLanguages.length + 1).toString(),
+    code: languageData.name.toLowerCase().slice(0, 2),
+    teachers: []
   };
   mockLanguages.push(newLanguage);
   return newLanguage;
