@@ -37,7 +37,7 @@ const AdminCourses = () => {
               className="pl-8 rtl:pr-8 rtl:pl-3"
             />
           </div>
-          <Button onClick={() => navigate("/admin/add-course")}>
+          <Button onClick={() => navigate("/admin/courses/new")}>
             <BookOpen className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
             إضافة دورة
           </Button>
@@ -70,7 +70,7 @@ const AdminCourses = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => navigate(`/admin/edit-course/${course.id}`)}
+                    onClick={() => navigate(`/admin/courses/edit/${course.id}`)}
                   >
                     تعديل
                   </Button>

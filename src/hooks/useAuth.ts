@@ -1,6 +1,6 @@
 
-import { setUser, logout } from "@/config/store/auth";
-import { loginUser, registerUser } from "@/services/api";
+import { setUser, logout as logoutAction } from "@/config/store/auth";
+import { loginUser, registerUser, resetPassword } from "@/services/api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,10 +26,29 @@ export const useAuth = () => {
       console.error("Error registering user:", error);
     },
   });
-  const user =useSelector((state: any) => state.auth.user);
 
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+    onError: (error) => {
+      console.error("Error resetting password:", error);
+    },
+  });
 
-  
+  const user = useSelector((state: any) => state.auth.user);
+  const isAuthenticated = !!user;
+  const isLoading = loginMutation.isPending || registerMutation.isPending;
 
-  return {loginMutation, registerMutation,user};
-}
+  const logout = () => {
+    dispatch(logoutAction());
+  };
+
+  return {
+    loginMutation,
+    registerMutation,
+    resetPasswordMutation,
+    user,
+    isAuthenticated,
+    isLoading,
+    logout,
+  };
+};

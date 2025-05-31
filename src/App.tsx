@@ -14,6 +14,10 @@ import Teachers from "./pages/Teachers";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import CourseEdit from "./pages/CourseEdit";
+import QuizEdit from "./pages/QuizEdit";
+import TeacherManagement from "./pages/TeacherManagement";
+import StudentActivation from "./pages/StudentActivation";
 import Auth from "./pages/Auth";
 import PasswordReset from "./components/PasswordReset";
 import NotFound from "./pages/NotFound";
@@ -58,6 +62,38 @@ const AppContent = () => {
         element={
             <AdminDashboard />
         }
+      />
+      
+      {/* Course Management Routes */}
+      <Route
+        path="/admin/courses/edit/:id"
+        element={<CourseEdit />}
+      />
+      <Route
+        path="/admin/courses/new"
+        element={<CourseEdit />}
+      />
+      
+      {/* Quiz Management Routes */}
+      <Route
+        path="/admin/quizzes/edit/:id"
+        element={<QuizEdit />}
+      />
+      <Route
+        path="/admin/quizzes/new"
+        element={<QuizEdit />}
+      />
+      
+      {/* Teacher Management Route */}
+      <Route
+        path="/admin/teacher-management"
+        element={<TeacherManagement />}
+      />
+      
+      {/* Student Activation Route */}
+      <Route
+        path="/admin/student-activation"
+        element={<StudentActivation />}
       />
 
       {/* Protected Student/General Routes */}

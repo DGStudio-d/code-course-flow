@@ -7,7 +7,10 @@ import {
   Languages, 
   UserPlus, 
   Settings,
-  BookOpen
+  BookOpen,
+  GraduationCap,
+  UserCheck,
+  FileText
 } from "lucide-react";
 
 const AdminSidebar = () => {
@@ -34,6 +37,16 @@ const AdminSidebar = () => {
       icon: UserPlus 
     },
     { 
+      name: "إدارة المعلمين", 
+      path: "/admin/teacher-management", 
+      icon: GraduationCap 
+    },
+    { 
+      name: "تفعيل الطلاب", 
+      path: "/admin/student-activation", 
+      icon: UserCheck 
+    },
+    { 
       name: "اللغات", 
       path: "/admin/languages", 
       icon: Languages 
@@ -42,6 +55,11 @@ const AdminSidebar = () => {
       name: "الدورات", 
       path: "/admin/courses", 
       icon: BookOpen 
+    },
+    { 
+      name: "الاختبارات", 
+      path: "/admin/quizzes", 
+      icon: FileText 
     },
     { 
       name: "الإعدادات", 
