@@ -1,11 +1,17 @@
+
 // store/DtaUser.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface Role {
+  name: string;
+}
 
 interface User {
   id: number;
   name: string;
   email: string;
-  // Add other user fields as needed
+  role?: Role;
+  isApproved?: boolean;
 }
 
 interface AppDataState {
@@ -33,7 +39,6 @@ const auth = createSlice({
       }>
     ) => {
       const { user, token } = action.payload;
-    //   console.log("Setting user:", user, "Token:", token, "Role:", user?.role);
       state.user = user;
       state.token = token;
       state.role = user?.role?.name || "";

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import Courses from "./pages/Courses";
 import Teachers from "./pages/Teachers";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import StudentDashboard from "./pages/StudentDashboard";
 import Auth from "./pages/Auth";
 import PasswordReset from "./components/PasswordReset";
 import NotFound from "./pages/NotFound";
@@ -28,18 +30,25 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
-      {/* <Route path="/forgot-password" element={<PasswordReset />} /> */}
       <Route path="/inscription" element={<Contact />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/teachers" element={<Teachers />} />
+
+      {/* Protected Student Routes */}
+      <Route
+        path="/student-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Protected Teacher Routes */}
       <Route
         path="/teacher-dashboard/*"
         element={
             <TeacherDashboard />
-          // <ProtectedRoute allowedRoles={["teacher"]} requireApproval={true}>
-          // </ProtectedRoute>
         }
       />
 
@@ -48,8 +57,6 @@ const AppContent = () => {
         path="/admin/*"
         element={
             <AdminDashboard />
-          // <ProtectedRoute allowedRoles={["admin"]}>
-          // </ProtectedRoute>
         }
       />
 
@@ -63,7 +70,6 @@ const AppContent = () => {
         }
       />
 
-      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
