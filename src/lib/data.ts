@@ -1,4 +1,3 @@
-
 import { Language, Teacher, Course, Quiz } from '@/types';
 
 export const languages: Language[] = [
@@ -6,6 +5,8 @@ export const languages: Language[] = [
     id: '1',
     name: 'الإنجليزية',
     code: 'en',
+    flag: '🇺🇸',
+    teachers: [],
     difficultyLevels: ['مبتدئ', 'متوسط', 'متقدم'],
     teacherCount: 15,
     studentCount: 1250
@@ -14,6 +15,8 @@ export const languages: Language[] = [
     id: '2',
     name: 'الفرنسية',
     code: 'fr',
+    flag: '🇫🇷',
+    teachers: [],
     difficultyLevels: ['مبتدئ', 'متوسط', 'متقدم'],
     teacherCount: 12,
     studentCount: 890
@@ -22,6 +25,8 @@ export const languages: Language[] = [
     id: '3',
     name: 'الألمانية',
     code: 'de',
+    flag: '🇩🇪',
+    teachers: [],
     difficultyLevels: ['مبتدئ', 'متوسط', 'متقدم'],
     teacherCount: 8,
     studentCount: 650
@@ -30,6 +35,8 @@ export const languages: Language[] = [
     id: '4',
     name: 'الإسبانية',
     code: 'es',
+    flag: '🇪🇸',
+    teachers: [],
     difficultyLevels: ['مبتدئ', 'متوسط', 'متقدم'],
     teacherCount: 10,
     studentCount: 720
@@ -38,6 +45,8 @@ export const languages: Language[] = [
     id: '5',
     name: 'الإيطالية',
     code: 'it',
+    flag: '🇮🇹',
+    teachers: [],
     difficultyLevels: ['مبتدئ', 'متوسط', 'متقدم'],
     teacherCount: 6,
     studentCount: 450
