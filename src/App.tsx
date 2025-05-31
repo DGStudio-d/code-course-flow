@@ -38,9 +38,9 @@ const AppContent = () => {
       <Route
         path="/student-dashboard"
         element={
-          <ProtectedRoute allowedRoles={["student"]}>
             <StudentDashboard />
-          </ProtectedRoute>
+          // <ProtectedRoute allowedRoles={["student"]}>
+          // </ProtectedRoute>
         }
       />
 
