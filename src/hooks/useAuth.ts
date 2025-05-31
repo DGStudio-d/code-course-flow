@@ -27,9 +27,10 @@ export const useAuth = () => {
     },
   });
   const user =useSelector((state: any) => state.auth.user);
+  const role =useSelector((state: any) => state.auth.role);
 
 
   
 
-  return {loginMutation, registerMutation,user};
+  return {loginMutation, registerMutation,user,role};
 }
