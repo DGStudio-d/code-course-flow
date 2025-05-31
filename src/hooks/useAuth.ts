@@ -1,16 +1,29 @@
 
 import { setUser, logout as logoutAction } from "@/config/store/auth";
-import { loginUser, registerUser, resetPassword } from "@/services/api";
+import { loginUser, logoutUser, registerUser, resetPassword } from "@/services/api";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
+  const navigate=useNavigate();
+  const user = useSelector((state: any) => state?.auth?.user);
+  const role = useSelector((state: unknown) => state?.auth?.role);
+
+  const CheckRoleNavigation=()=>{
+    if(role==='admin')navigate('/admin/*')
+    else if(role==='teacher')navigate("/teacher-dashboard/*");
+    else if (role === "student") navigate("/student-dashboard");
+  }
+
+  
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       dispatch(setUser(data?.data?.data));
+      CheckRoleNavigation()
     },
     onError: (error) => {
       console.error("Error fetching user data:", error);
@@ -21,6 +34,7 @@ export const useAuth = () => {
     mutationFn: registerUser,
     onSuccess: (data) => {
       dispatch(setUser(data));
+      CheckRoleNavigation();
     },
     onError: (error) => {
       console.error("Error registering user:", error);
@@ -34,13 +48,18 @@ export const useAuth = () => {
     },
   });
 
-  const user = useSelector((state: any) => state.auth.user);
+
   const isAuthenticated = !!user;
   const isLoading = loginMutation.isPending || registerMutation.isPending;
 
-  const logout = () => {
-    dispatch(logoutAction());
-  };
+  const logout = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      dispatch(logoutAction());
+      navigate('/');
+    },
+  });
+  ;
 
   return {
     loginMutation,
@@ -50,5 +69,6 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     logout,
+    CheckRoleNavigation,
   };
 };

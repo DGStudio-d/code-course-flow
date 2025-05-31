@@ -14,18 +14,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [notificationCount] = useState(3);
+  const {logout}=useAuth();
 
   const handleLogout = () => {
     try {
       // Clear authentication data
-      localStorage.removeItem("adminAuthenticated");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      logout.mutate();
+      
       
       // Show success message
       toast({

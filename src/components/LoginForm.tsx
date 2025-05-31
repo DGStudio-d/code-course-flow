@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
 
 interface LoginFormProps {
   userType: "student" | "teacher" | "admin";
@@ -22,6 +23,9 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ userType, onSwitchToRegister }: LoginFormProps) => {
+
+
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,6 +34,10 @@ export const LoginForm = ({ userType, onSwitchToRegister }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const {loginMutation}=useAuth();
+
+
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -50,7 +58,6 @@ export const LoginForm = ({ userType, onSwitchToRegister }: LoginFormProps) => {
       
       
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Handle successful login here
       console.log("Login successful");

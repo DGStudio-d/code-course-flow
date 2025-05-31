@@ -33,5 +33,9 @@ export const loginUser = async (credentials: { email: string; password: string }
 export const resetPassword = async (email: string): Promise<any> => {
   // Simulate API call delay
   const res = await api.post("/reset-password", { email });
-  return res.data;
+  return res;
+}
+export const logoutUser=async()=>{
+  const res=await api.post("/logout");
+  return res
 }

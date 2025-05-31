@@ -42,9 +42,9 @@ const AppContent = () => {
       <Route
         path="/student-dashboard"
         element={
+          <ProtectedRoute allowedRoles={["student"]}>
             <StudentDashboard />
-          // <ProtectedRoute allowedRoles={["student"]}>
-          // </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
 
@@ -52,7 +52,9 @@ const AppContent = () => {
       <Route
         path="/teacher-dashboard/*"
         element={
+          <ProtectedRoute allowedRoles={["teacher"]}>
             <TeacherDashboard />
+          </ProtectedRoute>
         }
       />
 
@@ -60,7 +62,9 @@ const AppContent = () => {
       <Route
         path="/admin/*"
         element={
+          <ProtectedRoute allowedRoles={["admin"]}>
             <AdminDashboard />
+          </ProtectedRoute>
         }
       />
       

@@ -28,7 +28,7 @@ const StudentHeader = () => {
   ];
 
   const handleLogout = () => {
-    logout();
+    logout.mutate();
     navigate('/');
   };
 
