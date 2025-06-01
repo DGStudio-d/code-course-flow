@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, User, LogOut } from 'lucide-react';
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,6 +42,15 @@ const Header = () => {
       case 'student': return '/student-dashboard';
       default: return '/';
     }
+  };
+
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
   };
 
   return (
@@ -78,9 +89,16 @@ const Header = () => {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span>{user?.name || 'User'}</span>
+                  <Button variant="ghost" size="sm" className="flex items-center space-x-2 h-10">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
+                        {user?.name ? getUserInitials(user.name) : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm font-medium">{user?.name || 'User'}</span>
+                      <span className="text-xs text-gray-500 capitalize">{user?.role?.name}</span>
+                    </div>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">

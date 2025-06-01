@@ -29,11 +29,11 @@ const ProtectedRoute = ({
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role?.name)) {
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role?.name || "")) {
     return <Navigate to="/" replace />;
   }
 
-  if (requireApproval && user.role === "teacher" && !user.isApproved) {
+  if (requireApproval && user.role?.name === "teacher" && !user.isApproved) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
