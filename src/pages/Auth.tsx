@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoginForm } from "@/components/LoginForm";
 import { RegisterForm } from "@/components/RegisrteForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { User, UserPlus, Shield } from "lucide-react";
 import Header from "@/components/Header";
+import { useAuth } from "@/hooks/useAuth";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState("login");
   const [userType, setUserType] = useState<"student" | "teacher" | "admin">(
     "student"
   );
+  const {CheckRoleNavigation}=useAuth()
+  useEffect(()=>{
+    CheckRoleNavigation();
+  },[])
 
   const handleSwitchToLogin = () => setActiveTab("login");
   const handleSwitchToRegister = () => setActiveTab("register");
