@@ -4,20 +4,19 @@ import { loginUser, logoutUser, registerUser, resetPassword } from "@/services/a
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import type { RootState } from "@/config/store/store";
 
 export const useAuth = () => {
   const dispatch = useDispatch();
-  const navigate=useNavigate();
-  const user = useSelector((state: any) => state?.auth?.user);
-  const role = useSelector((state: unknown) => state?.auth?.role);
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state?.auth?.user);
+  const role = useSelector((state: RootState) => state?.auth?.role);
 
-  const CheckRoleNavigation=()=>{
-    if(role==='admin')navigate('/admin/*')
-    else if(role==='teacher')navigate("/teacher-dashboard/*");
+  const CheckRoleNavigation = () => {
+    if(role === 'admin') navigate('/admin/*')
+    else if(role === 'teacher') navigate("/teacher-dashboard/*");
     else if (role === "student") navigate("/student-dashboard");
   }
-
-  
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
@@ -48,7 +47,6 @@ export const useAuth = () => {
     },
   });
 
-
   const isAuthenticated = !!user;
   const isLoading = loginMutation.isPending || registerMutation.isPending;
 
@@ -59,7 +57,6 @@ export const useAuth = () => {
       navigate('/');
     },
   });
-  ;
 
   return {
     loginMutation,

@@ -35,12 +35,12 @@ const StudentDashboardOverview = () => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>التقدم</span>
-              <span>{weeklyGoal.current}/{weeklyGoal.target} ساعة</span>
+              <span>{weeklyGoal.completed}/{weeklyGoal.target} {weeklyGoal.unit}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-green-500 h-2 rounded-full"
-                style={{ width: `${(weeklyGoal.current / weeklyGoal.target) * 100}%` }}
+                style={{ width: `${(weeklyGoal.completed / weeklyGoal.target) * 100}%` }}
               />
             </div>
           </div>

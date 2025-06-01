@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, Plus, Eye, Save } from "lucide-react";
 import { Quiz, Question } from "@/types";
 import { useSelector } from "react-redux";
+import type { RootState } from "@/config/store/store";
 
 interface QuizCreationFormProps {
   onClose: () => void;
@@ -35,7 +36,7 @@ const QuizCreationForm = ({ onClose, onSave }: QuizCreationFormProps) => {
     courseId: "",
     languageId: "1",
   });
-  const language = useSelector((state) => state.appData.languages);
+  const languages = useSelector((state: RootState) => state.appData.languages);
 
   const [questions, setQuestions] = useState<Partial<Question>[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Partial<Question>>({
@@ -155,7 +156,7 @@ const QuizCreationForm = ({ onClose, onSave }: QuizCreationFormProps) => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {language.map((lang: any) => (
+                      {languages?.map((lang: any) => (
                         <SelectItem key={lang.id} value={String(lang.id)}>
                           {lang.name}
                         </SelectItem>

@@ -4,7 +4,7 @@ import { StudentProgressTab } from "./StudentProgressTab";
 import { useStudentData } from "@/hooks/useStudentData";
 
 const StudentProgressPage = () => {
-  const { progressData } = useStudentData();
+  const { progressData, weeklyGoal } = useStudentData();
 
   return (
     <div className="space-y-6">
@@ -13,7 +13,7 @@ const StudentProgressPage = () => {
         <p className="text-gray-600 mt-2">تابع إحصائياتك وتقدمك الشامل</p>
       </div>
 
-      <StudentProgressTab progressData={progressData} />
+      <StudentProgressTab progressData={progressData} weeklyGoal={weeklyGoal} />
     </div>
   );
 };

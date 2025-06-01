@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Globe, User, LogOut } from 'lucide-react';
@@ -28,17 +27,17 @@ const Header = () => {
   ];
 
   const handleLogout = () => {
-    logout();
+    logout.mutate();
     navigate('/');
   };
 
   const getUserDashboardLink = () => {
     if (!user) return '/';
     
-    switch (user.role) {
+    switch (user.role?.name) {
       case 'admin': return '/admin';
       case 'teacher': return '/teacher-dashboard';
-      case 'student': return '/';
+      case 'student': return '/student-dashboard';
       default: return '/';
     }
   };
@@ -81,13 +80,13 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="flex items-center space-x-2">
                     <User className="w-4 h-4" />
-                    <span>{user?.firstName || 'User'}</span>
+                    <span>{user?.name || 'User'}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
-                    {user?.firstName} {user?.lastName}
-                    <div className="text-xs text-gray-500 capitalize">{user?.role}</div>
+                    {user?.name}
+                    <div className="text-xs text-gray-500 capitalize">{user?.role?.name}</div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
@@ -156,7 +155,7 @@ const Header = () => {
                     >
                       <Link to={getUserDashboardLink()}>
                         <User className="w-4 h-4 mr-2" />
-                        Dashboard ({user?.role})
+                        Dashboard ({user?.role?.name})
                       </Link>
                     </Button>
                     <Button

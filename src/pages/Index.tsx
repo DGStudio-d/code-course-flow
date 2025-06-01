@@ -51,6 +51,10 @@ const Index = () => {
     }
   ];
 
+  const handleSelectLanguage = (languageId: string, difficulty: string) => {
+    console.log(`Selected language ${languageId} with difficulty ${difficulty}`);
+  };
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -79,7 +83,8 @@ const Index = () => {
                     name: language.name,
                     flag: language.flag,
                     teachers: []
-                  }} 
+                  }}
+                  onSelectLanguage={handleSelectLanguage}
                 />
               ))
             ) : (
@@ -91,7 +96,8 @@ const Index = () => {
               ].map((language) => (
                 <LanguageCard 
                   key={language.id} 
-                  language={language} 
+                  language={language}
+                  onSelectLanguage={handleSelectLanguage}
                 />
               ))
             )}
