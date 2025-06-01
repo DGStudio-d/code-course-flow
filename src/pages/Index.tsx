@@ -1,114 +1,82 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import LanguageCard from '@/components/LanguageCard';
-import TeacherCarousel from '@/components/TeacherCarousel';
-import ContactForm from '@/components/ContactForm';
-import { languages, teachers } from '@/lib/data';
-import { Globe, Award, Users, Star } from 'lucide-react';
-import Footer from '@/components/common/Footer';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/config/store/store';
+import Hero from "@/components/Hero";
+import LanguageCard from "@/components/LanguageCard";
+import TeacherCarousel from "@/components/TeacherCarousel";
+import Header from "@/components/Header";
+import Footer from "@/components/common/Footer";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/config/store/store";
+
+interface Language {
+  id: number;
+  code: string;
+  name: string;
+  flag: string;
+  teachers: number;
+}
 
 const Index = () => {
-  const navigate = useNavigate();
-  const languages = useSelector((state: RootState) => state.appData.languages);
-  console.log('Available languages:', languages);
-
-  const handleSelectLanguage = (languageId: string, difficulty: string) => {
-    console.log(`Selected language: ${languageId}, difficulty: ${difficulty}`);
-    navigate('/quiz');
-  };
+  const { t } = useTranslation();
+  const languages = useSelector((state: RootState) => state.appData.languages) as Language[];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <Header />
       <Hero />
-
+      
       {/* Languages Section */}
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              اللغات المتوفرة
+              {t("languages.title")}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              اختر اللغة التي تريد تعلمها من مجموعة واسعة من اللغات العالمية
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t("languages.subtitle")}
             </p>
           </div>
-
-          <div
-            className={`grid md:grid-cols-2 lg:grid-cols-${languages?.length} xl:grid-cols-${languages?.length} gap-6`}
-          >
-            {languages?.map((language) => (
-              <LanguageCard
-                key={language.id}
-                language={language}
-                onSelectLanguage={handleSelectLanguage}
-              />
-            ))}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {languages && languages.length > 0 ? (
+              languages.map((language) => (
+                <LanguageCard 
+                  key={language.id} 
+                  language={language} 
+                />
+              ))
+            ) : (
+              // Fallback languages if none loaded from store
+              [
+                { id: 1, code: 'en', name: 'English', flag: '🇺🇸', teachers: 15 },
+                { id: 2, code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: 12 },
+                { id: 3, code: 'fr', name: 'Français', flag: '🇫🇷', teachers: 8 }
+              ].map((language) => (
+                <LanguageCard 
+                  key={language.id} 
+                  language={language} 
+                />
+              ))
+            )}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-primary-50">
+      {/* Teachers Section */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              لماذا نحن الخيار الأفضل؟
+              {t("teachers.title")}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              نقدم تجربة تعليمية فريدة ومتطورة تضمن لك أفضل النتائج
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t("teachers.subtitle")}
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Globe,
-                title: "معلمون مؤهلون",
-                description: "فريق من أفضل المعلمين المتخصصين",
-              },
-              {
-                icon: Award,
-                title: "شهادات معتمدة",
-                description: "احصل على شهادات معترف بها دولياً",
-              },
-              {
-                icon: Users,
-                title: "مجتمع نشط",
-                description: "انضم لمجتمع من الطلاب المتحمسين",
-              },
-              {
-                icon: Star,
-                title: "جودة عالية",
-                description: "محتوى تعليمي عالي الجودة ومحدث",
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="text-center group hover:transform hover:-translate-y-2 transition-all duration-300"
-              >
-                <div className="w-16 h-16 bg-green-gradient rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:shadow-lg transition-shadow">
-                  <feature.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+          <TeacherCarousel />
         </div>
       </section>
 
-      <TeacherCarousel teachers={teachers} />
-      <ContactForm />
-
-      {/* Footer */}
       <Footer />
     </div>
   );

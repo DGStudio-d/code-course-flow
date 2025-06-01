@@ -3,14 +3,10 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
-  Users, 
-  Languages, 
-  UserPlus, 
-  Settings,
-  BookOpen,
-  GraduationCap,
-  UserCheck,
-  FileText
+  FileText,
+  BarChart3,
+  Users,
+  Plus
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,7 +20,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
-const AdminSidebar = () => {
+const TeacherSidebar = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
@@ -33,56 +29,31 @@ const AdminSidebar = () => {
 
   const navItems = [
     { 
-      name: "الرئيسية", 
-      path: "/admin", 
+      name: "نظرة عامة", 
+      path: "/teacher-dashboard", 
       icon: Home 
     },
     { 
-      name: "المستخدمين", 
-      path: "/admin/users", 
-      icon: Users 
-    },
-    { 
-      name: "المدرسين", 
-      path: "/admin/professors", 
-      icon: UserPlus 
-    },
-    { 
-      name: "إدارة المعلمين", 
-      path: "/admin/teacher-management", 
-      icon: GraduationCap 
-    },
-    { 
-      name: "تفعيل الطلاب", 
-      path: "/admin/student-activation", 
-      icon: UserCheck 
-    },
-    { 
-      name: "اللغات", 
-      path: "/admin/languages", 
-      icon: Languages 
-    },
-    { 
-      name: "الدورات", 
-      path: "/admin/courses", 
-      icon: BookOpen 
-    },
-    { 
-      name: "الاختبارات", 
-      path: "/admin/quizzes", 
+      name: "إدارة الاختبارات", 
+      path: "/teacher-dashboard/quizzes", 
       icon: FileText 
     },
     { 
-      name: "الإعدادات", 
-      path: "/admin/settings", 
-      icon: Settings 
+      name: "التحليلات", 
+      path: "/teacher-dashboard/analytics", 
+      icon: BarChart3 
+    },
+    { 
+      name: "الطلاب", 
+      path: "/teacher-dashboard/students", 
+      icon: Users 
     },
   ];
 
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <h2 className="text-lg font-semibold">لوحة الإدارة</h2>
+        <h2 className="text-lg font-semibold">لوحة المعلم</h2>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -112,4 +83,4 @@ const AdminSidebar = () => {
   );
 };
 
-export { AdminSidebar };
+export { TeacherSidebar };

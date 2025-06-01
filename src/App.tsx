@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,7 +39,7 @@ const AppContent = () => {
 
       {/* Protected Student Routes */}
       <Route
-        path="/student-dashboard"
+        path="/student-dashboard/*"
         element={
           <ProtectedRoute allowedRoles={["student"]}>
             <StudentDashboard />
@@ -66,38 +65,6 @@ const AppContent = () => {
             <AdminDashboard />
           </ProtectedRoute>
         }
-      />
-      
-      {/* Course Management Routes */}
-      <Route
-        path="/admin/courses/edit/:id"
-        element={<CourseEdit />}
-      />
-      <Route
-        path="/admin/courses/new"
-        element={<CourseEdit />}
-      />
-      
-      {/* Quiz Management Routes */}
-      <Route
-        path="/admin/quizzes/edit/:id"
-        element={<QuizEdit />}
-      />
-      <Route
-        path="/admin/quizzes/new"
-        element={<QuizEdit />}
-      />
-      
-      {/* Teacher Management Route */}
-      <Route
-        path="/admin/teacher-management"
-        element={<TeacherManagement />}
-      />
-      
-      {/* Student Activation Route */}
-      <Route
-        path="/admin/student-activation"
-        element={<StudentActivation />}
       />
 
       {/* Protected Student/General Routes */}

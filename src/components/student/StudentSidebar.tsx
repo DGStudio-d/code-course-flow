@@ -3,14 +3,10 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
-  Users, 
-  Languages, 
-  UserPlus, 
-  Settings,
   BookOpen,
-  GraduationCap,
-  UserCheck,
-  FileText
+  FileText,
+  TrendingUp,
+  Trophy
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,7 +20,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
-const AdminSidebar = () => {
+const StudentSidebar = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
@@ -34,55 +30,30 @@ const AdminSidebar = () => {
   const navItems = [
     { 
       name: "الرئيسية", 
-      path: "/admin", 
+      path: "/student-dashboard", 
       icon: Home 
     },
     { 
-      name: "المستخدمين", 
-      path: "/admin/users", 
-      icon: Users 
-    },
-    { 
-      name: "المدرسين", 
-      path: "/admin/professors", 
-      icon: UserPlus 
-    },
-    { 
-      name: "إدارة المعلمين", 
-      path: "/admin/teacher-management", 
-      icon: GraduationCap 
-    },
-    { 
-      name: "تفعيل الطلاب", 
-      path: "/admin/student-activation", 
-      icon: UserCheck 
-    },
-    { 
-      name: "اللغات", 
-      path: "/admin/languages", 
-      icon: Languages 
-    },
-    { 
       name: "الدورات", 
-      path: "/admin/courses", 
+      path: "/student-dashboard/courses", 
       icon: BookOpen 
     },
     { 
       name: "الاختبارات", 
-      path: "/admin/quizzes", 
+      path: "/student-dashboard/quizzes", 
       icon: FileText 
     },
     { 
-      name: "الإعدادات", 
-      path: "/admin/settings", 
-      icon: Settings 
+      name: "التقدم", 
+      path: "/student-dashboard/progress", 
+      icon: TrendingUp 
     },
   ];
 
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <h2 className="text-lg font-semibold">لوحة الإدارة</h2>
+        <h2 className="text-lg font-semibold">لوحة الطالب</h2>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -112,4 +83,4 @@ const AdminSidebar = () => {
   );
 };
 
-export { AdminSidebar };
+export { StudentSidebar };
