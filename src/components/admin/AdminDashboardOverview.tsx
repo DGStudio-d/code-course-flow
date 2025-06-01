@@ -9,8 +9,15 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 
 const AdminDashboardOverview = () => {
+  const { stats, recentRegistrations, isLoading } = useAdminDashboard();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -26,7 +33,7 @@ const AdminDashboardOverview = () => {
             <CardTitle>إجمالي المستخدمين</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">23</div>
+            <div className="text-3xl font-bold">{stats.totalUsers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -34,7 +41,7 @@ const AdminDashboardOverview = () => {
             <CardTitle>إجمالي المدرسين</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">3</div>
+            <div className="text-3xl font-bold">{stats.totalTeachers}</div>
           </CardContent>
         </Card>
         <Card>
@@ -42,7 +49,7 @@ const AdminDashboardOverview = () => {
             <CardTitle>إجمالي اللغات</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">5</div>
+            <div className="text-3xl font-bold">{stats.totalLanguages}</div>
           </CardContent>
         </Card>
       </div>
@@ -62,24 +69,14 @@ const AdminDashboardOverview = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>أحمد محمد</TableCell>
-                <TableCell>ahmed@example.com</TableCell>
-                <TableCell>الإنجليزية</TableCell>
-                <TableCell>2025-05-05</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>سارة علي</TableCell>
-                <TableCell>sara@example.com</TableCell>
-                <TableCell>الفرنسية</TableCell>
-                <TableCell>2025-05-04</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>محمد خالد</TableCell>
-                <TableCell>mohamed@example.com</TableCell>
-                <TableCell>الإسبانية</TableCell>
-                <TableCell>2025-05-03</TableCell>
-              </TableRow>
+              {recentRegistrations.map((registration) => (
+                <TableRow key={registration.id}>
+                  <TableCell>{registration.name}</TableCell>
+                  <TableCell>{registration.email}</TableCell>
+                  <TableCell>{registration.language}</TableCell>
+                  <TableCell>{registration.date}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>

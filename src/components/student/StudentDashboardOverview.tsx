@@ -1,10 +1,14 @@
 
 import React from "react";
 import { DashboardStats } from "./DashboardStats";
-import { useStudentData } from "@/hooks/useStudentData";
+import { useStudentDashboardLogic } from "@/hooks/useStudentDashboardLogic";
 
 const StudentDashboardOverview = () => {
-  const { stats, courses, quizzes, progressData, weeklyGoal } = useStudentData();
+  const { stats, weeklyGoal, recentActivities, isLoading } = useStudentDashboardLogic();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -19,14 +23,12 @@ const StudentDashboardOverview = () => {
         <div className="bg-white rounded-lg p-6 shadow-sm border">
           <h2 className="text-xl font-semibold mb-4">آخر الأنشطة</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <span>اكتمال درس جديد في اللغة الإنجليزية</span>
-              <span className="text-sm text-gray-500">منذ ساعتين</span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <span>نجح في اختبار القواعد المتوسط</span>
-              <span className="text-sm text-gray-500">أمس</span>
-            </div>
+            {recentActivities.map((activity) => (
+              <div key={activity.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <span>{activity.title}</span>
+                <span className="text-sm text-gray-500">{activity.time}</span>
+              </div>
+            ))}
           </div>
         </div>
 
