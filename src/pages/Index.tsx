@@ -73,15 +73,21 @@ const Index = () => {
               languages.map((language) => (
                 <LanguageCard 
                   key={language.id} 
-                  language={language} 
+                  language={{
+                    id: language.id,
+                    code: language.code,
+                    name: language.name,
+                    flag: language.flag,
+                    teachers: []
+                  }} 
                 />
               ))
             ) : (
               // Fallback languages if none loaded from store
               [
-                { id: '1', code: 'en', name: 'English', flag: '🇺🇸', teachers: 15 },
-                { id: '2', code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: 12 },
-                { id: '3', code: 'fr', name: 'Français', flag: '🇫🇷', teachers: 8 }
+                { id: '1', code: 'en', name: 'English', flag: '🇺🇸', teachers: [] },
+                { id: '2', code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: [] },
+                { id: '3', code: 'fr', name: 'Français', flag: '🇫🇷', teachers: [] }
               ].map((language) => (
                 <LanguageCard 
                   key={language.id} 

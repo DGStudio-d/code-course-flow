@@ -58,5 +58,13 @@
       "submit": "Send Message"
     },
     "successMessage": "Thank you for contacting us! We will get back to you soon."
+  },
+  "languages": {
+    "title": "Discover Available Languages",
+    "subtitle": "Choose the language you want to learn with the best specialized teachers"
+  },
+  "teachers": {
+    "title": "Meet Our Distinguished Teachers",
+    "subtitle": "A team of qualified teachers specialized in language teaching using the latest interactive methods"
   }
 }
