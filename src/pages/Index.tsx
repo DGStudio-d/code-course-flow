@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/config/store/store";
 
 interface Language {
-  id: number;
+  id: string;
   code: string;
   name: string;
   flag: string;
@@ -19,6 +19,37 @@ interface Language {
 const Index = () => {
   const { t } = useTranslation();
   const languages = useSelector((state: RootState) => state.appData.languages) as Language[];
+
+  // Mock teachers data to prevent runtime error
+  const mockTeachers = [
+    {
+      id: "1",
+      name: "أحمد محمد علي",
+      specialization: "معلم اللغة الإنجليزية",
+      avatar: "/placeholder.svg",
+      rating: 4.9,
+      experience: 8,
+      testimonial: "تعليم اللغة الإنجليزية بطرق تفاعلية ومبتكرة لضمان أفضل النتائج للطلاب"
+    },
+    {
+      id: "2", 
+      name: "فاطمة أحمد",
+      specialization: "معلمة اللغة الفرنسية",
+      avatar: "/placeholder.svg",
+      rating: 4.8,
+      experience: 6,
+      testimonial: "أسعى لجعل تعلم الفرنسية تجربة ممتعة ومثمرة من خلال الأنشطة التفاعلية"
+    },
+    {
+      id: "3",
+      name: "محمد خالد",
+      specialization: "معلم اللغة الألمانية", 
+      avatar: "/placeholder.svg",
+      rating: 4.7,
+      experience: 10,
+      testimonial: "خبرة واسعة في تدريس الألمانية للمبتدئين والمتقدمين بأساليب حديثة"
+    }
+  ];
 
   return (
     <div className="min-h-screen">
@@ -48,9 +79,9 @@ const Index = () => {
             ) : (
               // Fallback languages if none loaded from store
               [
-                { id: 1, code: 'en', name: 'English', flag: '🇺🇸', teachers: 15 },
-                { id: 2, code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: 12 },
-                { id: 3, code: 'fr', name: 'Français', flag: '🇫🇷', teachers: 8 }
+                { id: '1', code: 'en', name: 'English', flag: '🇺🇸', teachers: 15 },
+                { id: '2', code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: 12 },
+                { id: '3', code: 'fr', name: 'Français', flag: '🇫🇷', teachers: 8 }
               ].map((language) => (
                 <LanguageCard 
                   key={language.id} 
@@ -73,7 +104,7 @@ const Index = () => {
               {t("teachers.subtitle")}
             </p>
           </div>
-          <TeacherCarousel />
+          <TeacherCarousel teachers={mockTeachers} />
         </div>
       </section>
 

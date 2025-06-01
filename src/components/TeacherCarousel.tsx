@@ -3,13 +3,22 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Star, Award } from 'lucide-react';
-import { Teacher } from '@/types';
+
+interface Teacher {
+  id: string;
+  name: string;
+  specialization: string;
+  avatar: string;
+  rating: number;
+  experience: number;
+  testimonial: string;
+}
 
 interface TeacherCarouselProps {
   teachers: Teacher[];
 }
 
-const TeacherCarousel = ({ teachers }: TeacherCarouselProps) => {
+const TeacherCarousel = ({ teachers = [] }: TeacherCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
@@ -21,9 +30,11 @@ const TeacherCarousel = ({ teachers }: TeacherCarouselProps) => {
   };
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    if (teachers.length > 0) {
+      const timer = setInterval(nextSlide, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [teachers.length]);
 
   if (!teachers.length) return null;
 
