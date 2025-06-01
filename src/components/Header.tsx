@@ -1,136 +1,27 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe, User, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useAuth } from '@/hooks/useAuth';
-import LanguageSwitcher from '@/components/common/LanguageSwitcher';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Menu, X } from 'lucide-react';
+import HeaderLogo from './header/HeaderLogo';
+import HeaderNavigation from './header/HeaderNavigation';
+import HeaderAuthSection from './header/HeaderAuthSection';
+import HeaderMobileMenu from './header/HeaderMobileMenu';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
-
-  const navigation = [  
-    { name: t("header.home"), href: "/" },
-    { name: t("header.teachers"), href: "/teachers" },
-    { name: t("header.contact"), href: "/contact" },
-  ];
-
-  const handleLogout = () => {
-    logout.mutate();
-    navigate('/');
-  };
-
-  const getUserDashboardLink = () => {
-    if (!user) return '/';
-    
-    switch (user.role?.name) {
-      case 'admin': return '/admin';
-      case 'teacher': return '/teacher-dashboard';
-      case 'student': return '/student-dashboard';
-      default: return '/';
-    }
-  };
-
-  const getUserInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .slice(0, 2)
-      .join('')
-      .toUpperCase();
-  };
 
   return (
     <header className="bg-white/95 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center space-x-2 rtl:space-x-reverse"
-          >
-            <div className="w-8 h-8 bg-green-gradient rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-green-gradient bg-clip-text text-transparent">
-              Learn academy
-            </span>
-          </Link>
+          <HeaderLogo />
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+          <HeaderNavigation />
 
           {/* Auth Section */}
-          <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
-            <LanguageSwitcher />
-            {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2 h-10">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
-                        {user?.name ? getUserInitials(user.name) : 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start">
-                      <span className="text-sm font-medium">{user?.name || 'User'}</span>
-                      <span className="text-xs text-gray-500 capitalize">{user?.role?.name}</span>
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    {user?.name}
-                    <div className="text-xs text-gray-500 capitalize">{user?.role?.name}</div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to={getUserDashboardLink()}>
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/auth">
-                    <User className="w-4 h-4 ml-2" />
-                    تسجيل الدخول
-                  </Link>
-                </Button>
-                
-              </>
-            )}
-          </div>
+          <HeaderAuthSection />
 
           {/* Mobile menu button */}
           <Button
@@ -148,70 +39,7 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-green-100">
-            <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="text-gray-700 hover:text-primary-600 font-medium py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <div className="pt-4 space-y-2">
-                <LanguageSwitcher />
-                {isAuthenticated ? (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      asChild
-                    >
-                      <Link to={getUserDashboardLink()}>
-                        <User className="w-4 h-4 mr-2" />
-                        Dashboard ({user?.role?.name})
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start text-red-600"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-center"
-                      asChild
-                    >
-                      <Link to="/auth">
-                        <User className="w-4 h-4 ml-2" />
-                        تسجيل الدخول
-                      </Link>
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="w-full bg-green-gradient hover:opacity-90"
-                      onClick={() => navigate("/inscription")}
-                    >
-                      إنشاء حساب
-                    </Button>
-                  </>
-                )}
-              </div>
-            </nav>
-          </div>
-        )}
+        <HeaderMobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       </div>
     </header>
   );
