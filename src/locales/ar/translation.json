@@ -1,5 +1,83 @@
 
 {
+  "admin": {
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "welcome": "مرحبًا بك في لوحة تحكم الإدارة",
+      "totalUsers": "إجمالي المستخدمين",
+      "totalTeachers": "إجمالي المدرسين",
+      "totalLanguages": "إجمالي اللغات",
+      "recentRegistrations": "آخر التسجيلات",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "language": "اللغة",
+      "date": "التاريخ"
+    },
+    "languages": {
+      "title": "إدارة اللغات",
+      "addNew": "إضافة لغة جديدة",
+      "list": "قائمة اللغات",
+      "loading": "جاري التحميل...",
+      "loadError": "خطأ في تحميل البيانات",
+      "form": {
+        "addTitle": "إضافة لغة جديدة",
+        "nameLabel": "اسم اللغة بالعربية",
+        "namePlaceholder": "مثال: الإنجليزية",
+        "nativeNameLabel": "اسم اللغة الأصلي",
+        "nativeNamePlaceholder": "مثال: English",
+        "flagLabel": "رمز العلم",
+        "flagPlaceholder": "مثال: 🇬🇧",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "saving": "جاري الحفظ..."
+      },
+      "table": {
+        "flag": "العلم",
+        "name": "اسم اللغة",
+        "nativeName": "الاسم الأصلي",
+        "actions": "الإجراءات",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "messages": {
+        "addSuccess": "تم إضافة اللغة بنجاح",
+        "addSuccessDesc": "تم إضافة اللغة الجديدة إلى النظام",
+        "addError": "خطأ في إضافة اللغة",
+        "addErrorDesc": "حدث خطأ أثناء إضافة اللغة",
+        "deleteSuccess": "تم حذف اللغة بنجاح",
+        "deleteSuccessDesc": "تم حذف اللغة من النظام",
+        "deleteError": "خطأ في حذف اللغة",
+        "deleteErrorDesc": "حدث خطأ أثناء حذف اللغة",
+        "deleteConfirm": "هل أنت متأكد من حذف هذه اللغة؟"
+      }
+    },
+    "users": {
+      "title": "المستخدمين",
+      "addNew": "إضافة مستخدم",
+      "search": "بحث عن مستخدم...",
+      "loading": "جاري التحميل...",
+      "loadError": "خطأ في تحميل البيانات",
+      "noUsers": "لا يوجد مستخدمين",
+      "table": {
+        "id": "الرقم",
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "registrationDate": "تاريخ التسجيل",
+        "actions": "الإجراءات",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "messages": {
+        "deleteSuccess": "تم حذف المستخدم بنجاح",
+        "deleteSuccessDesc": "تم حذف المستخدم من النظام",
+        "deleteError": "خطأ في حذف المستخدم",
+        "deleteErrorDesc": "حدث خطأ أثناء حذف المستخدم",
+        "deleteConfirm": "هل أنت متأكد من حذف هذا المستخدم؟"
+      }
+    },
+    "loading": "جاري التحميل..."
+  },
   "header": {
     "home": "الرئيسية",
     "about": "من نحن",

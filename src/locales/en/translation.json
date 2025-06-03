@@ -1,5 +1,83 @@
 
 {
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome to the Admin Dashboard",
+      "totalUsers": "Total Users",
+      "totalTeachers": "Total Teachers",
+      "totalLanguages": "Total Languages",
+      "recentRegistrations": "Recent Registrations",
+      "name": "Name",
+      "email": "Email",
+      "language": "Language",
+      "date": "Date"
+    },
+    "languages": {
+      "title": "Language Management",
+      "addNew": "Add New Language",
+      "list": "Languages List",
+      "loading": "Loading...",
+      "loadError": "Error loading data",
+      "form": {
+        "addTitle": "Add New Language",
+        "nameLabel": "Language Name in Arabic",
+        "namePlaceholder": "Example: الإنجليزية",
+        "nativeNameLabel": "Native Language Name",
+        "nativeNamePlaceholder": "Example: English",
+        "flagLabel": "Flag Symbol",
+        "flagPlaceholder": "Example: 🇬🇧",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "table": {
+        "flag": "Flag",
+        "name": "Language Name",
+        "nativeName": "Native Name",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "messages": {
+        "addSuccess": "Language added successfully",
+        "addSuccessDesc": "The new language has been added to the system",
+        "addError": "Error adding language",
+        "addErrorDesc": "An error occurred while adding the language",
+        "deleteSuccess": "Language deleted successfully",
+        "deleteSuccessDesc": "The language has been removed from the system",
+        "deleteError": "Error deleting language",
+        "deleteErrorDesc": "An error occurred while deleting the language",
+        "deleteConfirm": "Are you sure you want to delete this language?"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "addNew": "Add User",
+      "search": "Search for user...",
+      "loading": "Loading...",
+      "loadError": "Error loading data",
+      "noUsers": "No users found",
+      "table": {
+        "id": "ID",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "registrationDate": "Registration Date",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "messages": {
+        "deleteSuccess": "User deleted successfully",
+        "deleteSuccessDesc": "The user has been removed from the system",
+        "deleteError": "Error deleting user",
+        "deleteErrorDesc": "An error occurred while deleting the user",
+        "deleteConfirm": "Are you sure you want to delete this user?"
+      }
+    },
+    "loading": "Loading..."
+  },
   "header": {
     "home": "Home",
     "about": "About Us",

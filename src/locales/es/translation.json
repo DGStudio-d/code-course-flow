@@ -1,0 +1,67 @@
+{
+  "admin": {
+    "languages": {
+      "title": "Gestión de Idiomas",
+      "addNew": "Agregar Nuevo Idioma",
+      "list": "Lista de Idiomas",
+      "loading": "Cargando...",
+      "loadError": "Error al cargar los datos",
+      "form": {
+        "addTitle": "Agregar Nuevo Idioma",
+        "nameLabel": "Nombre del Idioma en Árabe",
+        "namePlaceholder": "Ejemplo: الإنجليزية",
+        "nativeNameLabel": "Nombre Nativo del Idioma",
+        "nativeNamePlaceholder": "Ejemplo: English",
+        "flagLabel": "Símbolo de Bandera",
+        "flagPlaceholder": "Ejemplo: 🇬🇧",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "table": {
+        "flag": "Bandera",
+        "name": "Nombre del Idioma",
+        "nativeName": "Nombre Nativo",
+        "actions": "Acciones",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "messages": {
+        "addSuccess": "Idioma agregado exitosamente",
+        "addSuccessDesc": "El nuevo idioma ha sido agregado al sistema",
+        "addError": "Error al agregar idioma",
+        "addErrorDesc": "Ocurrió un error al agregar el idioma",
+        "deleteSuccess": "Idioma eliminado exitosamente",
+        "deleteSuccessDesc": "El idioma ha sido removido del sistema",
+        "deleteError": "Error al eliminar idioma",
+        "deleteErrorDesc": "Ocurrió un error al eliminar el idioma",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar este idioma?"
+      }
+    },
+    "users": {
+      "title": "Usuarios",
+      "addNew": "Agregar Usuario",
+      "search": "Buscar usuario...",
+      "loading": "Cargando...",
+      "loadError": "Error al cargar los datos",
+      "noUsers": "No se encontraron usuarios",
+      "table": {
+        "id": "ID",
+        "name": "Nombre",
+        "email": "Email",
+        "phone": "Teléfono",
+        "registrationDate": "Fecha de Registro",
+        "actions": "Acciones",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "messages": {
+        "deleteSuccess": "Usuario eliminado exitosamente",
+        "deleteSuccessDesc": "El usuario ha sido removido del sistema",
+        "deleteError": "Error al eliminar usuario",
+        "deleteErrorDesc": "Ocurrió un error al eliminar el usuario",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar este usuario?"
+      }
+    }
+  }
+}

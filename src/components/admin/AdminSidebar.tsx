@@ -1,17 +1,5 @@
-
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { 
-  Home, 
-  Users, 
-  Languages, 
-  UserPlus, 
-  Settings,
-  BookOpen,
-  GraduationCap,
-  UserCheck,
-  FileText
-} from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -22,84 +10,126 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  Languages,
+  BookOpen,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  UserCheck,
+  FileQuestion,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const AdminSidebar = () => {
+function AdminSidebar() {
   const location = useLocation();
-  
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
-  const navItems = [
-    { 
-      name: "الرئيسية", 
-      path: "/admin", 
-      icon: Home 
+  const menuItems = [
+    {
+      title: t("admin.sidebar.dashboard", "لوحة التحكم"),
+      url: "/admin",
+      icon: LayoutDashboard,
     },
-    { 
-      name: "المستخدمين", 
-      path: "/admin/users", 
-      icon: Users 
+    {
+      title: t("admin.sidebar.users", "المستخدمين"),
+      url: "/admin/users",
+      icon: Users,
     },
-    { 
-      name: "المدرسين", 
-      path: "/admin/professors", 
-      icon: UserPlus 
+    {
+      title: t("admin.sidebar.teacherManagement", "إدارة المعلمين"),
+      url: "/admin/teacher-management",
+      icon: GraduationCap,
     },
-    { 
-      name: "إدارة المعلمين", 
-      path: "/admin/teacher-management", 
-      icon: GraduationCap 
+    {
+      title: t("admin.sidebar.studentActivation", "تفعيل الطلاب"),
+      url: "/admin/student-activation",
+      icon: UserCheck,
     },
-    { 
-      name: "تفعيل الطلاب", 
-      path: "/admin/student-activation", 
-      icon: UserCheck 
+    {
+      title: t("admin.sidebar.languages", "اللغات"),
+      url: "/admin/languages",
+      icon: Languages,
     },
-    { 
-      name: "اللغات", 
-      path: "/admin/languages", 
-      icon: Languages 
+    {
+      title: t("admin.sidebar.courses", "الكورسات"),
+      url: "/admin/courses",
+      icon: BookOpen,
     },
-    { 
-      name: "الدورات", 
-      path: "/admin/courses", 
-      icon: BookOpen 
+    {
+      title: t("admin.sidebar.quizzes", "الاختبارات"),
+      url: "/admin/quizzes",
+      icon: FileQuestion,
     },
-    { 
-      name: "الاختبارات", 
-      path: "/admin/quizzes", 
-      icon: FileText 
-    },
-    { 
-      name: "الإعدادات", 
-      path: "/admin/settings", 
-      icon: Settings 
+    {
+      title: t("admin.sidebar.settings", "الإعدادات"),
+      url: "/admin/settings",
+      icon: Settings,
     },
   ];
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4">
-        <h2 className="text-lg font-semibold">لوحة الإدارة</h2>
+    <Sidebar
+      className={`${isRTL ? "rtl-sidebar" : ""}`}
+      side={isRTL ? "right" : "left"}
+    >
+      <SidebarHeader className={`p-4 ${isRTL ? "text-right" : "text-left"}`}>
+        <div
+          className={`flex items-center gap-2 ${
+            isRTL ? "flex-row-reverse gap-3" : ""
+          }`}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <LayoutDashboard className="h-4 w-4" />
+          </div>
+          <div
+            className={`font-semibold ${isRTL ? "text-right" : "text-left"}`}
+          >
+            {t("admin.sidebar.title", "لوحة الإدارة")}
+          </div>
+        </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>القائمة الرئيسية</SidebarGroupLabel>
+          <SidebarGroupLabel className={isRTL ? "text-right" : "text-left"}>
+            {t("admin.sidebar.navigation", "التنقل")}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
-                const active = isActive(item.path);
-                const Icon = item.icon;
-                
+              {menuItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                const IconComponent = item.icon;
+
                 return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={active}>
-                      <Link to={item.path}>
-                        <Icon className="h-4 w-4" />
-                        <span>{item.name}</span>
-                      </Link>
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      onClick={() => navigate(item.url)}
+                      className={`flex items-center ${
+                        isActive ? "bg-accent text-accent-foreground" : ""
+                      } ${
+                        isRTL
+                          ? "flex-row-reverse text-right justify-start"
+                          : "text-left"
+                      } w-full`}
+                    >
+                      <IconComponent
+                        className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`}
+                      />
+                      <span className="flex-1">{item.title}</span>
+                      {isActive &&
+                        (isRTL ? (
+                          <ChevronLeft className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        ))}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -108,8 +138,18 @@ const AdminSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className={`p-4 ${isRTL ? "text-right" : "text-left"}`}>
+        <div
+          className={`text-xs text-muted-foreground ${
+            isRTL ? "text-right" : "text-left"
+          }`}
+        >
+          {t("admin.sidebar.version", "الإصدار")} 1.0.0
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
-};
+}
 
-export { AdminSidebar };
+export default AdminSidebar;

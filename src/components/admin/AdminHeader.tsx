@@ -15,6 +15,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 const AdminHeader = () => {
   const navigate = useNavigate();
@@ -147,6 +148,7 @@ const AdminHeader = () => {
         <Button asChild variant="outline" size="sm">
           <Link to="/">العودة للموقع</Link>
         </Button>
+        <LanguageSwitcher/>
       </div>
     </header>
   );

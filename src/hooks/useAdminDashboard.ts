@@ -1,70 +1,69 @@
-
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export const useAdminDashboard = () => {
-  const [stats] = useState({
-    totalUsers: 23,
-    totalTeachers: 3,
-    totalLanguages: 5,
-    pendingApprovals: 2,
-    activeStudents: 18,
-    totalCourses: 12,
-    totalQuizzes: 25
+  // Fetch dashboard stats
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    queryKey: ["adminDashboardStats"],
+    queryFn: async () => {
+      const response = await axios.get("/api/admin/dashboard/stats");
+      return response.data;
+    },
+
+    staleTime: 5 * 60 * 1000, // Cache data for 5 minutes
+    refetchOnWindowFocus: false, // Prevent refetching on window focus
   });
 
-  const [recentRegistrations] = useState([
+  // Fetch recent registrations
+  const { data: registrationsData, isLoading: registrationsLoading } = useQuery(
     {
-      id: 1,
-      name: "أحمد محمد",
-      email: "ahmed@example.com",
-      language: "الإنجليزية",
-      date: "2025-05-05"
-    },
-    {
-      id: 2,
-      name: "سارة علي",
-      email: "sara@example.com",
-      language: "الفرنسية",
-      date: "2025-05-04"
-    },
-    {
-      id: 3,
-      name: "محمد خالد",
-      email: "mohamed@example.com",
-      language: "الإسبانية",
-      date: "2025-05-03"
+      queryKey: ["adminDashboardRecentRegistrations"],
+      queryFn: async () => {
+        const response = await axios.get(
+          "/api/admin/dashboard/recent-registrations"
+        );
+        return response.data;
+      },
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
     }
-  ]);
+  );
 
-  const [notifications] = useState([
+  // Fetch notifications
+  const { data: notificationsData, isLoading: notificationsLoading } = useQuery(
     {
-      id: 1,
-      title: "مستخدم جديد",
-      message: "انضم طالب جديد إلى المنصة",
-      time: "منذ 5 دقائق",
-      type: "user"
-    },
-    {
-      id: 2,
-      title: "تحديث النظام",
-      message: "تم تحديث النظام بنجاح",
-      time: "منذ ساعة",
-      type: "system"
-    },
-    {
-      id: 3,
-      title: "دفعة جديدة",
-      message: "تم استلام دفعة جديدة",
-      time: "منذ 3 ساعات",
-      type: "payment"
+      queryKey: ["adminDashboardNotifications"],
+      queryFn: async () => {
+        const response = await axios.get("/api/admin/dashboard/notifications");
+        return response.data;
+      },
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
     }
-  ]);
+  );
+
+  // Combine loading states
+  const isLoading =
+    statsLoading || registrationsLoading || notificationsLoading;
+
+  // Provide fallback values if data is not yet available
+  const stats = statsData || {
+    totalUsers: 0,
+    totalTeachers: 0,
+    totalLanguages: 0,
+    pendingApprovals: 0,
+    activeStudents: 0,
+    totalCourses: 0,
+    totalQuizzes: 0,
+  };
+
+  const recentRegistrations = registrationsData || [];
+  const notifications = notificationsData || [];
 
   return {
     stats,
     recentRegistrations,
     notifications,
-    isLoading: false
+    isLoading,
   };
 };

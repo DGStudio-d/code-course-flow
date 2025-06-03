@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import ContactPage from "./pages/ContactPage";
 import { useAppData } from "./hooks/useAppData";
 import "./config/i18n";
+import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,7 @@ const App = () => {
         <BrowserRouter>
           <LanguageProvider>
             <AppContent />
+            <FloatingWhatsAppButton />
           </LanguageProvider>
         </BrowserRouter>
       </TooltipProvider>
