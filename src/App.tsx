@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
 import Contact from "./pages/Contact";
 import Courses from "./pages/Courses";
+import CourseDetail from "./components/CourseDetail";
 import Teachers from "./pages/Teachers";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";

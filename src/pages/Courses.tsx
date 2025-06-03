@@ -1,102 +1,122 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
+import Footer from '@/components/common/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Clock, Users, Star, Search, Filter } from 'lucide-react';
-import { Course } from '@/types';
-
-// Sample courses data
-const courses: Course[] = [
-  {
-    id: '1',
-    title: 'English for Beginners',
-    description: 'Learn the basics of English language with interactive lessons and exercises.',
-    languageId: 'en',
-    difficulty: 'beginner',
-    duration: '4 weeks',
-    lessonsCount: 20,
-    price: 299,
-    thumbnail: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&h=300&fit=crop'
-  },
-  {
-    id: '2',
-    title: 'French Conversation',
-    description: 'Improve your French speaking skills through practical conversation exercises.',
-    languageId: 'fr',
-    difficulty: 'intermediate',
-    duration: '6 weeks',
-    lessonsCount: 30,
-    price: 399,
-    thumbnail: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=500&h=300&fit=crop'
-  },
-  {
-    id: '3',
-    title: 'Advanced German Grammar',
-    description: 'Master complex German grammar rules and advanced language structures.',
-    languageId: 'de',
-    difficulty: 'advanced',
-    duration: '8 weeks',
-    lessonsCount: 40,
-    price: 499,
-    thumbnail: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&h=300&fit=crop'
-  },
-  {
-    id: '4',
-    title: 'Spanish Culture & Language',
-    description: 'Explore Spanish culture while learning the language through immersive content.',
-    languageId: 'es',
-    difficulty: 'intermediate',
-    duration: '5 weeks',
-    lessonsCount: 25,
-    price: 349,
-    thumbnail: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=500&h=300&fit=crop'
-  },
-  {
-    id: '5',
-    title: 'Italian Basics',
-    description: 'Start your Italian journey with fundamental vocabulary and phrases.',
-    languageId: 'it',
-    difficulty: 'beginner',
-    duration: '3 weeks',
-    lessonsCount: 15,
-    price: 249,
-    thumbnail: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=500&h=300&fit=crop'
-  },
-  {
-    id: '6',
-    title: 'Business English',
-    description: 'Professional English skills for workplace communication and presentations.',
-    languageId: 'en',
-    difficulty: 'advanced',
-    duration: '10 weeks',
-    lessonsCount: 50,
-    price: 599,
-    thumbnail: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop'
-  }
-];
+import { Search, Clock, Users, Star, BookOpen, Filter } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Courses = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLevel, setSelectedLevel] = useState('all');
+
+  // Mock courses data
+  const courses = [
+    {
+      id: 1,
+      title: 'English for Beginners',
+      titleAr: 'الإنجليزية للمبتدئين',
+      description: 'Learn English from scratch with interactive lessons',
+      descriptionAr: 'تعلم الإنجليزية من الصفر مع دروس تفاعلية',
+      instructor: 'Sarah Johnson',
+      instructorAr: 'سارة جونسون',
+      level: 'beginner',
+      category: 'english',
+      duration: '8 weeks',
+      students: 324,
+      rating: 4.8,
+      price: 299,
+      image: '/placeholder.svg',
+      isPopular: true
+    },
+    {
+      id: 2,
+      title: 'Advanced Spanish Conversation',
+      titleAr: 'محادثة إسبانية متقدمة',
+      description: 'Master Spanish conversation skills with native speakers',
+      descriptionAr: 'اتقن مهارات المحادثة الإسبانية مع متحدثين أصليين',
+      instructor: 'Carlos Martinez',
+      instructorAr: 'كارلوس مارتينيز',
+      level: 'advanced',
+      category: 'spanish',
+      duration: '6 weeks',
+      students: 156,
+      rating: 4.9,
+      price: 399,
+      image: '/placeholder.svg'
+    },
+    {
+      id: 3,
+      title: 'French Grammar Intensive',
+      titleAr: 'قواعد اللغة الفرنسية المكثفة',
+      description: 'Complete French grammar course for all levels',
+      descriptionAr: 'دورة قواعد اللغة الفرنسية الشاملة لجميع المستويات',
+      instructor: 'Marie Dubois',
+      instructorAr: 'ماري دوبوا',
+      level: 'intermediate',
+      category: 'french',
+      duration: '10 weeks',
+      students: 289,
+      rating: 4.7,
+      price: 349,
+      image: '/placeholder.svg'
+    },
+    {
+      id: 4,
+      title: 'German Business Language',
+      titleAr: 'لغة الأعمال الألمانية',
+      description: 'Professional German for business environments',
+      descriptionAr: 'الألمانية المهنية لبيئات الأعمال',
+      instructor: 'Hans Mueller',
+      instructorAr: 'هانس مولر',
+      level: 'intermediate',
+      category: 'german',
+      duration: '12 weeks',
+      students: 198,
+      rating: 4.6,
+      price: 449,
+      image: '/placeholder.svg'
+    }
+  ];
+
+  const categories = [
+    { value: 'all', label: 'All Categories', labelAr: 'جميع الفئات' },
+    { value: 'english', label: 'English', labelAr: 'الإنجليزية' },
+    { value: 'spanish', label: 'Spanish', labelAr: 'الإسبانية' },
+    { value: 'french', label: 'French', labelAr: 'الفرنسية' },
+    { value: 'german', label: 'German', labelAr: 'الألمانية' }
+  ];
+
+  const levels = [
+    { value: 'all', label: 'All Levels', labelAr: 'جميع المستويات' },
+    { value: 'beginner', label: 'Beginner', labelAr: 'مبتدئ' },
+    { value: 'intermediate', label: 'Intermediate', labelAr: 'متوسط' },
+    { value: 'advanced', label: 'Advanced', labelAr: 'متقدم' }
+  ];
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDifficulty = selectedDifficulty === 'all' || course.difficulty === selectedDifficulty;
-    const matchesLanguage = selectedLanguage === 'all' || course.languageId === selectedLanguage;
+                         course.titleAr.includes(searchTerm);
+    const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+    const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
     
-    return matchesSearch && matchesDifficulty && matchesLanguage;
+    return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
+  const handleEnroll = (courseId: number) => {
+    navigate(`/courses/${courseId}`);
+  };
+
+  const getLevelColor = (level: string) => {
+    switch (level) {
       case 'beginner': return 'bg-green-100 text-green-800';
       case 'intermediate': return 'bg-yellow-100 text-yellow-800';
       case 'advanced': return 'bg-red-100 text-red-800';
@@ -104,32 +124,18 @@ const Courses = () => {
     }
   };
 
-  const getDifficultyLabel = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'مبتدئ';
-      case 'intermediate': return 'متوسط';
-      case 'advanced': return 'متقدم';
-      default: return difficulty;
-    }
-  };
-
-  const handleEnrollCourse = (courseId: string) => {
-    console.log(`Enrolling in course: ${courseId}`);
-    navigate('/quiz');
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-green-gradient py-16">
+      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            دوراتنا التعليمية
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            {t('courses.hero.title', 'Discover Our Courses')}
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            اكتشف مجموعة واسعة من الدورات المصممة خصيصاً لتعلم اللغات بطريقة تفاعلية وممتعة
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            {t('courses.hero.subtitle', 'Learn languages with expert instructors and interactive lessons')}
           </p>
         </div>
       </section>
@@ -139,9 +145,9 @@ const Courses = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-4 items-center">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="ابحث عن الدورات..."
+                placeholder="Search courses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -149,30 +155,29 @@ const Courses = () => {
             </div>
             
             <div className="flex gap-4">
-              <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                <SelectTrigger className="w-[140px]">
-                  <Filter className="w-4 h-4 ml-2" />
-                  <SelectValue placeholder="المستوى" />
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">كل المستويات</SelectItem>
-                  <SelectItem value="beginner">مبتدئ</SelectItem>
-                  <SelectItem value="intermediate">متوسط</SelectItem>
-                  <SelectItem value="advanced">متقدم</SelectItem>
+                  {categories.map(category => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="اللغة" />
+              <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">كل اللغات</SelectItem>
-                  <SelectItem value="en">الإنجليزية</SelectItem>
-                  <SelectItem value="fr">الفرنسية</SelectItem>
-                  <SelectItem value="de">الألمانية</SelectItem>
-                  <SelectItem value="es">الإسبانية</SelectItem>
-                  <SelectItem value="it">الإيطالية</SelectItem>
+                  {levels.map(level => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -183,76 +188,87 @@ const Courses = () => {
       {/* Courses Grid */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {filteredCourses.length} Courses Available
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCourses.map((course) => (
-              <Card key={course.id} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img 
-                    src={course.thumbnail} 
+              <Card key={course.id} className="hover:shadow-lg transition-shadow duration-300">
+                <div className="relative">
+                  <img
+                    src={course.image}
                     alt={course.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-48 object-cover rounded-t-lg"
                   />
-                  <Badge 
-                    className={`absolute top-4 right-4 ${getDifficultyColor(course.difficulty)}`}
-                  >
-                    {getDifficultyLabel(course.difficulty)}
-                  </Badge>
+                  {course.isPopular && (
+                    <Badge className="absolute top-2 right-2 bg-orange-500">
+                      Popular
+                    </Badge>
+                  )}
                 </div>
                 
                 <CardHeader>
-                  <CardTitle className="text-xl text-gray-900 group-hover:text-primary-600 transition-colors">
-                    {course.title}
-                  </CardTitle>
-                  <p className="text-gray-600 text-sm line-clamp-2">
-                    {course.description}
-                  </p>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      <span>{course.lessonsCount} درس</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-400" />
-                      <span>4.8</span>
-                    </div>
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-lg leading-tight">{course.title}</CardTitle>
+                    <Badge className={getLevelColor(course.level)} variant="secondary">
+                      {course.level}
+                    </Badge>
                   </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="text-2xl font-bold text-primary-600">
-                      {course.price} ر.س
+                  <p className="text-gray-600 text-sm">{course.description}</p>
+                </CardHeader>
+
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {course.duration}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-4 w-4" />
+                        {course.students} students
+                      </div>
                     </div>
-                    <Button 
-                      onClick={() => handleEnrollCourse(course.id)}
-                      className="bg-green-gradient hover:opacity-90"
-                    >
-                      التسجيل الآن
-                    </Button>
+
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="ml-1 text-sm font-medium">{course.rating}</span>
+                      </div>
+                      <span className="text-sm text-gray-500">• {course.instructor}</span>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-2">
+                      <div className="text-2xl font-bold text-green-600">
+                        ${course.price}
+                      </div>
+                      <Button 
+                        onClick={() => handleEnroll(course.id)}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        Enroll Now
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
-          
+
           {filteredCourses.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">📚</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                لا توجد دورات متاحة
-              </h3>
-              <p className="text-gray-600">
-                جرب تغيير معايير البحث أو الفلاتر
-              </p>
+              <p className="text-gray-500 text-lg">No courses found matching your criteria.</p>
+              <p className="text-gray-400">Try adjusting your filters or search terms.</p>
             </div>
           )}
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 };
