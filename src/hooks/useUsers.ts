@@ -1,11 +1,13 @@
+
 import api from "@/config/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
+import { useTranslation } from "react-i18next";
 
 const useUsers = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-
+  const { t } = useTranslation();
 
   const {
     data: usersResponse,
@@ -15,6 +17,7 @@ const useUsers = () => {
     queryKey: ["users"],
     queryFn: ()=>api.get('/users').then((res)=>res.data),
   });
+  
   const deleteMutation = useMutation({
     mutationFn: (id:string) => api.post(`/users/${id}`).then((res) => res.data),
     onSuccess: () => {
@@ -32,6 +35,8 @@ const useUsers = () => {
       });
     },
   });
+  
   return{deleteMutation,usersResponse,isLoading,error}
 };
+
 export default useUsers;
