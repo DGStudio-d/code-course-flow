@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import {
@@ -9,6 +10,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminDashboardOverview from "@/components/admin/AdminDashboardOverview";
 import AdminUsers from "@/components/admin/AdminUsers";
+import AdminUserEdit from "@/components/admin/AdminUserEdit";
 import AdminProfessors from "@/components/admin/AdminProfessors";
 import AdminLanguages from "@/components/admin/AdminLanguages";
 import AdminCourses from "@/components/admin/AdminCourses";
@@ -56,6 +58,7 @@ const AdminDashboard = () => {
             <Routes>
               <Route path="/" element={<AdminDashboardOverview />} />
               <Route path="/users" element={<AdminUsers />} />
+              <Route path="/edit-user/:id" element={<AdminUserEdit />} />
               <Route
                 path="/teacher-management"
                 element={<TeacherManagement />}
