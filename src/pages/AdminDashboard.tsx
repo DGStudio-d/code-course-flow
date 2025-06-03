@@ -11,6 +11,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import AdminDashboardOverview from "@/components/admin/AdminDashboardOverview";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminUserEdit from "@/components/admin/AdminUserEdit";
+import AdminUserAdd from "@/components/admin/AdminUserAdd";
 import AdminProfessors from "@/components/admin/AdminProfessors";
 import AdminLanguages from "@/components/admin/AdminLanguages";
 import AdminCourses from "@/components/admin/AdminCourses";
@@ -59,6 +60,7 @@ const AdminDashboard = () => {
               <Route path="/" element={<AdminDashboardOverview />} />
               <Route path="/users" element={<AdminUsers />} />
               <Route path="/edit-user/:id" element={<AdminUserEdit />} />
+              <Route path="/add-user" element={<AdminUserAdd />} />
               <Route
                 path="/teacher-management"
                 element={<TeacherManagement />}
