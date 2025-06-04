@@ -10,6 +10,13 @@ export interface Language {
   teacherCount?: number;
   studentCount?: number;
 }
+export interface UserFormData {
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  isApproved: boolean;
+}
 
 export interface Question {
   id: string;

@@ -20,14 +20,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { UserFormData } from "@/types";
+import useUsers from "@/hooks/useUsers";
 
-interface UserFormData {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  isApproved: boolean;
-}
+
 
 const AdminUserEdit = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,7 +31,7 @@ const AdminUserEdit = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-
+  const {updateMutation}=useUsers()
   const form = useForm<UserFormData>({
     defaultValues: {
       name: "",
@@ -71,29 +67,10 @@ const AdminUserEdit = () => {
   }, [user, form]);
 
   // Update user mutation
-  const updateMutation = useMutation({
-    mutationFn: (data: UserFormData) =>
-      api.put(`/users/${id}`, data).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["user", id] });
-      toast({
-        title: t("admin.users.messages.updateSuccess"),
-        description: t("admin.users.messages.updateSuccessDesc"),
-      });
-      navigate("/admin/users");
-    },
-    onError: (error: any) => {
-      toast({
-        title: t("admin.users.messages.updateError"),
-        description: error.message || t("admin.users.messages.updateErrorDesc"),
-        variant: "destructive",
-      });
-    },
-  });
+  
 
   const onSubmit = (data: UserFormData) => {
-    updateMutation.mutate(data);
+    updateMutation.mutate({ data, id});
   };
 
   if (isLoading) {
