@@ -22,11 +22,11 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const { t } = useTranslation();
-  const { deleteMutation, usersResponse, isLoading, error } = useUsers();
+  const { deleteMutation, usersResponse, isLoading, error,refetch } = useUsers();
+  console.log('data users:',usersResponse)
 
 
-
-  const users = usersResponse?.data || [];
+  const users = usersResponse || [];
 
   // Delete user mutation
   
@@ -45,6 +45,7 @@ const AdminUsers = () => {
   const handleDelete = (id: string) => {
     if (confirm(t("admin.users.messages.deleteConfirm"))) {
       deleteMutation.mutate(id);
+      refetch();
     }
   };
 
@@ -89,7 +90,7 @@ const AdminUsers = () => {
         <div className="flex space-x-2 rtl:space-x-reverse">
           <div className="relative w-64">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground rtl:left-auto rtl:right-2" />
-            <Input 
+            <Input
               placeholder={t("admin.users.search")}
               value={searchTerm}
               onChange={handleSearch}
@@ -111,37 +112,45 @@ const AdminUsers = () => {
               <TableHead>{t("admin.users.table.name")}</TableHead>
               <TableHead>{t("admin.users.table.email")}</TableHead>
               <TableHead>{t("admin.users.table.phone")}</TableHead>
+              <TableHead>{t("admin.users.table.role")}</TableHead>
               <TableHead>{t("admin.users.table.registrationDate")}</TableHead>
-              <TableHead className="text-left rtl:text-right">{t("admin.users.table.actions")}</TableHead>
+              <TableHead className="text-left rtl:text-right">
+                {t("admin.users.table.actions")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8">
-                  {searchTerm ? t("admin.users.noUsers") : t("admin.users.noUsers")}
+                  {searchTerm
+                    ? t("admin.users.noUsers")
+                    : t("admin.users.noUsers")}
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.firstName + " " + user.lastName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
+                  <TableCell>{user?.role?.name}</TableCell>
                   <TableCell>
-                    {new Date(user.registrationDate || user.createdAt).toLocaleDateString()}
+                    {new Date(
+                      user.registrationDate || user.createdAt
+                    ).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="flex gap-2">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => navigate(`/admin/edit-user/${user.id}`)}
                     >
                       {t("admin.users.table.edit")}
                     </Button>
-                    <Button 
-                      variant="destructive" 
+                    <Button
+                      variant="destructive"
                       size="sm"
                       onClick={() => handleDelete(user.id)}
                       disabled={deleteMutation.isPending}

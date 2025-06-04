@@ -1,10 +1,15 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -19,14 +24,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-
-interface UserFormData {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  password: string;
-}
+import useUsers from "@/hooks/useUsers";
+import { UserFormData } from "@/types";
 
 const AdminUserAdd = () => {
   const navigate = useNavigate();
@@ -36,7 +35,8 @@ const AdminUserAdd = () => {
 
   const form = useForm<UserFormData>({
     defaultValues: {
-      name: "",
+      first_name: "",
+      last_name: "",
       email: "",
       phone: "",
       role: "student",
@@ -45,25 +45,7 @@ const AdminUserAdd = () => {
   });
 
   // Create user mutation
-  const createMutation = useMutation({
-    mutationFn: (data: UserFormData) =>
-      api.post("/users", data).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast({
-        title: t("admin.users.messages.createSuccess"),
-        description: t("admin.users.messages.createSuccessDesc"),
-      });
-      navigate("/admin/users");
-    },
-    onError: (error: any) => {
-      toast({
-        title: t("admin.users.messages.createError"),
-        description: error.message || t("admin.users.messages.createErrorDesc"),
-        variant: "destructive",
-      });
-    },
-  });
+  const { createMutation } = useUsers();
 
   const onSubmit = (data: UserFormData) => {
     createMutation.mutate(data);
@@ -89,12 +71,26 @@ const AdminUserAdd = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="first_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.name")}</FormLabel>
+                      <FormLabel>{t("admin.users.form.firstName")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter user name" {...field} />
+                        <Input placeholder="Enter first name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="last_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.users.form.lastName")}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter last name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -88,7 +88,9 @@ const AdminDashboardOverview = () => {
             <TableBody>
               {recentRegistrations?.map((registration) => (
                 <TableRow key={registration?.id}>
-                  <TableCell>{registration?.name}</TableCell>
+                  <TableCell>
+                    {registration?.first_name + registration?.last_name}
+                  </TableCell>
                   <TableCell>{registration?.email}</TableCell>
                   <TableCell>{registration?.language}</TableCell>
                   <TableCell>{registration?.date}</TableCell>

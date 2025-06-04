@@ -1,12 +1,13 @@
+import api from "@/config/axios";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 export const useAdminDashboard = () => {
   // Fetch dashboard stats
   const { data: statsData, isLoading: statsLoading } = useQuery({
     queryKey: ["adminDashboardStats"],
     queryFn: async () => {
-      const response = await axios.get("/api/admin/dashboard/stats");
+      const response = await api.get("/admin/stats");
+      console.log("Stats", response.data);
       return response.data;
     },
 
@@ -19,9 +20,10 @@ export const useAdminDashboard = () => {
     {
       queryKey: ["adminDashboardRecentRegistrations"],
       queryFn: async () => {
-        const response = await axios.get(
-          "/api/admin/dashboard/recent-registrations"
+        const response = await api.get(
+          "/admin/recent-registrations"
         );
+        console.log('recent user',response.data)
         return response.data;
       },
       staleTime: 5 * 60 * 1000,
@@ -34,7 +36,8 @@ export const useAdminDashboard = () => {
     {
       queryKey: ["adminDashboardNotifications"],
       queryFn: async () => {
-        const response = await axios.get("/api/admin/dashboard/notifications");
+        const response = await api.get("/admin/notifications");
+        console.log("notification", response);
         return response.data;
       },
       staleTime: 5 * 60 * 1000,

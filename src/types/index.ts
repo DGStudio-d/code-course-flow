@@ -30,7 +30,14 @@ export interface Quiz {
   duration: number; // in seconds
   languageId: string;
 }
-
+export interface UserFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  role: string;
+  password: string;
+}
 export interface Teacher {
   id: string;
   name: string;

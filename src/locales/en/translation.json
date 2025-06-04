@@ -52,6 +52,7 @@
       }
     },
     "users": {
+      "role":"role",
       "title": "Users",
       "addNew": "Add User",
       "search": "Search for user...",
