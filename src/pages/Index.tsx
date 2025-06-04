@@ -6,19 +6,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/common/Footer";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { useAppData } from "@/hooks/useAppData";
 import type { RootState } from "@/config/store/store";
-
-interface Language {
-  id: string;
-  code: string;
-  name: string;
-  flag: string;
-  teachers: number;
-}
+import { Language } from "@/types";
 
 const Index = () => {
   const { t } = useTranslation();
+  const { isLoading } = useAppData();
   const languages = useSelector((state: RootState) => state.appData.languages) as Language[];
+
+  console.log("Languages from store:", languages);
+  console.log("Is loading:", isLoading);
 
   // Mock teachers data to prevent runtime error
   const mockTeachers = [
@@ -55,6 +53,72 @@ const Index = () => {
     console.log(`Selected language ${languageId} with difficulty ${difficulty}`);
   };
 
+  // Fallback languages if none loaded from store or API
+  const fallbackLanguages = [
+    { 
+      id: '1', 
+      code: 'en', 
+      name: 'English', 
+      nativeName: 'English',
+      flag: '🇺🇸', 
+      teachers: [],
+      teacherCount: 15,
+      studentCount: 120
+    },
+    { 
+      id: '2', 
+      code: 'ar', 
+      name: 'العربية', 
+      nativeName: 'Arabic',
+      flag: '🇸🇦', 
+      teachers: [],
+      teacherCount: 12,
+      studentCount: 85
+    },
+    { 
+      id: '3', 
+      code: 'fr', 
+      name: 'Français', 
+      nativeName: 'French',
+      flag: '🇫🇷', 
+      teachers: [],
+      teacherCount: 10,
+      studentCount: 95
+    },
+    { 
+      id: '4', 
+      code: 'es', 
+      name: 'Español', 
+      nativeName: 'Spanish',
+      flag: '🇪🇸', 
+      teachers: [],
+      teacherCount: 8,
+      studentCount: 70
+    },
+    { 
+      id: '5', 
+      code: 'de', 
+      name: 'Deutsch', 
+      nativeName: 'German',
+      flag: '🇩🇪', 
+      teachers: [],
+      teacherCount: 6,
+      studentCount: 45
+    },
+    { 
+      id: '6', 
+      code: 'it', 
+      name: 'Italiano', 
+      nativeName: 'Italian',
+      flag: '🇮🇹', 
+      teachers: [],
+      teacherCount: 5,
+      studentCount: 35
+    }
+  ];
+
+  const displayLanguages = languages && languages.length > 0 ? languages : fallbackLanguages;
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -72,36 +136,21 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {languages && languages.length > 0 ? (
-              languages.map((language) => (
-                <LanguageCard 
-                  key={language.id} 
-                  language={{
-                    id: language.id,
-                    code: language.code,
-                    name: language.name,
-                    flag: language.flag,
-                    teachers: []
-                  }}
-                  onSelectLanguage={handleSelectLanguage}
-                />
-              ))
-            ) : (
-              // Fallback languages if none loaded from store
-              [
-                { id: '1', code: 'en', name: 'English', flag: '🇺🇸', teachers: [] },
-                { id: '2', code: 'ar', name: 'العربية', flag: '🇸🇦', teachers: [] },
-                { id: '3', code: 'fr', name: 'Français', flag: '🇫🇷', teachers: [] }
-              ].map((language) => (
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="text-lg text-gray-600">{t("admin.loading")}</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayLanguages.map((language) => (
                 <LanguageCard 
                   key={language.id} 
                   language={language}
                   onSelectLanguage={handleSelectLanguage}
                 />
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

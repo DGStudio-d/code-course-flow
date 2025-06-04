@@ -98,6 +98,18 @@
   "button": {
     "register": "Register"
   },
+  "hero": {
+    "title": "High Quality Language Courses",
+    "subtitle": "at Affordable Prices",
+    "description": "We believe that choosing the right course shouldn't be complicated. If you're not satisfied with the course you chose, we offer a full money-back guarantee for 60 days.",
+    "startJourney": "Start Your Learning Journey",
+    "watchHow": "Watch How We Work",
+    "activeStudents": "Active Students",
+    "availableCourses": "Available Courses",
+    "userRating": "User Rating",
+    "startNow": "Start Now",
+    "guarantee": "60 Day Guarantee"
+  },
   "payment":{
     "title": "Payment",
     "description": "Please complete your payment to access the course materials.",

@@ -1,8 +1,11 @@
 
 import { Button } from '@/components/ui/button';
 import { Play, Star, Users, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Hero = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="relative min-h-[80vh] bg-gradient-to-br from-primary-50 via-white to-primary-50 overflow-hidden">
       {/* Background Pattern */}
@@ -16,23 +19,23 @@ const Hero = () => {
           {/* Content */}
           <div className="text-center lg:text-right animate-fade-in">
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              دورات لغوية عالية الجودة
+              {t('hero.title')}
               <span className="block bg-green-gradient bg-clip-text text-transparent mt-2">
-                بأسعار معقولة
+                {t('hero.subtitle')}
               </span>
             </h1>
             
             <p className="text-xl text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0">
-              نعتقد أن اختيار الدورة المناسبة لا يجب أن يكون أمراً معقداً. إذا لم تكن راضياً عن الدورة التي اخترتها، نقدم لك ضماناً كاملاً لاسترداد الأموال لمدة 60 يوماً.
+              {t('hero.description')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Button size="lg" className="bg-green-gradient hover:opacity-90 text-lg px-8 py-6">
-                ابدأ رحلتك التعليمية
+                {t('hero.startJourney')}
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 py-6 group">
                 <Play className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                شاهد كيف نعمل
+                {t('hero.watchHow')}
               </Button>
             </div>
 
@@ -43,21 +46,21 @@ const Hero = () => {
                   <Users className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900">5000+</div>
-                <div className="text-sm text-gray-600">طالب نشط</div>
+                <div className="text-sm text-gray-600">{t('hero.activeStudents')}</div>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-green-100">
                 <div className="flex items-center justify-center mb-2">
                   <BookOpen className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900">50+</div>
-                <div className="text-sm text-gray-600">دورة متاحة</div>
+                <div className="text-sm text-gray-600">{t('hero.availableCourses')}</div>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border border-green-100">
                 <div className="flex items-center justify-center mb-2">
                   <Star className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900">4.9</div>
-                <div className="text-sm text-gray-600">تقييم المستخدمين</div>
+                <div className="text-sm text-gray-600">{t('hero.userRating')}</div>
               </div>
             </div>
           </div>
@@ -73,10 +76,10 @@ const Hero = () => {
               
               {/* Floating Elements */}
               <div className="absolute -top-4 -right-4 bg-green-gradient text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                ابدأ الآن
+                {t('hero.startNow')}
               </div>
               <div className="absolute -bottom-4 -left-4 bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg border border-green-100">
-                60 يوم ضمان
+                {t('hero.guarantee')}
               </div>
             </div>
           </div>

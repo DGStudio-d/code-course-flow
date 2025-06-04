@@ -28,6 +28,18 @@ const translationES = {
   "button": {
     "register": "Registrarse"
   },
+  "hero": {
+    "title": "Cursos de Idiomas de Alta Calidad",
+    "subtitle": "a Precios Asequibles",
+    "description": "Creemos que elegir el curso correcto no debería ser complicado. Si no estás satisfecho con el curso que elegiste, ofrecemos una garantía completa de devolución de dinero por 60 días.",
+    "startJourney": "Comienza tu Viaje de Aprendizaje",
+    "watchHow": "Mira Cómo Trabajamos",
+    "activeStudents": "Estudiantes Activos",
+    "availableCourses": "Cursos Disponibles",
+    "userRating": "Calificación de Usuario",
+    "startNow": "Comienza Ahora",
+    "guarantee": "Garantía de 60 Días"
+  },
   "payment": {
     "title": "Pago",
     "description": "Complete su pago para acceder a los materiales del curso.",
@@ -67,6 +79,17 @@ const translationES = {
       "submit": "Enviar Mensaje"
     },
     "successMessage": "¡Gracias por contactarnos! Te responderemos pronto."
+  },
+  "languages": {
+    "title": "Descubre los Idiomas Disponibles",
+    "subtitle": "Elige el idioma que quieres aprender con los mejores profesores especializados"
+  },
+  "teachers": {
+    "title": "Conoce a Nuestros Distinguidos Profesores",
+    "subtitle": "Un equipo de profesores calificados especializados en la enseñanza de idiomas usando los métodos interactivos más modernos"
+  },
+  "admin": {
+    "loading": "Cargando..."
   }
 };
 
