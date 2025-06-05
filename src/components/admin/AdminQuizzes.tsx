@@ -44,7 +44,7 @@ const AdminQuizzes = () => {
           <p className="text-gray-600 mt-2">إنشاء وإدارة الاختبارات للطلاب</p>
         </div>
         <Button asChild>
-          <Link to="/admin/quizzes/new">
+          <Link to="/admin/quizzes/create">
             <Plus className="w-4 h-4 mr-2" />
             إضافة اختبار جديد
           </Link>

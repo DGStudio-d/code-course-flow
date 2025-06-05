@@ -19,6 +19,7 @@ import AdminSettings from "@/components/admin/AdminSettings";
 import TeacherManagement from "./TeacherManagement";
 import AdminQuizzes from "@/components/admin/AdminQuizzes";
 import QuizEdit from "./QuizEdit";
+import QuizCreation from "./QuizCreation";
 import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
@@ -67,6 +68,7 @@ const AdminDashboard = () => {
               <Route path="/quizzes" element={<AdminQuizzes />} />
               <Route path="/quizzes/edit/:id" element={<QuizEdit />} />
               <Route path="/quizzes/new" element={<QuizEdit />} />
+              <Route path="/quizzes/create" element={<QuizCreation />} />
               <Route path="/settings" element={<AdminSettings />} />
             </Routes>
           </main>
