@@ -10,12 +10,29 @@ export interface Language {
   teacherCount?: number;
   studentCount?: number;
 }
+
 export interface UserFormData {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
   role: string;
-  isApproved: boolean;
+  password: string;
+}
+
+export interface InscriptionFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  phone: string;
+  age: number;
+  role: string;
+  language_id: number;
+  level: "beginner" | "intermediate" | "advanced";
+  type: "group" | "individual";
+  start_date: string;
 }
 
 export interface Question {
@@ -37,14 +54,7 @@ export interface Quiz {
   duration: number; // in seconds
   languageId: string;
 }
-export interface UserFormData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  role: string;
-  password: string;
-}
+
 export interface Teacher {
   id: string;
   name: string;
@@ -80,6 +90,7 @@ export interface ApiResponse<T> {
   message?: string;
   success?: boolean;
 }
+
 export interface ApiResponseRegister<T> {
   data: T;
   message?: string;
