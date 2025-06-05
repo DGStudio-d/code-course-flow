@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import api from "@/config/axios";
@@ -26,12 +26,25 @@ import {
 import { useForm } from "react-hook-form";
 import useUsers from "@/hooks/useUsers";
 import { UserFormData } from "@/types";
+import { useSelector } from "react-redux";
+import { stringify } from "node:querystring";
+import { getLanguages } from "@/api/languages";
 
 const AdminUserAdd = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
+  const {
+    data: languagesResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["languages"],
+    queryFn: getLanguages,
+  });
+  // Create user mutation
+  const { createMutation } = useUsers();
 
   const form = useForm<UserFormData>({
     defaultValues: {
@@ -41,11 +54,11 @@ const AdminUserAdd = () => {
       phone: "",
       role: "student",
       password: "",
+      language_id:""
     },
   });
+  const languages = languagesResponse?.data || [];
 
-  // Create user mutation
-  const { createMutation } = useUsers();
 
   const onSubmit = (data: UserFormData) => {
     createMutation.mutate(data);
@@ -148,6 +161,60 @@ const AdminUserAdd = () => {
                           <SelectItem value="student">Student</SelectItem>
                           <SelectItem value="teacher">Teacher</SelectItem>
                           <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="language_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a language" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {languages?.map((lan) => (
+                            <SelectItem key={lan.id} value={lan.id.toString()}>
+                              {lan.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="language_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a language" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {languages?.map((lan) => (
+                            <SelectItem key={lan.id} value={lan.id.toString()}>
+                              {lan.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

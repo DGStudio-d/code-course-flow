@@ -44,6 +44,7 @@ export interface UserFormData {
   phone: string;
   role: string;
   password: string;
+  language_id: string;
 }
 export interface Teacher {
   id: string;

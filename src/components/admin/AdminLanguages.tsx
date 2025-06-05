@@ -1,4 +1,4 @@
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -34,7 +34,7 @@ import { useTranslation } from "react-i18next";
 
 interface LanguageFormValues {
   name: string;
-  nativeName: string;
+  code: string;
   flag: string;
 }
 
@@ -49,6 +49,7 @@ const AdminLanguages = () => {
     data: languagesResponse,
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["languages"],
     queryFn: getLanguages,
@@ -59,7 +60,7 @@ const AdminLanguages = () => {
   const form = useForm<LanguageFormValues>({
     defaultValues: {
       name: "",
-      nativeName: "",
+      code: "",
       flag: "",
     },
   });
@@ -74,6 +75,7 @@ const AdminLanguages = () => {
         title: t("admin.languages.messages.addSuccess"),
         description: t("admin.languages.messages.addSuccessDesc"),
       });
+      refetch();
     },
     onError: (error: any) => {
       toast({
@@ -82,8 +84,10 @@ const AdminLanguages = () => {
           error.message || t("admin.languages.messages.addErrorDesc"),
         variant: "destructive",
       });
+      console.log(error);
     },
   });
+  useEffect(()=>{},[languagesResponse]);
 
   const deleteMutation = useMutation({
     mutationFn: deleteLanguage,
@@ -93,6 +97,7 @@ const AdminLanguages = () => {
         title: t("admin.languages.messages.deleteSuccess"),
         description: t("admin.languages.messages.deleteSuccessDesc"),
       });
+      refetch();
     },
     onError: (error: any) => {
       toast({
@@ -197,16 +202,16 @@ const AdminLanguages = () => {
 
                   <FormField
                     control={form.control}
-                    name="nativeName"
+                    name="code"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t("admin.languages.form.nativeNameLabel")}
+                          {t("admin.languages.form.codeLabel")}
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder={t(
-                              "admin.languages.form.nativeNamePlaceholder"
+                              "admin.languages.form.codePlaceholder"
                             )}
                             {...field}
                           />
@@ -269,7 +274,7 @@ const AdminLanguages = () => {
               <TableRow>
                 <TableHead>{t("admin.languages.table.flag")}</TableHead>
                 <TableHead>{t("admin.languages.table.name")}</TableHead>
-                <TableHead>{t("admin.languages.table.nativeName")}</TableHead>
+                <TableHead>{t("admin.languages.table.code")}</TableHead>
                 <TableHead className="w-[100px]">
                   {t("admin.languages.table.actions")}
                 </TableHead>
@@ -280,7 +285,7 @@ const AdminLanguages = () => {
                 <TableRow key={language.id}>
                   <TableCell>{language.flag}</TableCell>
                   <TableCell>{language.name}</TableCell>
-                  <TableCell>{language.nativeName}</TableCell>
+                  <TableCell>{language.code}</TableCell>
                   <TableCell className="flex space-x-2">
                     <Button
                       variant="ghost"
