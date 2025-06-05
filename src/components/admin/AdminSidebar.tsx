@@ -18,7 +18,6 @@ import {
   FileText,
   Settings,
   LogOut,
-  UserCheck,
   UserPlus,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -44,11 +43,6 @@ const AdminSidebar = () => {
       title: t("admin.sidebar.teacherManagement"),
       url: "/admin/teacher-management",
       icon: GraduationCap,
-    },
-    {
-      title: t("admin.sidebar.studentActivation"),
-      url: "/admin/student-activation",
-      icon: UserCheck,
     },
     {
       title: "Inscriptions",

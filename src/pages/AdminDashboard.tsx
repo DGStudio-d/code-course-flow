@@ -17,7 +17,6 @@ import AdminLanguages from "@/components/admin/AdminLanguages";
 import AdminInscriptions from "@/components/admin/AdminInscriptions";
 import AdminSettings from "@/components/admin/AdminSettings";
 import TeacherManagement from "./TeacherManagement";
-import StudentActivation from "./StudentActivation";
 import AdminQuizzes from "@/components/admin/AdminQuizzes";
 import QuizEdit from "./QuizEdit";
 import { useTranslation } from "react-i18next";
@@ -62,10 +61,6 @@ const AdminDashboard = () => {
               <Route
                 path="/teacher-management"
                 element={<TeacherManagement />}
-              />
-              <Route
-                path="/student-activation"
-                element={<StudentActivation />}
               />
               <Route path="/languages" element={<AdminLanguages />} />
               <Route path="/inscriptions" element={<AdminInscriptions />} />

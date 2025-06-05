@@ -16,7 +16,6 @@ import StudentDashboard from "./pages/StudentDashboard";
 import CourseEdit from "./pages/CourseEdit";
 import QuizEdit from "./pages/QuizEdit";
 import TeacherManagement from "./pages/TeacherManagement";
-import StudentActivation from "./pages/StudentActivation";
 import Auth from "./pages/Auth";
 import PasswordReset from "./components/PasswordReset";
 import NotFound from "./pages/NotFound";
