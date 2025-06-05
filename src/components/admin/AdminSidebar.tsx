@@ -73,7 +73,7 @@ const AdminSidebar = () => {
   ];
 
   const handleLogout = () => {
-    logout();
+    logout.mutate();
   };
 
   return (
