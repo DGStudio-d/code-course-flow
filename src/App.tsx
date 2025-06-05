@@ -9,8 +9,6 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Quiz from "./pages/Quiz";
 import Contact from "./pages/Contact";
-import Courses from "./pages/Courses";
-import CourseDetail from "./components/CourseDetail";
 import Teachers from "./pages/Teachers";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AdminDashboard from "./pages/AdminDashboard";

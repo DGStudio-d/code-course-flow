@@ -1,12 +1,37 @@
+
 import api from "@/config/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { UserFormData } from "@/types";
-interface upUers{
-  data:UserFormData,
-  id:string
+
+interface InscriptionFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  phone: string;
+  age: number;
+  role: string;
+  language_id: number;
+  level: "beginner" | "intermediate" | "advanced";
+  type: "group" | "individual";
+  start_date: string;
+}
+
+interface UserFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  role: string;
+  password: string;
+}
+
+interface UpdateUser {
+  data: UserFormData;
+  id: string;
 }
 
 const useUsers = () => {
@@ -43,6 +68,7 @@ const useUsers = () => {
       });
     },
   });
+
   const createMutation = useMutation({
     mutationFn: (data: UserFormData) =>
       api.post("/users", data).then((res) => res.data),
@@ -62,12 +88,31 @@ const useUsers = () => {
       });
     },
   });
-  const updateMutation = useMutation({
-    mutationFn: ({ data, id }: upUers) =>
-      api.put(`/users/${id}`, data).then((res) => res.data),
+
+  const createInscriptionMutation = useMutation({
+    mutationFn: (data: InscriptionFormData) =>
+      api.post("/inscriptions", data).then((res) => res.data),
     onSuccess: () => {
+      toast({
+        title: "Inscription submitted successfully",
+        description: "Your inscription has been processed",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Inscription failed",
+        description: error.message || "An error occurred while processing your inscription",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ data, id }: UpdateUser) =>
+      api.put(`/users/${id}`, data).then((res) => res.data),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["user", id] });
+      queryClient.invalidateQueries({ queryKey: ["user", variables.id] });
       toast({
         title: t("admin.users.messages.updateSuccess"),
         description: t("admin.users.messages.updateSuccessDesc"),
@@ -85,6 +130,7 @@ const useUsers = () => {
 
   return {
     createMutation,
+    createInscriptionMutation,
     deleteMutation,
     updateMutation,
     usersResponse,

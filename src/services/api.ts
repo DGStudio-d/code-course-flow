@@ -1,8 +1,6 @@
 
 import api from "@/config/axios";
-import { Language } from "@/types";
-
-
+import { Language, InscriptionFormData } from "@/types";
 
 export const fetchLanguages = async (): Promise<Language[]> => {
   // Simulate API call delay
@@ -20,21 +18,31 @@ export const deleteLanguage = async (id: string): Promise<void> => {
   // Simulate API call delay
   await api.delete(`/languages/${id}`);
 }
-export const  registerUser = async (userData:any): Promise<any> => {
+
+export const registerUser = async (userData:any): Promise<any> => {
   // Simulate API call delay
   const res = await api.post("/register", userData);
   return res;
 }
+
+export const submitInscription = async (inscriptionData: InscriptionFormData): Promise<any> => {
+  // Submit inscription with the new data format
+  const res = await api.post("/inscriptions", inscriptionData);
+  return res;
+}
+
 export const loginUser = async (credentials: { email: string; password: string }): Promise<any> => {
   // Simulate API call delay
   const res = await api.post("/login", credentials);
   return res;
 }
+
 export const resetPassword = async (email: string): Promise<any> => {
   // Simulate API call delay
   const res = await api.post("/reset-password", { email });
   return res;
 }
+
 export const logoutUser=async()=>{
   const res=await api.post("/logout");
   return res

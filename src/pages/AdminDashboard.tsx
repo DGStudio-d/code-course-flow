@@ -14,19 +14,17 @@ import AdminUserEdit from "@/components/admin/AdminUserEdit";
 import AdminUserAdd from "@/components/admin/AdminUserAdd";
 import AdminProfessors from "@/components/admin/AdminProfessors";
 import AdminLanguages from "@/components/admin/AdminLanguages";
-import AdminCourses from "@/components/admin/AdminCourses";
+import AdminInscriptions from "@/components/admin/AdminInscriptions";
 import AdminSettings from "@/components/admin/AdminSettings";
-import CourseEdit from "./CourseEdit";
-import QuizEdit from "./QuizEdit";
 import TeacherManagement from "./TeacherManagement";
 import StudentActivation from "./StudentActivation";
 import AdminQuizzes from "@/components/admin/AdminQuizzes";
+import QuizEdit from "./QuizEdit";
 import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
-  
 
   return (
     <div
@@ -70,9 +68,7 @@ const AdminDashboard = () => {
                 element={<StudentActivation />}
               />
               <Route path="/languages" element={<AdminLanguages />} />
-              <Route path="/courses" element={<AdminCourses />} />
-              <Route path="/courses/edit/:id" element={<CourseEdit />} />
-              <Route path="/courses/new" element={<CourseEdit />} />
+              <Route path="/inscriptions" element={<AdminInscriptions />} />
               <Route path="/quizzes" element={<AdminQuizzes />} />
               <Route path="/quizzes/edit/:id" element={<QuizEdit />} />
               <Route path="/quizzes/new" element={<QuizEdit />} />

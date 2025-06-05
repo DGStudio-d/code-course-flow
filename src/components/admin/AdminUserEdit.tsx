@@ -1,240 +1,193 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next";
-import api from "@/config/axios";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { UserFormData } from "@/types";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/config/axios";
 import useUsers from "@/hooks/useUsers";
-
-
+import { useTranslation } from "react-i18next";
+import { UserFormData } from "@/types";
 
 const AdminUserEdit = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const {updateMutation}=useUsers()
-  const form = useForm<UserFormData>({
+  const { updateMutation } = useUsers();
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<UserFormData>({
     defaultValues: {
-      name: "",
+      first_name: "",
+      last_name: "",
       email: "",
       phone: "",
-      role: "student",
-      isApproved: false,
+      role: "",
+      password: "",
     },
   });
 
-  // Fetch user data
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["user", id],
     queryFn: () => api.get(`/users/${id}`).then((res) => res.data.data),
     enabled: !!id,
   });
 
-  // Update form when user data is loaded
   useEffect(() => {
     if (user) {
-      form.reset({
-        name: user.name || "",
+      reset({
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
         email: user.email || "",
         phone: user.phone || "",
-        role: user.role?.name || "student",
-        isApproved: user.isApproved || false,
+        role: user.role?.name || "",
+        password: "",
       });
     }
-  }, [user, form]);
-
-  // Update user mutation
-  
+  }, [user, reset]);
 
   const onSubmit = (data: UserFormData) => {
-    updateMutation.mutate({ data, id});
+    if (id) {
+      updateMutation.mutate({ data, id });
+    }
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/admin/users")}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
-          <h2 className="text-2xl font-bold">{t("admin.users.editUser")}</h2>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              {t("admin.users.loading")}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  if (error || !user) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate("/admin/users")}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("common.back")}
-          </Button>
-          <h2 className="text-2xl font-bold">{t("admin.users.editUser")}</h2>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-600">
-              {t("admin.users.loadError")}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate("/admin/users")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("common.back")}
-        </Button>
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t("admin.users.editUser")}</h2>
+        <Button variant="outline" onClick={() => navigate("/admin/users")}>
+          {t("admin.users.backToList")}
+        </Button>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>{t("admin.users.editUserDetails")}</CardTitle>
+          <CardDescription>
+            {t("admin.users.editUserDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.name")}</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter user name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first_name">{t("admin.users.firstName")}</Label>
+                <Input
+                  id="first_name"
+                  {...register("first_name", { required: true })}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.email")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Enter email address"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.phone")}</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter phone number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.role")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="student">Student</SelectItem>
-                          <SelectItem value="teacher">Teacher</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {errors.first_name && (
+                  <span className="text-red-500 text-sm">
+                    {t("admin.users.firstNameRequired")}
+                  </span>
+                )}
               </div>
-
-              <div className="flex justify-end gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate("/admin/users")}
-                >
-                  {t("common.cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={updateMutation.isPending}
-                  className="min-w-32"
-                >
-                  {updateMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      {t("common.saving")}
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      {t("common.save")}
-                    </>
-                  )}
-                </Button>
+              <div className="space-y-2">
+                <Label htmlFor="last_name">{t("admin.users.lastName")}</Label>
+                <Input
+                  id="last_name"
+                  {...register("last_name", { required: true })}
+                />
+                {errors.last_name && (
+                  <span className="text-red-500 text-sm">
+                    {t("admin.users.lastNameRequired")}
+                  </span>
+                )}
               </div>
-            </form>
-          </Form>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">{t("admin.users.email")}</Label>
+              <Input
+                id="email"
+                type="email"
+                {...register("email", { required: true })}
+              />
+              {errors.email && (
+                <span className="text-red-500 text-sm">
+                  {t("admin.users.emailRequired")}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">{t("admin.users.phone")}</Label>
+              <Input
+                id="phone"
+                {...register("phone", { required: true })}
+              />
+              {errors.phone && (
+                <span className="text-red-500 text-sm">
+                  {t("admin.users.phoneRequired")}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="role">{t("admin.users.role")}</Label>
+              <Select
+                value={user?.role?.name || ""}
+                onValueChange={(value) => setValue("role", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("admin.users.selectRole")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">{t("admin.users.roles.admin")}</SelectItem>
+                  <SelectItem value="teacher">{t("admin.users.roles.teacher")}</SelectItem>
+                  <SelectItem value="student">{t("admin.users.roles.student")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">{t("admin.users.password")}</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder={t("admin.users.passwordPlaceholder")}
+                {...register("password")}
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending
+                  ? t("admin.users.updating")
+                  : t("admin.users.updateUser")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate("/admin/users")}
+              >
+                {t("admin.users.cancel")}
+              </Button>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

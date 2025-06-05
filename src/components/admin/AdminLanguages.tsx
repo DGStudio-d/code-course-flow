@@ -109,8 +109,8 @@ const AdminLanguages = () => {
     },
   });
 
-  const onSubmit = (data: LanguageFormValues) => {
-    createMutation.mutate(data);
+  const onSubmit = (datas: LanguageFormValues) => {
+    createMutation.mutate(datas);
   };
 
   const handleDelete = (id: string) => {

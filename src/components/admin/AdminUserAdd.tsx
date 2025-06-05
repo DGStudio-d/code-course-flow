@@ -1,8 +1,16 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -11,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import api from "@/config/axios";
@@ -26,25 +34,11 @@ import {
 import { useForm } from "react-hook-form";
 import useUsers from "@/hooks/useUsers";
 import { UserFormData } from "@/types";
-import { useSelector } from "react-redux";
-import { stringify } from "node:querystring";
-import { getLanguages } from "@/api/languages";
 
 const AdminUserAdd = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { t } = useTranslation();
-  const {
-    data: languagesResponse,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["languages"],
-    queryFn: getLanguages,
-  });
-  // Create user mutation
-  const { createMutation } = useUsers();
+  const queryClient = useQueryClient();
 
   const form = useForm<UserFormData>({
     defaultValues: {
@@ -54,29 +48,69 @@ const AdminUserAdd = () => {
       phone: "",
       role: "student",
       password: "",
-      language_id:""
     },
   });
-  const languages = languagesResponse?.data || [];
 
+  // Create user mutation
+  const { createMutation } = useUsers();
 
-  const onSubmit = (data: UserFormData) => {
-    createMutation.mutate(data);
+  // Default languages fallback
+  const defaultLanguages = [
+    { id: 1, code: "en", name: "English" },
+    { id: 2, code: "fr", name: "French" },
+    { id: 3, code: "es", name: "Spanish" },
+    { id: 4, code: "ar", name: "Arabic" },
+    { id: 5, code: "zh", name: "Chinese" },
+  ];
+
+  const availableLanguages =
+    languages && languages.length > 0 ? languages : defaultLanguages;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.password_confirmation) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
+    if (!formData.phone || !formData.age || parseInt(formData.age) < 1) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    const inscriptionData = {
+      ...formData,
+      age: parseInt(formData.age),
+      language_id: Number(formData.language_id),
+    };
+
+    createInscriptionMutation.mutate(inscriptionData);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate("/admin/users")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t("common.back")}
-        </Button>
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t("admin.users.addUser")}</h2>
+        <Button variant="outline" onClick={() => navigate("/admin/users")}>
+          {t("admin.users.backToList")}
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("admin.users.addUserDetails")}</CardTitle>
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">
+            {t("admin.users.createInscription")}
+          </CardTitle>
+          <CardDescription>
+            Fill out the form below to create a new user inscription
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -167,60 +201,6 @@ const AdminUserAdd = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="language_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a language" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {languages?.map((lan) => (
-                            <SelectItem key={lan.id} value={lan.id.toString()}>
-                              {lan.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="language_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a language" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {languages?.map((lan) => (
-                            <SelectItem key={lan.id} value={lan.id.toString()}>
-                              {lan.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <FormField
                   control={form.control}
@@ -241,35 +221,88 @@ const AdminUserAdd = () => {
                 />
               </div>
 
-              <div className="flex justify-end gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">{t("inscription.password")}</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  required
+                />
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={() => navigate("/admin/users")}
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {t("common.cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createMutation.isPending}
-                  className="min-w-32"
-                >
-                  {createMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      {t("common.creating")}
-                    </>
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <>
-                      <Save className="h-4 w-4 mr-2" />
-                      {t("common.create")}
-                    </>
+                    <Eye className="h-4 w-4" />
                   )}
                 </Button>
               </div>
-            </form>
-          </Form>
-        </CardContent>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">
+                {t("inscription.confirm_password")}
+              </Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  value={formData.password_confirmation}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password_confirmation: e.target.value,
+                    }))
+                  }
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={createInscriptionMutation.isPending}
+            >
+              {createInscriptionMutation.isPending ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+              ) : (
+                <UserPlus className="w-4 h-4 mr-2" />
+              )}
+              {createInscriptionMutation.isPending
+                ? "Creating..."
+                : t("inscription.submit")}
+            </Button>
+          </CardContent>
+        </form>
       </Card>
     </div>
   );
