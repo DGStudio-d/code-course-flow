@@ -1,15 +1,13 @@
+
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import {
@@ -17,139 +15,106 @@ import {
   Users,
   GraduationCap,
   Languages,
-  BookOpen,
+  FileText,
   Settings,
-  ChevronLeft,
-  ChevronRight,
+  LogOut,
   UserCheck,
-  FileQuestion,
+  UserPlus,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
 
-function AdminSidebar() {
+const AdminSidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar";
+  const { t } = useTranslation();
+  const { logout } = useAuth();
 
   const menuItems = [
     {
-      title: t("admin.sidebar.dashboard", "لوحة التحكم"),
+      title: t("admin.sidebar.dashboard"),
       url: "/admin",
       icon: LayoutDashboard,
     },
     {
-      title: t("admin.sidebar.users", "المستخدمين"),
+      title: t("admin.sidebar.users"),
       url: "/admin/users",
       icon: Users,
     },
     {
-      title: t("admin.sidebar.teacherManagement", "إدارة المعلمين"),
+      title: t("admin.sidebar.teacherManagement"),
       url: "/admin/teacher-management",
       icon: GraduationCap,
     },
     {
-      title: t("admin.sidebar.studentActivation", "تفعيل الطلاب"),
+      title: t("admin.sidebar.studentActivation"),
       url: "/admin/student-activation",
       icon: UserCheck,
     },
     {
-      title: t("admin.sidebar.languages", "اللغات"),
+      title: "Inscriptions",
+      url: "/admin/inscriptions",
+      icon: UserPlus,
+    },
+    {
+      title: t("admin.sidebar.languages"),
       url: "/admin/languages",
       icon: Languages,
     },
     {
-      title: t("admin.sidebar.courses", "الكورسات"),
-      url: "/admin/courses",
-      icon: BookOpen,
-    },
-    {
-      title: t("admin.sidebar.quizzes", "الاختبارات"),
+      title: t("admin.sidebar.quizzes"),
       url: "/admin/quizzes",
-      icon: FileQuestion,
+      icon: FileText,
     },
     {
-      title: t("admin.sidebar.settings", "الإعدادات"),
+      title: t("admin.sidebar.settings"),
       url: "/admin/settings",
       icon: Settings,
     },
   ];
 
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
-    <Sidebar
-      className={`${isRTL ? "rtl-sidebar" : ""}`}
-      side={isRTL ? "right" : "left"}
-    >
-      <SidebarHeader className={`p-4 ${isRTL ? "text-right" : "text-left"}`}>
-        <div
-          className={`flex items-center gap-2 ${
-            isRTL ? "flex-row-reverse gap-3" : ""
-          }`}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <LayoutDashboard className="h-4 w-4" />
-          </div>
-          <div
-            className={`font-semibold ${isRTL ? "text-right" : "text-left"}`}
-          >
-            {t("admin.sidebar.title", "لوحة الإدارة")}
-          </div>
-        </div>
+    <Sidebar>
+      <SidebarHeader className="border-b p-4">
+        <h2 className="text-lg font-semibold">{t("admin.sidebar.title")}</h2>
       </SidebarHeader>
-
+      
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className={isRTL ? "text-right" : "text-left"}>
-            {t("admin.sidebar.navigation", "التنقل")}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => {
-                const isActive = location.pathname === item.url;
-                const IconComponent = item.icon;
-
-                return (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      onClick={() => navigate(item.url)}
-                      className={`flex items-center ${
-                        isActive ? "bg-accent text-accent-foreground" : ""
-                      } ${
-                        isRTL
-                          ? "flex-row-reverse text-right justify-start"
-                          : "text-left"
-                      } w-full`}
-                    >
-                      <IconComponent
-                        className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`}
-                      />
-                      <span className="flex-1">{item.title}</span>
-                      {isActive &&
-                        (isRTL ? (
-                          <ChevronLeft className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        ))}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.url}>
+              <SidebarMenuButton
+                asChild
+                isActive={
+                  location.pathname === item.url ||
+                  (item.url !== "/admin" && location.pathname.startsWith(item.url))
+                }
+              >
+                <Link to={item.url} className="flex items-center gap-3">
+                  <item.icon className="w-4 h-4" />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className={`p-4 ${isRTL ? "text-right" : "text-left"}`}>
-        <div
-          className={`text-xs text-muted-foreground ${
-            isRTL ? "text-right" : "text-left"
-          }`}
-        >
-          {t("admin.sidebar.version", "الإصدار")} 1.0.0
-        </div>
+      <SidebarFooter className="border-t p-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout}>
+              <LogOut className="w-4 h-4" />
+              <span>{t("admin.sidebar.logout")}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
 
 export default AdminSidebar;
