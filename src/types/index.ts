@@ -54,7 +54,7 @@ export interface Quiz {
   duration: number; // in seconds
   languageId: string;
 }
-<<<<<<< HEAD
+
 export interface UserFormData {
   first_name: string;
   last_name: string;
@@ -62,11 +62,13 @@ export interface UserFormData {
   phone: string;
   role: string;
   password: string;
+  password_confirmation: string;
   language_id: string;
+  age:number;
 }
-=======
 
->>>>>>> 15ffa7a774f8aedfe1dd01be70bed3bda567c64b
+
+
 export interface Teacher {
   id: string;
   name: string;

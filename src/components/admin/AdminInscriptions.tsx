@@ -32,12 +32,12 @@ const AdminInscriptions = () => {
     error,
   } = useQuery({
     queryKey: ["inscriptions"],
-    queryFn: () => api.get("/inscriptions").then((res) => res.data.data),
+    queryFn: () => api.get("/admin/inscriptions").then((res) => res.data.data),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
-      api.delete(`/inscriptions/${id}`).then((res) => res.data),
+      api.delete(`/admin/inscriptions/${id}`).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inscriptions"] });
       toast({
@@ -56,7 +56,7 @@ const AdminInscriptions = () => {
 
   const approveMutation = useMutation({
     mutationFn: (id: string) =>
-      api.patch(`/inscriptions/${id}/approve`).then((res) => res.data),
+      api.patch(`/admin/inscriptions/${id}/approve`).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inscriptions"] });
       toast({

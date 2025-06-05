@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,11 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Eye, EyeOff } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
-import api from "@/config/axios";
 import {
   Form,
   FormControl,
@@ -39,6 +37,9 @@ const AdminUserAdd = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<UserFormData>({
     defaultValues: {
@@ -48,13 +49,16 @@ const AdminUserAdd = () => {
       phone: "",
       role: "student",
       password: "",
+      password_confirmation: "",
+      language_id: "1",
+      age: "",
     },
   });
 
   // Create user mutation
   const { createMutation } = useUsers();
 
-  // Default languages fallback
+  // Default languages
   const defaultLanguages = [
     { id: 1, code: "en", name: "English" },
     { id: 2, code: "fr", name: "French" },
@@ -63,35 +67,54 @@ const AdminUserAdd = () => {
     { id: 5, code: "zh", name: "Chinese" },
   ];
 
-  const availableLanguages =
-    languages && languages.length > 0 ? languages : defaultLanguages;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (formData.password !== formData.password_confirmation) {
-      setError("Passwords do not match");
+  const onSubmit = async (data: UserFormData) => {
+    if (data.password !== data.password_confirmation) {
+      form.setError("password_confirmation", {
+        type: "manual",
+        message: t("inscription.passwordsDoNotMatch"),
+      });
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
+    if (data.password.length < 6) {
+      form.setError("password", {
+        type: "manual",
+        message: t("inscription.passwordTooShort"),
+      });
       return;
     }
 
-    if (!formData.phone || !formData.age || parseInt(formData.age) < 1) {
-      setError("Please fill in all required fields");
+    if (!data.phone || !data.age || parseInt(data.age) < 1) {
+      form.setError("root", {
+        type: "manual",
+        message: t("inscription.requiredFields"),
+      });
       return;
     }
 
     const inscriptionData = {
-      ...formData,
-      age: parseInt(formData.age),
-      language_id: Number(formData.language_id),
+      ...data,
+      age: parseInt(data.age),
+      language_id: Number(data.language_id),
     };
 
-    createInscriptionMutation.mutate(inscriptionData);
+    createMutation.mutate(inscriptionData, {
+      onSuccess: () => {
+        toast({
+          title: t("admin.users.success"),
+          description: t("admin.users.userCreated"),
+        });
+        queryClient.invalidateQueries(["users"]);
+        navigate("/admin/users");
+      },
+      onError: () => {
+        toast({
+          title: t("admin.users.error"),
+          description: t("admin.users.errorCreating"),
+          variant: "destructive",
+        });
+      },
+    });
   };
 
   return (
@@ -99,6 +122,7 @@ const AdminUserAdd = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t("admin.users.addUser")}</h2>
         <Button variant="outline" onClick={() => navigate("/admin/users")}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
           {t("admin.users.backToList")}
         </Button>
       </div>
@@ -109,7 +133,7 @@ const AdminUserAdd = () => {
             {t("admin.users.createInscription")}
           </CardTitle>
           <CardDescription>
-            Fill out the form below to create a new user inscription
+            {t("admin.users.createInscriptionDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -123,7 +147,10 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>{t("admin.users.form.firstName")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter first name" {...field} />
+                        <Input
+                          placeholder={t("admin.users.form.firstName")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -137,7 +164,10 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>{t("admin.users.form.lastName")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter last name" {...field} />
+                        <Input
+                          placeholder={t("admin.users.form.lastName")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -153,7 +183,7 @@ const AdminUserAdd = () => {
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="Enter email address"
+                          placeholder={t("admin.users.form.email")}
                           {...field}
                         />
                       </FormControl>
@@ -169,7 +199,29 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>{t("admin.users.form.phone")}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter phone number" {...field} />
+                        <Input
+                          placeholder={t("admin.users.form.phone")}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                      燃料
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="age"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.users.form.age")}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder={t("admin.users.form.age")}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -188,13 +240,54 @@ const AdminUserAdd = () => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue
+                              placeholder={t("admin.users.form.selectRole")}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="student">Student</SelectItem>
-                          <SelectItem value="teacher">Teacher</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="student">
+                            {t("admin.users.form.student")}
+                          </SelectItem>
+                          <SelectItem value="teacher">
+                            {t("admin.users.form.teacher")}
+                          </SelectItem>
+                          <SelectItem value="admin">
+                            {t("admin.users.form.admin")}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="language_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t("admin.users.form.selectLanguage")}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {defaultLanguages.map((lang) => (
+                            <SelectItem
+                              key={lang.id}
+                              value={lang.id.toString()}
+                            >
+                              {lang.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -206,14 +299,66 @@ const AdminUserAdd = () => {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
+                    <FormItem>
                       <FormLabel>{t("admin.users.form.password")}</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter password"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder={t("admin.users.form.password")}
+                            {...field}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password_confirmation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("admin.users.form.confirmPassword")}
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder={t("admin.users.form.confirmPassword")}
+                            {...field}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() =>
+                              setShowConfirmPassword(!showConfirmPassword)
+                            }
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -221,88 +366,26 @@ const AdminUserAdd = () => {
                 />
               </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">{t("inscription.password")}</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">
-                {t("inscription.confirm_password")}
-              </Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm your password"
-                  value={formData.password_confirmation}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      password_confirmation: e.target.value,
-                    }))
-                  }
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={createInscriptionMutation.isPending}
-            >
-              {createInscriptionMutation.isPending ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-              ) : (
-                <UserPlus className="w-4 h-4 mr-2" />
-              )}
-              {createInscriptionMutation.isPending
-                ? "Creating..."
-                : t("inscription.submit")}
-            </Button>
-          </CardContent>
-        </form>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t("admin.users.creating")}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {t("admin.users.create")}
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
       </Card>
     </div>
   );
