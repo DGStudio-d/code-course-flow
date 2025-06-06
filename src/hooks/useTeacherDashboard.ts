@@ -1,18 +1,57 @@
 
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import api from "@/config/axios";
 
 export const useTeacherDashboard = () => {
-  const [stats] = useState({
-    totalStudents: 45,
-    activeQuizzes: 8,
-    completedQuizzes: 23,
-    averageScore: 82,
-    coursesCreated: 5,
-    totalLessons: 67
+  // Fetch teacher dashboard stats
+  const { data: statsData, isLoading: statsLoading } = useQuery({
+    queryKey: ["teacherDashboardStats"],
+    queryFn: async () => {
+      const response = await api.get("/teacher/dashboard-stats");
+      console.log("Teacher Stats", response.data);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
-  const [recentQuizResults] = useState([
+  // Fetch teacher quizzes
+  const { data: quizzesData, isLoading: quizzesLoading } = useQuery({
+    queryKey: ["teacherQuizzes"],
+    queryFn: async () => {
+      const response = await api.get("/teacher/quizzes");
+      console.log("Teacher Quizzes", response.data);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
+  // Fetch teacher inscriptions
+  const { data: inscriptionsData, isLoading: inscriptionsLoading } = useQuery({
+    queryKey: ["teacherInscriptions"],
+    queryFn: async () => {
+      const response = await api.get("/teacher/inscriptions");
+      console.log("Teacher Inscriptions", response.data);
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
+  const isLoading = statsLoading || quizzesLoading || inscriptionsLoading;
+
+  // Provide fallback values based on actual API data or mock data
+  const stats = statsData || {
+    totalStudents: 0,
+    activeQuizzes: 0,
+    completedQuizzes: 0,
+    averageScore: 0,
+    coursesCreated: 0,
+    totalLessons: 0
+  };
+
+  const recentQuizResults = quizzesData?.recent_results || [
     {
       id: 1,
       quizName: "اختبار القواعد الأساسية",
@@ -37,9 +76,9 @@ export const useTeacherDashboard = () => {
       date: "2025-05-28",
       status: "completed"
     }
-  ]);
+  ];
 
-  const [upcomingTasks] = useState([
+  const upcomingTasks = [
     {
       id: 1,
       title: "مراجعة اختبارات الأسبوع",
@@ -61,9 +100,9 @@ export const useTeacherDashboard = () => {
       priority: "low",
       type: "update"
     }
-  ]);
+  ];
 
-  const [studentProgress] = useState([
+  const studentProgress = inscriptionsData?.student_progress || [
     {
       studentId: 1,
       studentName: "أحمد محمد",
@@ -78,13 +117,13 @@ export const useTeacherDashboard = () => {
       progress: 60,
       lastActivity: "2025-05-29"
     }
-  ]);
+  ];
 
   return {
     stats,
     recentQuizResults,
     upcomingTasks,
     studentProgress,
-    isLoading: false
+    isLoading
   };
 };
