@@ -31,11 +31,14 @@ import api from "@/config/axios";
 
 const questionSchema = z.object({
   question: z.string().min(1, "Question text is required").max(500, "Question text cannot exceed 500 characters"),
-  type: z.string().optional().default("multiple_choice"),
-  points: z.number().min(1).max(10).optional().default(1),
+  type: z.enum(["mcq", "fill", "true_false"], {
+    required_error: "Question type must be selected",
+  }),
+  points: z.number().min(1, "Points must be between 1 and 10").max(10, "Points must be between 1 and 10"),
   audio_file: z.string().optional(),
   options: z.array(z.string().min(1, "Option cannot be empty").max(200, "Option cannot exceed 200 characters")).min(2, "At least 2 options required").max(6, "Maximum 6 options allowed"),
-  correct_answer: z.string().min(1, "Correct answer is required"),
+  correct_answer: z.string().min(1, "Correct answer is required").max(200, "Correct answer cannot exceed 200 characters"),
+  explanation: z.string().min(1, "Explanation is required"),
 });
 
 const quizSchema = z.object({
@@ -80,11 +83,12 @@ const QuizCreation = () => {
       questions: [
         {
           question: "",
-          type: "multiple_choice",
+          type: "mcq",
           points: 1,
           audio_file: "",
           options: ["", ""],
           correct_answer: "",
+          explanation: "",
         },
       ],
     },
@@ -128,11 +132,12 @@ const QuizCreation = () => {
   const addQuestion = () => {
     append({
       question: "",
-      type: "multiple_choice",
+      type: "mcq",
       points: 1,
       audio_file: "",
       options: ["", ""],
       correct_answer: "",
+      explanation: "",
     });
   };
 
@@ -148,6 +153,12 @@ const QuizCreation = () => {
     if (currentOptions.length > 2) {
       const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
       form.setValue(`questions.${questionIndex}.options`, newOptions);
+      
+      // Clear correct answer if it was the removed option
+      const correctAnswer = form.getValues(`questions.${questionIndex}.correct_answer`);
+      if (correctAnswer === currentOptions[optionIndex]) {
+        form.setValue(`questions.${questionIndex}.correct_answer`, "");
+      }
     }
   };
 
@@ -328,10 +339,33 @@ const QuizCreation = () => {
 
                       <FormField
                         control={form.control}
+                        name={`questions.${questionIndex}.type`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Question Type (required) *</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select question type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="mcq">Multiple Choice</SelectItem>
+                                <SelectItem value="fill">Fill in the Blank</SelectItem>
+                                <SelectItem value="true_false">True/False</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
                         name={`questions.${questionIndex}.points`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Points (optional)</FormLabel>
+                            <FormLabel>Points (required) *</FormLabel>
                             <FormControl>
                               <Input 
                                 {...field} 
@@ -356,6 +390,24 @@ const QuizCreation = () => {
                             <FormLabel>Audio File (optional)</FormLabel>
                             <FormControl>
                               <Input {...field} placeholder="Audio file URL" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name={`questions.${questionIndex}.explanation`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Explanation (required) *</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                {...field} 
+                                placeholder="Provide an explanation for the correct answer" 
+                                rows={2}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
