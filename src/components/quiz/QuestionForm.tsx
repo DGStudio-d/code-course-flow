@@ -34,6 +34,27 @@ interface QuestionFormProps {
 }
 
 const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionFormProps) => {
+  const questionType = form.watch(`questions.${questionIndex}.type`);
+
+  // When question type changes, update options accordingly
+  const handleTypeChange = (value: string) => {
+    form.setValue(`questions.${questionIndex}.type`, value);
+    
+    if (value === "fill") {
+      // For fill type, remove options
+      form.setValue(`questions.${questionIndex}.options`, undefined);
+    } else if (value === "true_false") {
+      // For true/false, set default options
+      form.setValue(`questions.${questionIndex}.options`, ["True", "False"]);
+    } else if (value === "mcq") {
+      // For MCQ, set default empty options
+      form.setValue(`questions.${questionIndex}.options`, ["", ""]);
+    }
+    
+    // Clear correct answer when type changes
+    form.setValue(`questions.${questionIndex}.correct_answer`, "");
+  };
+
   return (
     <Card className="p-4">
       <div className="flex items-center justify-between mb-4">
@@ -75,7 +96,7 @@ const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionForm
           render={({ field }) => (
             <FormItem>
               <FormLabel>Question Type (required) *</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={handleTypeChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select question type" />
@@ -147,7 +168,10 @@ const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionForm
         />
       </div>
 
-      <OptionsList form={form} questionIndex={questionIndex} />
+      {/* Only show options for MCQ and True/False types */}
+      {questionType !== "fill" && (
+        <OptionsList form={form} questionIndex={questionIndex} />
+      )}
 
       <FormField
         control={form.control}
@@ -158,7 +182,11 @@ const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionForm
             <FormControl>
               <Input 
                 {...field} 
-                placeholder="Must exactly match one of the options above" 
+                placeholder={
+                  questionType === "fill" 
+                    ? "Enter the correct answer for this fill-in-the-blank question" 
+                    : "Must exactly match one of the options above"
+                } 
               />
             </FormControl>
             <FormMessage />

@@ -4,37 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAdminQuizzes } from "@/hooks/useAdminQuizzes";
 
 const AdminQuizzes = () => {
-  const quizzes = [
-    {
-      id: 1,
-      title: "اختبار القواعد المتقدم",
-      language: "العربية",
-      difficulty: "متقدم",
-      questions: 20,
-      duration: 45,
-      status: "منشور"
-    },
-    {
-      id: 2,
-      title: "English Grammar Basic",
-      language: "English",
-      difficulty: "مبتدئ",
-      questions: 15,
-      duration: 30,
-      status: "مسودة"
-    },
-    {
-      id: 3,
-      title: "French Vocabulary",
-      language: "Français",
-      difficulty: "متوسط",
-      questions: 25,
-      duration: 40,
-      status: "منشور"
+  const { quizzes, quizzesLoading, deleteQuizMutation } = useAdminQuizzes();
+
+  const handleDeleteQuiz = (id: number) => {
+    if (window.confirm("Are you sure you want to delete this quiz?")) {
+      deleteQuizMutation.mutate(id);
     }
-  ];
+  };
+
+  if (quizzesLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg">Loading quizzes...</div>
+      </div>
+    );
+  }
+
+  const quizzesList = quizzes?.data || [];
 
   return (
     <div className="space-y-6">
@@ -52,26 +41,26 @@ const AdminQuizzes = () => {
       </div>
 
       <div className="grid gap-6">
-        {quizzes.map((quiz) => (
+        {quizzesList.map((quiz: any) => (
           <Card key={quiz.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-xl">{quiz.title}</CardTitle>
                   <div className="flex gap-4 mt-2 text-sm text-gray-600">
-                    <span>اللغة: {quiz.language}</span>
+                    <span>اللغة: {quiz.language?.name || 'غير محدد'}</span>
                     <span>المستوى: {quiz.difficulty}</span>
-                    <span>الأسئلة: {quiz.questions}</span>
-                    <span>المدة: {quiz.duration} دقيقة</span>
+                    <span>الأسئلة: {quiz.questions?.length || 0}</span>
+                    <span>المدة: {quiz.time_limit || 'غير محدد'} دقيقة</span>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <span className={`px-2 py-1 rounded text-xs ${
-                    quiz.status === 'منشور' 
+                    quiz.status === 'published' 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-gray-100 text-gray-800'
                   }`}>
-                    {quiz.status}
+                    {quiz.status === 'published' ? 'منشور' : 'مسودة'}
                   </span>
                 </div>
               </div>
@@ -88,7 +77,13 @@ const AdminQuizzes = () => {
                     تعديل
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-red-600 hover:text-red-700"
+                  onClick={() => handleDeleteQuiz(quiz.id)}
+                  disabled={deleteQuizMutation.isPending}
+                >
                   <Trash2 className="w-4 h-4 mr-1" />
                   حذف
                 </Button>
