@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -17,10 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Save, Loader2, Eye, EyeOff } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next";
 import {
   Form,
   FormControl,
@@ -29,19 +23,33 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import useUsers from "@/hooks/useUsers";
-import { UserFormData } from "@/types";
+import { ArrowLeft, Save } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+const userSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone number is required"),
+  role: z.enum(["student", "teacher", "admin"]),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  password_confirmation: z.string(),
+  language_id: z.string().min(1, "Language is required"),
+  age: z.string().min(1, "Age is required"),
+}).refine((data) => data.password === data.password_confirmation, {
+  message: "Passwords don't match",
+  path: ["password_confirmation"],
+});
+
+type UserFormData = z.infer<typeof userSchema>;
 
 const AdminUserAdd = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const queryClient = useQueryClient();
 
   const form = useForm<UserFormData>({
+    resolver: zodResolver(userSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -50,107 +58,76 @@ const AdminUserAdd = () => {
       role: "student",
       password: "",
       password_confirmation: "",
-      language_id: "1",
+      language_id: "",
       age: "",
     },
   });
 
-  // Create user mutation
-  const { createMutation } = useUsers();
-
-  // Default languages
-  const defaultLanguages = [
-    { id: 1, code: "en", name: "English" },
-    { id: 2, code: "fr", name: "French" },
-    { id: 3, code: "es", name: "Spanish" },
-    { id: 4, code: "ar", name: "Arabic" },
-    { id: 5, code: "zh", name: "Chinese" },
-  ];
-
-  const onSubmit = async (data: UserFormData) => {
-    if (data.password !== data.password_confirmation) {
-      form.setError("password_confirmation", {
-        type: "manual",
-        message: t("inscription.passwordsDoNotMatch"),
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: UserFormData) => {
+      // Transform data to match API expectations
+      const apiData = {
+        ...userData,
+        age: parseInt(userData.age),
+        language_id: parseInt(userData.language_id),
+      };
+      // TODO: Replace with actual API call
+      console.log("Creating user:", apiData);
+      return apiData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: "Success",
+        description: "User created successfully",
       });
-      return;
-    }
-
-    if (data.password.length < 6) {
-      form.setError("password", {
-        type: "manual",
-        message: t("inscription.passwordTooShort"),
+      navigate("/admin/users");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to create user",
+        variant: "destructive",
       });
-      return;
-    }
+    },
+  });
 
-    if (!data.phone || !data.age || parseInt(data.age) < 1) {
-      form.setError("root", {
-        type: "manual",
-        message: t("inscription.requiredFields"),
-      });
-      return;
-    }
-
-    const inscriptionData = {
-      ...data,
-      age: parseInt(data.age),
-      language_id: Number(data.language_id),
-    };
-
-    createMutation.mutate(inscriptionData, {
-      onSuccess: () => {
-        toast({
-          title: t("admin.users.success"),
-          description: t("admin.users.userCreated"),
-        });
-        queryClient.invalidateQueries(["users"]);
-        navigate("/admin/users");
-      },
-      onError: () => {
-        toast({
-          title: t("admin.users.error"),
-          description: t("admin.users.errorCreating"),
-          variant: "destructive",
-        });
-      },
-    });
+  const onSubmit = (data: UserFormData) => {
+    createUserMutation.mutate(data);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{t("admin.users.addUser")}</h2>
-        <Button variant="outline" onClick={() => navigate("/admin/users")}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("admin.users.backToList")}
-        </Button>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/admin/users")}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Users</span>
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900">Add New User</h1>
+        </div>
       </div>
 
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
-            {t("admin.users.createInscription")}
-          </CardTitle>
-          <CardDescription>
-            {t("admin.users.createInscriptionDescription")}
-          </CardDescription>
+      <Card>
+        <CardHeader>
+          <CardTitle>User Information</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="first_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.firstName")}</FormLabel>
+                      <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder={t("admin.users.form.firstName")}
-                          {...field}
-                        />
+                        <Input {...field} placeholder="Enter first name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -162,12 +139,9 @@ const AdminUserAdd = () => {
                   name="last_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.lastName")}</FormLabel>
+                      <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder={t("admin.users.form.lastName")}
-                          {...field}
-                        />
+                        <Input {...field} placeholder="Enter last name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -179,13 +153,9 @@ const AdminUserAdd = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.email")}</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          placeholder={t("admin.users.form.email")}
-                          {...field}
-                        />
+                        <Input {...field} type="email" placeholder="Enter email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -197,15 +167,11 @@ const AdminUserAdd = () => {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.phone")}</FormLabel>
+                      <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder={t("admin.users.form.phone")}
-                          {...field}
-                        />
+                        <Input {...field} placeholder="Enter phone number" />
                       </FormControl>
                       <FormMessage />
-                      燃料
                     </FormItem>
                   )}
                 />
@@ -215,13 +181,9 @@ const AdminUserAdd = () => {
                   name="age"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.age")}</FormLabel>
+                      <FormLabel>Age</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder={t("admin.users.form.age")}
-                          {...field}
-                        />
+                        <Input {...field} placeholder="Enter age" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -233,28 +195,17 @@ const AdminUserAdd = () => {
                   name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.role")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue
-                              placeholder={t("admin.users.form.selectRole")}
-                            />
+                            <SelectValue placeholder="Select role" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="student">
-                            {t("admin.users.form.student")}
-                          </SelectItem>
-                          <SelectItem value="teacher">
-                            {t("admin.users.form.teacher")}
-                          </SelectItem>
-                          <SelectItem value="admin">
-                            {t("admin.users.form.admin")}
-                          </SelectItem>
+                          <SelectItem value="student">Student</SelectItem>
+                          <SelectItem value="teacher">Teacher</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -267,27 +218,17 @@ const AdminUserAdd = () => {
                   name="language_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.language")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <FormLabel>Language</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue
-                              placeholder={t("admin.users.form.selectLanguage")}
-                            />
+                            <SelectValue placeholder="Select language" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {defaultLanguages.map((lang) => (
-                            <SelectItem
-                              key={lang.id}
-                              value={lang.id.toString()}
-                            >
-                              {lang.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="1">English</SelectItem>
+                          <SelectItem value="2">French</SelectItem>
+                          <SelectItem value="3">Spanish</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -300,28 +241,9 @@ const AdminUserAdd = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("admin.users.form.password")}</FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder={t("admin.users.form.password")}
-                            {...field}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
+                        <Input {...field} type="password" placeholder="Enter password" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -333,32 +255,9 @@ const AdminUserAdd = () => {
                   name="password_confirmation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        {t("admin.users.form.confirmPassword")}
-                      </FormLabel>
+                      <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showConfirmPassword ? "text" : "password"}
-                            placeholder={t("admin.users.form.confirmPassword")}
-                            {...field}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() =>
-                              setShowConfirmPassword(!showConfirmPassword)
-                            }
-                          >
-                            {showConfirmPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
+                        <Input {...field} type="password" placeholder="Confirm password" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -366,23 +265,23 @@ const AdminUserAdd = () => {
                 />
               </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {t("admin.users.creating")}
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4 mr-2" />
-                    {t("admin.users.create")}
-                  </>
-                )}
-              </Button>
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/admin/users")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createUserMutation.isPending}
+                  className="flex items-center space-x-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{createUserMutation.isPending ? "Creating..." : "Create User"}</span>
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>

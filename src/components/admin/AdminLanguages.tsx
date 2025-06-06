@@ -1,322 +1,190 @@
-import React, { useEffect, useState, useTransition } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { Label } from "@/components/ui/label";
+import { Plus, Edit, Trash2, Globe } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getLanguages, createLanguage, deleteLanguage } from "@/api/languages";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next";
 
 interface LanguageFormValues {
   name: string;
-  code: string;
+  nativeName: string;
   flag: string;
 }
 
 const AdminLanguages = () => {
-  const navigate = useNavigate();
-  const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [formData, setFormData] = useState<LanguageFormValues>({
+    name: "",
+    nativeName: "",
+    flag: "",
+  });
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
 
-  const {
-    data: languagesResponse,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data: languages, isLoading } = useQuery({
     queryKey: ["languages"],
     queryFn: getLanguages,
   });
 
-  const languages = languagesResponse?.data || [];
-
-  const form = useForm<LanguageFormValues>({
-    defaultValues: {
-      name: "",
-      code: "",
-      flag: "",
-    },
-  });
-
-  const createMutation = useMutation({
+  const createLanguageMutation = useMutation({
     mutationFn: createLanguage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["languages"] });
-      setIsAddSheetOpen(false);
-      form.reset();
+      setShowAddForm(false);
+      setFormData({ name: "", nativeName: "", flag: "" });
       toast({
-        title: t("admin.languages.messages.addSuccess"),
-        description: t("admin.languages.messages.addSuccessDesc"),
+        title: "Success",
+        description: "Language created successfully",
       });
-      refetch();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
-        title: t("admin.languages.messages.addError"),
-        description:
-          error.message || t("admin.languages.messages.addErrorDesc"),
+        title: "Error",
+        description: "Failed to create language",
         variant: "destructive",
       });
-      console.log(error);
     },
   });
-  useEffect(()=>{},[languagesResponse]);
 
-  const deleteMutation = useMutation({
+  const deleteLanguageMutation = useMutation({
     mutationFn: deleteLanguage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["languages"] });
       toast({
-        title: t("admin.languages.messages.deleteSuccess"),
-        description: t("admin.languages.messages.deleteSuccessDesc"),
+        title: "Success",
+        description: "Language deleted successfully",
       });
-      refetch();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
-        title: t("admin.languages.messages.deleteError"),
-        description:
-          error.message || t("admin.languages.messages.deleteErrorDesc"),
+        title: "Error",
+        description: "Failed to delete language",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (datas: LanguageFormValues) => {
-    createMutation.mutate(datas);
-  };
-
-  const handleDelete = (id: string) => {
-    if (confirm(t("admin.languages.messages.deleteConfirm"))) {
-      deleteMutation.mutate(id);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.name && formData.nativeName && formData.flag) {
+      createLanguageMutation.mutate(formData);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t("admin.languages.title")}
-          </h1>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("admin.languages.loading")}</CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t("admin.languages.title")}
-          </h1>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-600">
-              {t("admin.languages.loadError")}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this language?")) {
+      deleteLanguageMutation.mutate(id);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t("admin.languages.title")}
-        </h1>
-        <Sheet open={isAddSheetOpen} onOpenChange={setIsAddSheetOpen}>
-          <SheetTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("admin.languages.addNew")}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-[400px]">
-            <SheetHeader>
-              <SheetTitle className="text-right">
-                {t("admin.languages.form.addTitle")}
-              </SheetTitle>
-            </SheetHeader>
-            <div className="mt-6">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
-                >
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("admin.languages.form.nameLabel")}
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder={t(
-                              "admin.languages.form.namePlaceholder"
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="code"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("admin.languages.form.codeLabel")}
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder={t(
-                              "admin.languages.form.codePlaceholder"
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="flag"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t("admin.languages.form.flagLabel")}
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder={t(
-                              "admin.languages.form.flagPlaceholder"
-                            )}
-                            {...field}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsAddSheetOpen(false)}
-                      className="ml-2"
-                    >
-                      {t("admin.languages.form.cancel")}
-                    </Button>
-                    <Button type="submit" disabled={createMutation.isPending}>
-                      {createMutation.isPending
-                        ? t("admin.languages.form.saving")
-                        : t("admin.languages.form.save")}
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </div>
-          </SheetContent>
-        </Sheet>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Language Management</h1>
+          <p className="text-gray-600 mt-2">Manage available languages for courses and quizzes</p>
+        </div>
+        <Button onClick={() => setShowAddForm(!showAddForm)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Language
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            {t("admin.languages.list")} ({languages.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t("admin.languages.table.flag")}</TableHead>
-                <TableHead>{t("admin.languages.table.name")}</TableHead>
-                <TableHead>{t("admin.languages.table.code")}</TableHead>
-                <TableHead className="w-[100px]">
-                  {t("admin.languages.table.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {languages.map((language) => (
-                <TableRow key={language.id}>
-                  <TableCell>{language.flag}</TableCell>
-                  <TableCell>{language.name}</TableCell>
-                  <TableCell>{language.code}</TableCell>
-                  <TableCell className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        navigate(`/admin/edit-language/${language.id}`)
-                      }
-                    >
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">
-                        {t("admin.languages.table.edit")}
-                      </span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(language.id)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash className="h-4 w-4" />
-                      <span className="sr-only">
-                        {t("admin.languages.table.delete")}
-                      </span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {showAddForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add New Language</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Language Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g., English"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="nativeName">Native Name</Label>
+                <Input
+                  id="nativeName"
+                  type="text"
+                  value={formData.nativeName}
+                  onChange={(e) => setFormData({ ...formData, nativeName: e.target.value })}
+                  placeholder="e.g., English"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="flag">Flag (emoji or URL)</Label>
+                <Input
+                  id="flag"
+                  type="text"
+                  value={formData.flag}
+                  onChange={(e) => setFormData({ ...formData, flag: e.target.value })}
+                  placeholder="e.g., 🇺🇸"
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit" disabled={createLanguageMutation.isPending}>
+                  {createLanguageMutation.isPending ? "Creating..." : "Create Language"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowAddForm(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid gap-4">
+        {isLoading ? (
+          <div>Loading languages...</div>
+        ) : (
+          languages?.data?.map((language: any) => (
+            <Card key={language.id}>
+              <CardContent className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-4">
+                  <span className="text-2xl">{language.flag}</span>
+                  <div>
+                    <h3 className="font-semibold">{language.name}</h3>
+                    <p className="text-sm text-gray-600">{language.nativeName}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Edit className="w-4 h-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={() => handleDelete(language.id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
   );
 };

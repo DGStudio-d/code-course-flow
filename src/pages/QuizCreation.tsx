@@ -30,21 +30,23 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/config/store/store';
 
 const questionSchema = z.object({
-  text: z.string().min(1, 'Question text is required').max(500, 'Question text must be 500 characters or less'),
+  question: z.string().min(1, 'Question text is required').max(500, 'Question text must be 500 characters or less'),
   options: z.array(z.string().min(1, 'Option cannot be empty').max(200, 'Option must be 200 characters or less')).min(2, 'At least 2 options required').max(6, 'Maximum 6 options allowed'),
-  correctAnswer: z.string().min(1, 'Correct answer is required'),
+  correct_answer: z.string().min(1, 'Correct answer is required'),
   points: z.number().min(1).max(10).optional().default(1),
+  type: z.string().optional().default('multiple_choice'),
+  audio_file: z.string().optional().nullable(),
 });
 
 const quizSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255, 'Title must be 255 characters or less'),
   description: z.string().max(1000, 'Description must be 1000 characters or less').optional(),
-  languageId: z.string().min(1, 'Language is required'),
+  language_id: z.number().min(1, 'Language is required'),
   difficulty: z.enum(['beginner', 'intermediate', 'advanced'], {
     required_error: 'Difficulty is required',
   }),
-  timeLimit: z.number().min(1).max(300).optional(),
-  questions: z.array(questionSchema).min(1, 'At least one question is required'),
+  time_limit: z.number().min(1).max(300).optional().nullable(),
+  questions: z.array(questionSchema).min(1, 'At least one question is required').max(50, 'Maximum 50 questions allowed'),
 });
 
 type QuizFormData = z.infer<typeof quizSchema>;
@@ -59,15 +61,17 @@ const QuizCreation = () => {
     defaultValues: {
       title: '',
       description: '',
-      languageId: '',
+      language_id: 0,
       difficulty: 'beginner',
-      timeLimit: undefined,
+      time_limit: null,
       questions: [
         {
-          text: '',
+          question: '',
           options: ['', ''],
-          correctAnswer: '',
+          correct_answer: '',
           points: 1,
+          type: 'multiple_choice',
+          audio_file: null,
         },
       ],
     },
@@ -79,12 +83,16 @@ const QuizCreation = () => {
   });
 
   const addQuestion = () => {
-    append({
-      text: '',
-      options: ['', ''],
-      correctAnswer: '',
-      points: 1,
-    });
+    if (fields.length < 50) {
+      append({
+        question: '',
+        options: ['', ''],
+        correct_answer: '',
+        points: 1,
+        type: 'multiple_choice',
+        audio_file: null,
+      });
+    }
   };
 
   const addOption = (questionIndex: number) => {
@@ -100,10 +108,9 @@ const QuizCreation = () => {
       const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
       form.setValue(`questions.${questionIndex}.options`, newOptions);
       
-      // Reset correct answer if it was the removed option
-      const correctAnswer = form.getValues(`questions.${questionIndex}.correctAnswer`);
+      const correctAnswer = form.getValues(`questions.${questionIndex}.correct_answer`);
       if (correctAnswer === currentOptions[optionIndex]) {
-        form.setValue(`questions.${questionIndex}.correctAnswer`, '');
+        form.setValue(`questions.${questionIndex}.correct_answer`, '');
       }
     }
   };
@@ -113,7 +120,7 @@ const QuizCreation = () => {
     try {
       // Validate that correct answers match options for each question
       for (const question of data.questions) {
-        if (!question.options.includes(question.correctAnswer)) {
+        if (!question.options.includes(question.correct_answer)) {
           throw new Error('Correct answer must match one of the provided options');
         }
       }
@@ -145,6 +152,10 @@ const QuizCreation = () => {
             <h1 className="text-3xl font-bold text-gray-900">Create New Quiz</h1>
           </div>
         </div>
+
+        <p className="text-gray-600 mb-6">
+          Fill out the following form to create your quiz. Make sure to follow the rules shown below each field.
+        </p>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -203,11 +214,11 @@ const QuizCreation = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
-                    name="languageId"
+                    name="language_id"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Language (required)</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value ? String(field.value) : ''}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select language" />
@@ -222,7 +233,7 @@ const QuizCreation = () => {
                           </SelectContent>
                         </Select>
                         <p className="text-sm text-gray-500">
-                          → Select the language this quiz is written in.
+                          → Select the language this quiz is written in. You must choose from the available options.
                         </p>
                         <FormMessage />
                       </FormItem>
@@ -257,7 +268,7 @@ const QuizCreation = () => {
 
                   <FormField
                     control={form.control}
-                    name="timeLimit"
+                    name="time_limit"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Time Limit (optional)</FormLabel>
@@ -268,7 +279,7 @@ const QuizCreation = () => {
                             placeholder="Minutes"
                             min={1}
                             max={300}
-                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                            onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
                             value={field.value || ''}
                           />
                         </FormControl>
@@ -289,7 +300,7 @@ const QuizCreation = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center space-x-2">
                     <span>❓</span>
-                    <span>Questions (Add at least one)</span>
+                    <span>Questions (Min: 1, Max: 50)</span>
                   </CardTitle>
                   <Badge variant="secondary">
                     {fields.length} question{fields.length !== 1 ? 's' : ''}
@@ -318,7 +329,7 @@ const QuizCreation = () => {
                     <CardContent className="space-y-4">
                       <FormField
                         control={form.control}
-                        name={`questions.${questionIndex}.text`}
+                        name={`questions.${questionIndex}.question`}
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Question Text (required)</FormLabel>
@@ -393,10 +404,10 @@ const QuizCreation = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField
                           control={form.control}
-                          name={`questions.${questionIndex}.correctAnswer`}
+                          name={`questions.${questionIndex}.correct_answer`}
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Correct Answer (required)</FormLabel>
@@ -448,20 +459,43 @@ const QuizCreation = () => {
                             </FormItem>
                           )}
                         />
+
+                        <FormField
+                          control={form.control}
+                          name={`questions.${questionIndex}.audio_file`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Audio File (optional)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Audio file URL"
+                                  value={field.value || ''}
+                                />
+                              </FormControl>
+                              <p className="text-sm text-gray-500">
+                                → Optional audio file URL or upload.
+                              </p>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
                     </CardContent>
                   </Card>
                 ))}
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={addQuestion}
-                  className="w-full border-2 border-dashed border-green-300 text-green-600 hover:border-green-400 hover:text-green-700 py-6"
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  🟢 Add Another Question
-                </Button>
+                {fields.length < 50 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addQuestion}
+                    className="w-full border-2 border-dashed border-green-300 text-green-600 hover:border-green-400 hover:text-green-700 py-6"
+                  >
+                    <Plus className="w-5 h-5 mr-2" />
+                    🟢 Add Another Question
+                  </Button>
+                )}
               </CardContent>
             </Card>
 
