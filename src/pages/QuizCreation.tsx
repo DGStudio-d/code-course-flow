@@ -25,15 +25,12 @@ const questionSchema = z.object({
   correct_answer: z.string().min(1, "Correct answer is required").max(200, "Correct answer cannot exceed 200 characters"),
   explanation: z.string().min(1, "Explanation is required"),
 }).refine((data) => {
-  // For MCQ and True/False, options are required
   if (data.type === "mcq" || data.type === "true_false") {
     if (!data.options || data.options.length < 2 || data.options.length > 6) {
       return false;
     }
-    // Correct answer must match one of the options
     return data.options.includes(data.correct_answer);
   }
-  // For fill type, no options validation needed
   return true;
 }, {
   message: "For MCQ and True/False: Options (2-6) are required and correct answer must match one of the options",
