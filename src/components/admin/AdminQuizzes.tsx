@@ -14,6 +14,7 @@ const AdminQuizzes = () => {
       deleteQuizMutation.mutate(id);
     }
   };
+  console.log('Quizzes :',quizzes?.data)
 
   if (quizzesLoading) {
     return (
@@ -23,7 +24,7 @@ const AdminQuizzes = () => {
     );
   }
 
-  const quizzesList = quizzes?.data || [];
+  const quizzesList = quizzes?.data?.data || [];
 
   return (
     <div className="space-y-6">
@@ -41,26 +42,28 @@ const AdminQuizzes = () => {
       </div>
 
       <div className="grid gap-6">
-        {quizzesList.map((quiz: any) => (
+        {quizzesList.length===0 ? "nothing":quizzesList?.map((quiz: any) => (
           <Card key={quiz.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-xl">{quiz.title}</CardTitle>
+                  <CardTitle className="text-xl">{quiz?.title}</CardTitle>
                   <div className="flex gap-4 mt-2 text-sm text-gray-600">
-                    <span>اللغة: {quiz.language?.name || 'غير محدد'}</span>
-                    <span>المستوى: {quiz.difficulty}</span>
-                    <span>الأسئلة: {quiz.questions?.length || 0}</span>
-                    <span>المدة: {quiz.time_limit || 'غير محدد'} دقيقة</span>
+                    <span>اللغة: {quiz?.language?.name || "غير محدد"}</span>
+                    <span>المستوى: {quiz?.difficulty}</span>
+                    <span>الأسئلة: {quiz?.questions?.length || 0}</span>
+                    <span>المدة: {quiz?.time_limit || "غير محدد"} دقيقة</span>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    quiz.status === 'published' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {quiz.status === 'published' ? 'منشور' : 'مسودة'}
+                  <span
+                    className={`px-2 py-1 rounded text-xs ${
+                      quiz.status === "published"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {quiz?.status === "published" ? "منشور" : "مسودة"}
                   </span>
                 </div>
               </div>
@@ -77,9 +80,9 @@ const AdminQuizzes = () => {
                     تعديل
                   </Link>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="text-red-600 hover:text-red-700"
                   onClick={() => handleDeleteQuiz(quiz.id)}
                   disabled={deleteQuizMutation.isPending}

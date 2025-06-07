@@ -47,12 +47,12 @@ const useUsers = () => {
     refetch,
   } = useQuery({
     queryKey: ["users"],
-    queryFn: () => api.get("/users").then((res) => res.data.data),
+    queryFn: () => api.get("/admin/users").then((res) => res.data.data),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
-      api.delete(`/users/${id}`).then((res) => res.data),
+      api.delete(`/admin/users/${id}`).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
@@ -91,7 +91,7 @@ const useUsers = () => {
 
   const createInscriptionMutation = useMutation({
     mutationFn: (data: InscriptionFormData) =>
-      api.post("/inscriptions", data).then((res) => res.data),
+      api.post("/admin/inscriptions", data).then((res) => res.data),
     onSuccess: () => {
       toast({
         title: "Inscription submitted successfully",

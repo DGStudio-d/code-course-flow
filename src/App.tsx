@@ -28,6 +28,7 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   useAppData();
+  
 
   return (
     <Routes>
@@ -71,7 +72,7 @@ const AppContent = () => {
       <Route
         path="/quiz"
         element={
-          <ProtectedRoute allowedRoles={["student", "teacher"]}>
+          <ProtectedRoute allowedRoles={["student", "teacher","admin"]}>
             <Quiz />
           </ProtectedRoute>
         }
@@ -83,6 +84,7 @@ const AppContent = () => {
 };
 
 const App = () => {
+  const role = localStorage.getItem("role");
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -91,7 +93,7 @@ const App = () => {
         <BrowserRouter>
           <LanguageProvider>
             <AppContent />
-            <FloatingWhatsAppButton />
+            {role === "student" && (<FloatingWhatsAppButton />)}
           </LanguageProvider>
         </BrowserRouter>
       </TooltipProvider>

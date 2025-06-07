@@ -25,21 +25,27 @@ import {
 } from "@/components/ui/form";
 import { ArrowLeft, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSelector } from "react-redux";
+import api from "@/config/axios";
 
-const userSchema = z.object({
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
-  role: z.enum(["student", "teacher", "admin"]),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  password_confirmation: z.string(),
-  language_id: z.string().min(1, "Language is required"),
-  age: z.string().min(1, "Age is required"),
-}).refine((data) => data.password === data.password_confirmation, {
-  message: "Passwords don't match",
-  path: ["password_confirmation"],
-});
+const userSchema = z
+  .object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(1, "Phone number is required"),
+    role: z.enum(["student", "teacher", "admin"]),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    password_confirmation: z.string(),
+    language_id: z.string().min(1, "Language is required"),
+    age: z.string().min(1, "Age is required"),
+    level: z.enum(["beginner", "intermediate", "advanced"]),
+    type: z.enum(["individual", "group"]),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords don't match",
+    path: ["password_confirmation"],
+  });
 
 type UserFormData = z.infer<typeof userSchema>;
 
@@ -47,6 +53,8 @@ const AdminUserAdd = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const languages = useSelector((state: any) => state.appData.languages);
+  console.log(languages);
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -60,6 +68,8 @@ const AdminUserAdd = () => {
       password_confirmation: "",
       language_id: "",
       age: "",
+      level: "beginner",
+      type: "individual",
     },
   });
 
@@ -71,9 +81,12 @@ const AdminUserAdd = () => {
         age: parseInt(userData.age),
         language_id: parseInt(userData.language_id),
       };
+      const res = await api
+        .post("/admin/users", apiData)
+        .then((data) => data?.data);
       // TODO: Replace with actual API call
-      console.log("Creating user:", apiData);
-      return apiData;
+      console.log("Creating user:", res);
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -84,6 +97,7 @@ const AdminUserAdd = () => {
       navigate("/admin/users");
     },
     onError: (error) => {
+      console.log("eRRor user:", error);
       toast({
         title: "Error",
         description: "Failed to create user",
@@ -155,7 +169,11 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input {...field} type="email" placeholder="Enter email" />
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="Enter email"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -196,7 +214,10 @@ const AdminUserAdd = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select role" />
@@ -212,6 +233,57 @@ const AdminUserAdd = () => {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="level"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Level</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="intermediate">
+                            Intermediate
+                          </SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Type of inscription</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="individual">Individual</SelectItem>
+                          <SelectItem value="group">Group</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}
@@ -219,16 +291,24 @@ const AdminUserAdd = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Language</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select language" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="1">English</SelectItem>
-                          <SelectItem value="2">French</SelectItem>
-                          <SelectItem value="3">Spanish</SelectItem>
+                          {languages?.map((language: any) => (
+                            <SelectItem
+                              key={language.id}
+                              value={language.id.toString()}
+                            >
+                              {language.flag} {language.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -243,7 +323,11 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input {...field} type="password" placeholder="Enter password" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Enter password"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -257,7 +341,11 @@ const AdminUserAdd = () => {
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input {...field} type="password" placeholder="Confirm password" />
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Confirm password"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -279,7 +367,11 @@ const AdminUserAdd = () => {
                   className="flex items-center space-x-2"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{createUserMutation.isPending ? "Creating..." : "Create User"}</span>
+                  <span>
+                    {createUserMutation.isPending
+                      ? "Creating..."
+                      : "Create User"}
+                  </span>
                 </Button>
               </div>
             </form>

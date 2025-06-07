@@ -33,6 +33,7 @@ export const useAdminQuizzes = () => {
       });
     },
     onError: (error: any) => {
+      console.log('error message',error)
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to create quiz",

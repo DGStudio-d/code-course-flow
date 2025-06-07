@@ -114,6 +114,7 @@ const AdminInscriptions = () => {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+  console.log(filteredInscriptions);
 
   if (isLoading) {
     return (
@@ -180,7 +181,9 @@ const AdminInscriptions = () => {
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Start Date</TableHead>
-              <TableHead className="text-left rtl:text-right">Actions</TableHead>
+              <TableHead className="text-left rtl:text-right">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -197,19 +200,23 @@ const AdminInscriptions = () => {
                 <TableRow key={inscription.id}>
                   <TableCell>{inscription.id}</TableCell>
                   <TableCell>
-                    {inscription.first_name} {inscription.last_name}
+                    {inscription.user.firstName} {inscription.user.lastName}
                   </TableCell>
-                  <TableCell>{inscription.email}</TableCell>
-                  <TableCell>{inscription.phone}</TableCell>
-                  <TableCell>{inscription.age}</TableCell>
+                  <TableCell>{inscription.user.email}</TableCell>
+                  <TableCell>{inscription.user.phone}</TableCell>
+                  <TableCell>{inscription.user.age}</TableCell>
                   <TableCell>{inscription.language?.name || "N/A"}</TableCell>
-                  <TableCell className="capitalize">{inscription.level}</TableCell>
-                  <TableCell className="capitalize">{inscription.type}</TableCell>
+                  <TableCell className="capitalize">
+                    {inscription.level}
+                  </TableCell>
+                  <TableCell className="capitalize">
+                    {inscription.type}
+                  </TableCell>
                   <TableCell>
                     {getStatusBadge(inscription.status || "pending")}
                   </TableCell>
                   <TableCell>
-                    {new Date(inscription.start_date).toLocaleDateString()}
+                    {new Date(inscription.startDate).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="flex gap-2">
                     {inscription.status !== "approved" && (

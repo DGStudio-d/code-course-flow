@@ -107,6 +107,7 @@ const QuizCreation = () => {
       navigate("/admin/quizzes");
     },
     onError: (error: any) => {
+      console.log("error handling Quiz creation : ",error)
       toast({
         title: "Error",
         description: error.response?.data?.message || "Failed to create quiz",
