@@ -1,6 +1,8 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,87 +13,91 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Save, ArrowLeft, Upload, UserPlus, Search, Edit, Trash2, Eye } from 'lucide-react';
-import AdminHeader from '@/components/admin/AdminHeader';
+import { useTeacherManagement } from '@/hooks/useTeacherManagement';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/config/axios';
+
+const teacherSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone number is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  age: z.number().min(18, "Age must be at least 18"),
+  language_id: z.number().min(1, "Language is required"),
+  bio: z.string().optional(),
+  qualifications: z.string().optional(),
+  expertise: z.string().optional(),
+});
+
+type TeacherFormData = z.infer<typeof teacherSchema>;
 
 const TeacherManagement = () => {
   const navigate = useNavigate();
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  // Mock data for teachers
-  const teachers = [
-    {
-      id: 1,
-      name: 'د. محمد أحمد',
-      email: 'mohamed@example.com',
-      phone: '050-1234567',
-      department: 'اللغة الإنجليزية',
-      status: 'active',
-      coursesCount: 5,
-      studentsCount: 120,
-      joinDate: '2023-01-15'
-    },
-    {
-      id: 2,
-      name: 'د. سارة علي',
-      email: 'sarah@example.com',
-      phone: '055-7654321',
-      department: 'اللغة الفرنسية',
-      status: 'active',
-      coursesCount: 3,
-      studentsCount: 85,
-      joinDate: '2023-03-20'
-    },
-    {
-      id: 3,
-      name: 'د. أحمد محمود',
-      email: 'ahmed@example.com',
-      phone: '054-9876543',
-      department: 'اللغة الألمانية',
-      status: 'pending',
-      coursesCount: 0,
-      studentsCount: 0,
-      joinDate: '2024-01-10'
-    }
-  ];
+  const {
+    teachers,
+    teachersLoading,
+    createTeacherMutation,
+    updateTeacherStatusMutation,
+    deleteTeacherMutation
+  } = useTeacherManagement();
 
-  const [teacherProfile, setTeacherProfile] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bio: '',
-    qualifications: '',
-    expertise: '',
-    socialLinks: {
-      linkedin: '',
-      twitter: '',
-      website: ''
+  // Fetch languages for the dropdown
+  const { data: languages } = useQuery({
+    queryKey: ["languages"],
+    queryFn: async () => {
+      const response = await api.get("/languages");
+      return response.data;
     },
-    department: '',
-    role: 'teacher',
-    notifications: {
-      email: true,
-      sms: false,
-      push: true
-    },
-    twoFactor: false
   });
 
-  const handleSaveProfile = () => {
-    console.log('Saving teacher profile:', teacherProfile);
-    // API call to save teacher profile
+  const form = useForm<TeacherFormData>({
+    resolver: zodResolver(teacherSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      password: "",
+      age: 18,
+      language_id: 0,
+      bio: "",
+      qualifications: "",
+      expertise: "",
+    },
+  });
+
+  const onSubmit = (data: TeacherFormData) => {
+    createTeacherMutation.mutate(data, {
+      onSuccess: () => {
+        setIsCreateDialogOpen(false);
+        form.reset();
+      },
+    });
   };
 
-  const handleStatusChange = (teacherId, newStatus) => {
-    console.log(`Changing teacher ${teacherId} status to ${newStatus}`);
-    // API call to update teacher status
+  const handleStatusChange = (teacherId: number, newStatus: string) => {
+    updateTeacherStatusMutation.mutate({ id: teacherId, status: newStatus });
   };
 
-  const filteredTeachers = teachers.filter(teacher =>
-    teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.department.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleDeleteTeacher = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this teacher?')) {
+      deleteTeacherMutation.mutate(id);
+    }
+  };
+
+  const teachersList = teachers?.data || [];
+  const filteredTeachers = teachersList.filter((teacher: any) =>
+    teacher.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    teacher.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    teacher.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -111,17 +117,163 @@ const TeacherManagement = () => {
             <h1 className="text-2xl font-bold">إدارة المعلمين</h1>
           </div>
           
-          <Button className="flex items-center space-x-2">
-            <UserPlus className="w-4 h-4" />
-            <span>إضافة معلم جديد</span>
-          </Button>
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center space-x-2">
+                <UserPlus className="w-4 h-4" />
+                <span>إضافة معلم جديد</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>إضافة معلم جديد</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="first_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>الاسم الأول</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="أدخل الاسم الأول" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="last_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>الاسم الأخير</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="أدخل الاسم الأخير" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>البريد الإلكتروني</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="email" placeholder="example@domain.com" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>رقم الهاتف</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="050-1234567" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="age"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>العمر</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number"
+                              onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              placeholder="العمر" 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>كلمة المرور</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="password" placeholder="أدخل كلمة المرور" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="language_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>اللغة المُدرسة</FormLabel>
+                        <Select 
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          value={field.value?.toString()}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="اختر اللغة" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {languages?.data?.map((language: any) => (
+                              <SelectItem key={language.id} value={language.id.toString()}>
+                                {language.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex justify-end space-x-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsCreateDialogOpen(false)}
+                    >
+                      إلغاء
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={createTeacherMutation.isPending}
+                    >
+                      {createTeacherMutation.isPending ? "جاري الإنشاء..." : "إنشاء المعلم"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Tabs defaultValue="list" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="list">قائمة المعلمين</TabsTrigger>
             <TabsTrigger value="profile">إدارة الملف الشخصي</TabsTrigger>
-            <TabsTrigger value="settings">إعدادات الحساب</TabsTrigger>
           </TabsList>
 
           <TabsContent value="list" className="space-y-6">
@@ -143,54 +295,67 @@ const TeacherManagement = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>الاسم</TableHead>
-                      <TableHead>البريد الإلكتروني</TableHead>
-                      <TableHead>القسم</TableHead>
-                      <TableHead>الحالة</TableHead>
-                      <TableHead>الدورات</TableHead>
-                      <TableHead>الطلاب</TableHead>
-                      <TableHead>تاريخ الانضمام</TableHead>
-                      <TableHead>الإجراءات</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredTeachers.map((teacher) => (
-                      <TableRow key={teacher.id}>
-                        <TableCell className="font-medium">{teacher.name}</TableCell>
-                        <TableCell>{teacher.email}</TableCell>
-                        <TableCell>{teacher.department}</TableCell>
-                        <TableCell>
-                          <Badge variant={teacher.status === 'active' ? 'default' : 'secondary'}>
-                            {teacher.status === 'active' ? 'نشط' : 'معلق'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{teacher.coursesCount}</TableCell>
-                        <TableCell>{teacher.studentsCount}</TableCell>
-                        <TableCell>{teacher.joinDate}</TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedTeacher(teacher)}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="text-red-600">
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                {teachersLoading ? (
+                  <div className="text-center py-8">جاري التحميل...</div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>الاسم</TableHead>
+                        <TableHead>البريد الإلكتروني</TableHead>
+                        <TableHead>اللغة المُدرسة</TableHead>
+                        <TableHead>الحالة</TableHead>
+                        <TableHead>الطلاب</TableHead>
+                        <TableHead>تاريخ الانضمام</TableHead>
+                        <TableHead>الإجراءات</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredTeachers.map((teacher: any) => (
+                        <TableRow key={teacher.id}>
+                          <TableCell className="font-medium">
+                            {teacher.first_name} {teacher.last_name}
+                          </TableCell>
+                          <TableCell>{teacher.email}</TableCell>
+                          <TableCell>
+                            {teacher.taughtLanguages?.map((lang: any) => lang.name).join(', ') || 'غير محدد'}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={teacher.status === 'active' ? 'default' : 'secondary'}>
+                              {teacher.status === 'active' ? 'نشط' : 'معلق'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{teacher.studentsCount || 0}</TableCell>
+                          <TableCell>
+                            {teacher.created_at ? new Date(teacher.created_at).toLocaleDateString() : 'غير محدد'}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setSelectedTeacher(teacher)}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-red-600"
+                                onClick={() => handleDeleteTeacher(teacher.id)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
