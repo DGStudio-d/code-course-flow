@@ -11,9 +11,10 @@ import type { RootState } from "@/config/store/store";
 import { Language } from "@/types";
 
 const Index = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isLoading } = useAppData();
   const languages = useSelector((state: RootState) => state.appData.languages) as Language[];
+  const isRTL = i18n.language === "ar";
 
   console.log("Languages from store:", languages);
   console.log("Is loading:", isLoading);
@@ -120,14 +121,14 @@ const Index = () => {
   const displayLanguages = languages && languages.length > 0 ? languages : fallbackLanguages;
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen ${isRTL ? 'rtl-layout' : 'ltr-layout'}`} dir={isRTL ? "rtl" : "ltr"}>
       <Header />
       <Hero />
       
       {/* Languages Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className={`text-center mb-16 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               {t("languages.title")}
             </h2>
@@ -157,7 +158,7 @@ const Index = () => {
       {/* Teachers Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className={`text-center mb-16 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               {t("teachers.title")}
             </h2>
