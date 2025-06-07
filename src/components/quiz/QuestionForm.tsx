@@ -20,11 +20,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Trash2 } from "lucide-react";
+import { QuizFormData } from "@/types/quiz-form";
 import OptionsList from "./OptionsList";
-
-interface QuizFormData {
-  questions: any[];
-}
 
 interface QuestionFormProps {
   form: UseFormReturn<QuizFormData>;

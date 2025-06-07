@@ -11,10 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Plus, Trash2 } from "lucide-react";
-
-interface QuizFormData {
-  questions: any[];
-}
+import { QuizFormData } from "@/types/quiz-form";
 
 interface OptionsListProps {
   form: UseFormReturn<QuizFormData>;
@@ -24,14 +21,14 @@ interface OptionsListProps {
 const OptionsList = ({ form, questionIndex }: OptionsListProps) => {
   const addOption = () => {
     const currentOptions = form.getValues(`questions.${questionIndex}.options`);
-    if (currentOptions.length < 6) {
+    if (currentOptions && currentOptions.length < 6) {
       form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
     }
   };
 
   const removeOption = (optionIndex: number) => {
     const currentOptions = form.getValues(`questions.${questionIndex}.options`);
-    if (currentOptions.length > 2) {
+    if (currentOptions && currentOptions.length > 2) {
       const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
       form.setValue(`questions.${questionIndex}.options`, newOptions);
       
@@ -43,10 +40,12 @@ const OptionsList = ({ form, questionIndex }: OptionsListProps) => {
     }
   };
 
+  const options = form.watch(`questions.${questionIndex}.options`) || [];
+
   return (
     <div className="mt-4 space-y-2">
       <FormLabel>Options (2-6 required) *</FormLabel>
-      {form.watch(`questions.${questionIndex}.options`).map((_, optionIndex) => (
+      {options.map((_, optionIndex) => (
         <div key={optionIndex} className="flex gap-2">
           <FormField
             control={form.control}
@@ -63,7 +62,7 @@ const OptionsList = ({ form, questionIndex }: OptionsListProps) => {
               </FormItem>
             )}
           />
-          {form.watch(`questions.${questionIndex}.options`).length > 2 && (
+          {options.length > 2 && (
             <Button
               type="button"
               variant="outline"
@@ -75,7 +74,7 @@ const OptionsList = ({ form, questionIndex }: OptionsListProps) => {
           )}
         </div>
       ))}
-      {form.watch(`questions.${questionIndex}.options`).length < 6 && (
+      {options.length < 6 && (
         <Button
           type="button"
           variant="outline"

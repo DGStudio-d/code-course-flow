@@ -18,15 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-interface QuizFormData {
-  title: string;
-  description?: string;
-  language_id: string;
-  difficulty: "beginner" | "intermediate" | "advanced";
-  time_limit?: number;
-  questions: any[];
-}
+import { QuizFormData } from "@/types/quiz-form";
 
 interface QuizBasicInfoProps {
   form: UseFormReturn<QuizFormData>;
