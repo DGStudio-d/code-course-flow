@@ -27,9 +27,6 @@ import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  useAppData();
-  
-
   return (
     <Routes>
       <Route path="/" element={<Index />} />
@@ -46,7 +43,7 @@ const AppContent = () => {
             <StudentDashboard />
           </ProtectedRoute>
         }
-      />
+        />
 
       {/* Protected Teacher Routes */}
       <Route
@@ -85,6 +82,7 @@ const AppContent = () => {
 
 const App = () => {
   const role = localStorage.getItem("role");
+  useAppData();
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

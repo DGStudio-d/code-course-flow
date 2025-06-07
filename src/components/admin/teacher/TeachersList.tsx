@@ -68,11 +68,11 @@ export const TeachersList = ({
               {filteredTeachers.map((teacher: any) => (
                 <TableRow key={teacher.id}>
                   <TableCell className="font-medium">
-                    {teacher.first_name} {teacher.last_name}
+                    {teacher.firstName} {teacher.lastName}
                   </TableCell>
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell>
-                    {teacher.taughtLanguages?.map((lang: any) => lang.name).join(', ') || 'غير محدد'}
+                    {teacher.taught_languages?.map((lang: any) => lang.name).join(', ') || 'غير محدد'}
                   </TableCell>
                   <TableCell>
                     <Badge variant={teacher.status === 'active' ? 'default' : 'secondary'}>

@@ -29,7 +29,7 @@ import { fetchLanguages } from "@/services/api";
 interface ProfessorFormValues {
   name: string;
   title: string;
-  language: string;
+  language_id: string;
   image: string;
   description: string;
 }
@@ -47,7 +47,7 @@ const AdminProfessors = () => {
     defaultValues: {
       name: "",
       title: "",
-      language: "",
+      language_id: "",
       image: "",
       description: ""
     }
@@ -106,7 +106,7 @@ const AdminProfessors = () => {
 
                   <FormField
                     control={form.control}
-                    name="language"
+                    name="language_id"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>اللغة</FormLabel>

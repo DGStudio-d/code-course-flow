@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 const LanguageSwitcher: React.FC = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, dir } = useLanguage();
 
   const languageOptions: { code: SupportedLanguage, name: string, flag: string, isRtl: boolean }[] = [
     { code: 'ar', name: 'العربية', flag: '🇸🇦', isRtl: true },
@@ -21,6 +21,7 @@ const LanguageSwitcher: React.FC = () => {
 
   // Find current language details
   const currentLanguage = languageOptions.find(option => option.code === language);
+  const isRTL = dir === 'rtl';
 
   return (
     <DropdownMenu>
@@ -28,19 +29,19 @@ const LanguageSwitcher: React.FC = () => {
         <Button 
           variant="outline" 
           size="sm" 
-          className="flex items-center gap-2 bg-background"
+          className={`flex items-center gap-2 bg-background ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <Globe className="h-4 w-4" />
           <span>{currentLanguage?.flag}</span>
           <span className="hidden md:inline">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 bg-background">
+      <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-40 bg-background">
         {languageOptions.map((option) => (
           <DropdownMenuItem
             key={option.code}
             onClick={() => setLanguage(option.code)}
-            className="flex items-center gap-2 cursor-pointer"
+            className={`flex items-center gap-2 cursor-pointer ${isRTL ? 'flex-row-reverse' : ''}`}
           >
             <span>{option.flag}</span>
             <span>{option.name}</span>

@@ -25,8 +25,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 const AdminSidebar = () => {
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { logout } = useAuth();
+  const isRTL = i18n.language === "ar";
 
   const menuItems = [
     {
@@ -71,8 +72,8 @@ const AdminSidebar = () => {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b p-4">
+    <Sidebar className={isRTL ? "rtl" : "ltr"} dir={isRTL ? "rtl" : "ltr"}>
+      <SidebarHeader className={`border-b p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
         <h2 className="text-lg font-semibold">{t("admin.sidebar.title")}</h2>
       </SidebarHeader>
       
@@ -87,7 +88,7 @@ const AdminSidebar = () => {
                   (item.url !== "/admin" && location.pathname.startsWith(item.url))
                 }
               >
-                <Link to={item.url} className="flex items-center gap-3">
+                <Link to={item.url} className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <item.icon className="w-4 h-4" />
                   <span>{item.title}</span>
                 </Link>
@@ -97,10 +98,10 @@ const AdminSidebar = () => {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4">
+      <SidebarFooter className={`border-t p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
+            <SidebarMenuButton onClick={handleLogout} className={`${isRTL ? 'flex-row-reverse' : ''}`}>
               <LogOut className="w-4 h-4" />
               <span>{t("admin.sidebar.logout")}</span>
             </SidebarMenuButton>

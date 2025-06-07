@@ -5,9 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAdminQuizzes } from "@/hooks/useAdminQuizzes";
+import { useTranslation } from "react-i18next";
 
 const AdminQuizzes = () => {
   const { quizzes, quizzesLoading, deleteQuizMutation } = useAdminQuizzes();
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   const handleDeleteQuiz = (id: number) => {
     if (window.confirm("Are you sure you want to delete this quiz?")) {
@@ -27,15 +30,15 @@ const AdminQuizzes = () => {
   const quizzesList = quizzes?.data?.data || [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className={`space-y-6 ${isRTL ? 'text-right' : 'text-left'}`} dir={isRTL ? "rtl" : "ltr"}>
+      <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">إدارة الاختبارات</h1>
           <p className="text-gray-600 mt-2">إنشاء وإدارة الاختبارات للطلاب</p>
         </div>
         <Button asChild>
-          <Link to="/admin/quizzes/create">
-            <Plus className="w-4 h-4 mr-2" />
+          <Link to="/admin/quizzes/create" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Plus className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             إضافة اختبار جديد
           </Link>
         </Button>
@@ -45,10 +48,10 @@ const AdminQuizzes = () => {
         {quizzesList.length===0 ? "nothing":quizzesList?.map((quiz: any) => (
           <Card key={quiz.id}>
             <CardHeader>
-              <div className="flex justify-between items-start">
+              <div className={`flex justify-between items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <div>
                   <CardTitle className="text-xl">{quiz?.title}</CardTitle>
-                  <div className="flex gap-4 mt-2 text-sm text-gray-600">
+                  <div className={`flex gap-4 mt-2 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <span>اللغة: {quiz?.language?.name || "غير محدد"}</span>
                     <span>المستوى: {quiz?.difficulty}</span>
                     <span>الأسئلة: {quiz?.questions?.length || 0}</span>
@@ -69,25 +72,25 @@ const AdminQuizzes = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm">
-                  <Eye className="w-4 h-4 mr-1" />
+              <div className={`flex gap-2 ${isRTL ? 'justify-start flex-row-reverse' : 'justify-end'}`}>
+                <Button variant="outline" size="sm" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <Eye className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
                   معاينة
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to={`/admin/quizzes/edit/${quiz.id}`}>
-                    <Edit className="w-4 h-4 mr-1" />
+                  <Link to={`/admin/quizzes/edit/${quiz.id}`} className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Edit className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
                     تعديل
                   </Link>
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-red-600 hover:text-red-700"
+                  className={`text-red-600 hover:text-red-700 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}
                   onClick={() => handleDeleteQuiz(quiz.id)}
                   disabled={deleteQuizMutation.isPending}
                 >
-                  <Trash2 className="w-4 h-4 mr-1" />
+                  <Trash2 className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
                   حذف
                 </Button>
               </div>

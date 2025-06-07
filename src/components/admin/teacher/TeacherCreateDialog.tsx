@@ -15,6 +15,7 @@ const teacherSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().min(1, "Phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  password_confirmation: z.string().min(6, "Password must be at least 6 characters"),
   age: z.number().min(18, "Age must be at least 18"),
   language_id: z.number().min(1, "Language is required"),
   bio: z.string().optional(),
@@ -47,6 +48,7 @@ export const TeacherCreateDialog = ({
       email: "",
       phone: "",
       password: "",
+      password_confirmation: "",
       age: 18,
       language_id: 0,
       bio: "",
@@ -67,7 +69,10 @@ export const TeacherCreateDialog = ({
           <DialogTitle>إضافة معلم جديد</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -104,7 +109,11 @@ export const TeacherCreateDialog = ({
                 <FormItem>
                   <FormLabel>البريد الإلكتروني</FormLabel>
                   <FormControl>
-                    <Input {...field} type="email" placeholder="example@domain.com" />
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="example@domain.com"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -132,11 +141,13 @@ export const TeacherCreateDialog = ({
                   <FormItem>
                     <FormLabel>العمر</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field} 
+                      <Input
+                        {...field}
                         type="number"
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                        placeholder="العمر" 
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
+                        placeholder="العمر"
                       />
                     </FormControl>
                     <FormMessage />
@@ -152,20 +163,40 @@ export const TeacherCreateDialog = ({
                 <FormItem>
                   <FormLabel>كلمة المرور</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="أدخل كلمة المرور" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="أدخل كلمة المرور"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="password_confirmation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>كلمة المرور</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="أدخل كلمة المرور"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="language_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>اللغة المُدرسة</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => field.onChange(parseInt(value))}
                     value={field.value?.toString()}
                   >
@@ -176,7 +207,10 @@ export const TeacherCreateDialog = ({
                     </FormControl>
                     <SelectContent>
                       {languages?.map((language: any) => (
-                        <SelectItem key={language.id} value={language.id.toString()}>
+                        <SelectItem
+                          key={language.id}
+                          value={language.id.toString()}
+                        >
                           {language.name}
                         </SelectItem>
                       ))}
@@ -195,10 +229,7 @@ export const TeacherCreateDialog = ({
               >
                 إلغاء
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-              >
+              <Button type="submit" disabled={isLoading}>
                 {isLoading ? "جاري الإنشاء..." : "إنشاء المعلم"}
               </Button>
             </div>

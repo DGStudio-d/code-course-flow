@@ -29,7 +29,7 @@ export const useTeacherManagement = () => {
   const { data: teachers, isLoading: teachersLoading } = useQuery({
     queryKey: ["teachers"],
     queryFn: async () => {
-      const response = await api.get("/admin/teachers");
+      const response = await api.get("/admin/users?includeteacher=true");
       console.log("Teachers", response.data);
       return response.data;
     },
@@ -40,7 +40,7 @@ export const useTeacherManagement = () => {
   // Create teacher mutation with language assignment
   const createTeacherMutation = useMutation({
     mutationFn: async (teacherData: TeacherFormData) => {
-      const response = await api.post("/admin/teachers", {
+      const response = await api.post("/admin/users", {
         ...teacherData,
         role: 'teacher' // Ensure role is set to teacher
       });
@@ -87,7 +87,7 @@ export const useTeacherManagement = () => {
   // Delete teacher mutation
   const deleteTeacherMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await api.delete(`/admin/teachers/${id}`);
+      const response = await api.delete(`/admin/uers/${id}`);
       return response.data;
     },
     onSuccess: () => {

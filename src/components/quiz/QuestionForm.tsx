@@ -1,10 +1,11 @@
-
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Trash2, Plus, Minus } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+<<<<<<< HEAD
 import {
   Select,
   SelectContent,
@@ -21,6 +22,11 @@ import {
 } from "@/components/ui/form";
 import { Trash2 } from "lucide-react";
 import { QuizFormData } from "@/types/quiz-form";
+=======
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { QuizFormData, QuestionType } from "@/types/quiz";
+>>>>>>> e7bc76cc8bdef738837871ec75f45b334c0bfb02
 import OptionsList from "./OptionsList";
 
 interface QuestionFormProps {
@@ -30,56 +36,83 @@ interface QuestionFormProps {
   canRemove: boolean;
 }
 
-const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionFormProps) => {
-  const questionType = form.watch(`questions.${questionIndex}.type`);
+const QuestionForm: React.FC<QuestionFormProps> = ({
+  form,
+  questionIndex,
+  onRemove,
+  canRemove,
+}) => {
+  const questionType = form.watch(`questions.${questionIndex}.type`) as QuestionType;
+  const questionOptions = form.watch(`questions.${questionIndex}.options`) || [];
 
-  // When question type changes, update options accordingly
-  const handleTypeChange = (value: string) => {
-    form.setValue(`questions.${questionIndex}.type`, value);
-    
-    if (value === "fill") {
-      // For fill type, remove options
-      form.setValue(`questions.${questionIndex}.options`, undefined);
-    } else if (value === "true_false") {
-      // For true/false, set default options
-      form.setValue(`questions.${questionIndex}.options`, ["True", "False"]);
-    } else if (value === "mcq") {
-      // For MCQ, set default empty options
-      form.setValue(`questions.${questionIndex}.options`, ["", ""]);
+  const addOption = () => {
+    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    if (currentOptions.length < 6) {
+      form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
     }
+  };
+
+  const removeOption = (optionIndex: number) => {
+    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    if (currentOptions.length > 2) {
+      const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
+      form.setValue(`questions.${questionIndex}.options`, newOptions);
+      
+      // Clear correct answer if it was the removed option
+      const correctAnswer = form.getValues(`questions.${questionIndex}.correct_answer`);
+      if (correctAnswer === currentOptions[optionIndex]) {
+        form.setValue(`questions.${questionIndex}.correct_answer`, "");
+      }
+    }
+  };
+
+  const handleTypeChange = (newType: string) => {
+    const typedNewType = newType as QuestionType;
+    form.setValue(`questions.${questionIndex}.type`, typedNewType);
     
-    // Clear correct answer when type changes
-    form.setValue(`questions.${questionIndex}.correct_answer`, "");
+    // Reset options and correct answer when changing type
+    if (typedNewType === "fill") {
+      form.setValue(`questions.${questionIndex}.options`, []);
+    } else if (typedNewType === "true_false") {
+      form.setValue(`questions.${questionIndex}.options`, ["True", "False"]);
+      form.setValue(`questions.${questionIndex}.correct_answer`, "");
+    } else if (typedNewType === "mcq") {
+      form.setValue(`questions.${questionIndex}.options`, ["", ""]);
+      form.setValue(`questions.${questionIndex}.correct_answer`, "");
+    }
   };
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-medium">Question {questionIndex + 1}</h4>
-        {canRemove && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onRemove}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Card className="border-2">
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-lg">Question {questionIndex + 1}</CardTitle>
+          {canRemove && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRemove}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+              Remove
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <FormField
           control={form.control}
           name={`questions.${questionIndex}.question`}
           render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Question Text (required) *</FormLabel>
+            <FormItem>
+              <FormLabel>Question Text *</FormLabel>
               <FormControl>
-                <Textarea 
-                  {...field} 
-                  placeholder="Enter your question (max 500 characters)" 
-                  rows={2}
+                <Textarea
+                  {...field}
+                  placeholder="Enter your question here..."
+                  className="min-h-[80px]"
                 />
               </FormControl>
               <FormMessage />
@@ -87,59 +120,102 @@ const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionForm
           )}
         />
 
-        <FormField
-          control={form.control}
-          name={`questions.${questionIndex}.type`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Question Type (required) *</FormLabel>
-              <Select onValueChange={handleTypeChange} value={field.value}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name={`questions.${questionIndex}.type`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Question Type *</FormLabel>
+                <Select onValueChange={handleTypeChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select question type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="mcq">Multiple Choice</SelectItem>
+                    <SelectItem value="fill">Fill in the Blank</SelectItem>
+                    <SelectItem value="true_false">True/False</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name={`questions.${questionIndex}.points`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Points (1-10) *</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select question type" />
-                  </SelectTrigger>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="10"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                  />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="mcq">Multiple Choice</SelectItem>
-                  <SelectItem value="fill">Fill in the Blank</SelectItem>
-                  <SelectItem value="true_false">True/False</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name={`questions.${questionIndex}.points`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Points (required) *</FormLabel>
-              <FormControl>
-                <Input 
-                  {...field} 
-                  type="number" 
-                  placeholder="1-10 points" 
-                  min={1}
-                  max={10}
-                  onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : 1)}
-                  value={field.value || 1}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
           name={`questions.${questionIndex}.audio_file`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Audio File (optional)</FormLabel>
+              <FormLabel>Audio File URL (Optional)</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Audio file URL" />
+                <Input {...field} placeholder="https://example.com/audio.mp3" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {(questionType === "mcq" || questionType === "true_false") && (
+          <OptionsList
+            form={form}
+            questionIndex={questionIndex}
+            questionType={questionType}
+            options={questionOptions}
+            onAddOption={addOption}
+            onRemoveOption={removeOption}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name={`questions.${questionIndex}.correct_answer`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Correct Answer *</FormLabel>
+              <FormControl>
+                {questionType === "mcq" || questionType === "true_false" ? (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select correct answer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {questionOptions.map((option, index) => (
+                        <SelectItem key={index} value={option}>
+                          {option || `Option ${index + 1}`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    {...field}
+                    placeholder="Enter the correct answer"
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -151,45 +227,19 @@ const QuestionForm = ({ form, questionIndex, onRemove, canRemove }: QuestionForm
           name={`questions.${questionIndex}.explanation`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Explanation (required) *</FormLabel>
+              <FormLabel>Explanation *</FormLabel>
               <FormControl>
-                <Textarea 
-                  {...field} 
-                  placeholder="Provide an explanation for the correct answer" 
-                  rows={2}
+                <Textarea
+                  {...field}
+                  placeholder="Explain why this is the correct answer..."
+                  className="min-h-[60px]"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-      </div>
-
-      {/* Only show options for MCQ and True/False types */}
-      {questionType !== "fill" && (
-        <OptionsList form={form} questionIndex={questionIndex} />
-      )}
-
-      <FormField
-        control={form.control}
-        name={`questions.${questionIndex}.correct_answer`}
-        render={({ field }) => (
-          <FormItem className="mt-4">
-            <FormLabel>Correct Answer (required) *</FormLabel>
-            <FormControl>
-              <Input 
-                {...field} 
-                placeholder={
-                  questionType === "fill" 
-                    ? "Enter the correct answer for this fill-in-the-blank question" 
-                    : "Must exactly match one of the options above"
-                } 
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      </CardContent>
     </Card>
   );
 };
