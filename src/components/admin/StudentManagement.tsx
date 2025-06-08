@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserPlus, Search, Edit, Trash2 } from "lucide-react";
+import { UserPlus, Search, Edit, Trash2, ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
@@ -78,7 +78,7 @@ const StudentManagement = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           <h2 className="text-2xl font-bold">{t("admin.students.title", "Student Management")}</h2>
         </div>
@@ -93,7 +93,7 @@ const StudentManagement = () => {
 
   if (error) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
         <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           <h2 className="text-2xl font-bold">{t("admin.students.title", "Student Management")}</h2>
         </div>
@@ -109,7 +109,17 @@ const StudentManagement = () => {
   return (
     <div className="space-y-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <h2 className="text-2xl font-bold">{t("admin.students.title", "Student Management")}</h2>
+        <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/admin')}
+            className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t('admin.students.backToDashboard', 'Back to Dashboard')}</span>
+          </Button>
+          <h2 className="text-2xl font-bold">{t("admin.students.title", "Student Management")}</h2>
+        </div>
         <div className={`flex ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
           <div className="relative w-64">
             <Search className={`absolute top-2.5 h-4 w-4 text-muted-foreground ${isRTL ? 'right-2' : 'left-2'}`} />

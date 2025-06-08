@@ -32,37 +32,37 @@ const AdminSidebar = () => {
 
   const menuItems = [
     {
-      title: t("admin.sidebar.dashboard"),
+      title: t("admin.sidebar.dashboard", "Dashboard"),
       url: "/admin",
       icon: LayoutDashboard,
     },
     {
-      title: t("admin.sidebar.students", "Students"),
+      title: t("admin.sidebar.students", "Student Management"),
       url: "/admin/students",
       icon: UserCheck,
     },
     {
-      title: t("admin.sidebar.teacherManagement"),
+      title: t("admin.sidebar.teachers", "Teacher Management"),
       url: "/admin/teacher-management",
       icon: GraduationCap,
     },
     {
-      title: "Inscriptions",
+      title: t("admin.sidebar.inscriptions", "Inscriptions"),
       url: "/admin/inscriptions",
       icon: UserPlus,
     },
     {
-      title: t("admin.sidebar.languages"),
+      title: t("admin.sidebar.languages", "Languages"),
       url: "/admin/languages",
       icon: Languages,
     },
     {
-      title: t("admin.sidebar.quizzes"),
+      title: t("admin.sidebar.quizzes", "Quizzes"),
       url: "/admin/quizzes",
       icon: FileText,
     },
     {
-      title: t("admin.sidebar.settings"),
+      title: t("admin.sidebar.settings", "Settings"),
       url: "/admin/settings",
       icon: Settings,
     },
@@ -75,7 +75,7 @@ const AdminSidebar = () => {
   return (
     <Sidebar className={isRTL ? "rtl" : "ltr"} dir={isRTL ? "rtl" : "ltr"}>
       <SidebarHeader className={`border-b p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-        <h2 className="text-lg font-semibold">{t("admin.sidebar.title")}</h2>
+        <h2 className="text-lg font-semibold">{t("admin.sidebar.title", "Admin Panel")}</h2>
       </SidebarHeader>
       
       <SidebarContent>
@@ -104,7 +104,7 @@ const AdminSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton onClick={handleLogout} className={`${isRTL ? 'flex-row-reverse' : ''}`}>
               <LogOut className="w-4 h-4" />
-              <span>{t("admin.sidebar.logout")}</span>
+              <span>{t("admin.sidebar.logout", "Logout")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

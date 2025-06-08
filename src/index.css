@@ -36,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -188,5 +181,46 @@
 
   .rtl-layout .ml-auto {
     margin-left: auto;
+  }
+
+  /* RTL Button and Icon Support */
+  .rtl-layout .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  /* RTL Card and Dialog Support */
+  .rtl-layout .text-start {
+    text-align: start;
+  }
+
+  .rtl-layout .text-end {
+    text-align: end;
+  }
+
+  /* RTL Sidebar Specific */
+  .rtl-layout [data-sidebar] {
+    direction: rtl;
+  }
+
+  .rtl-layout [data-sidebar-content] {
+    direction: rtl;
+  }
+
+  /* RTL Tab Support */
+  .rtl-layout [role="tablist"] {
+    direction: rtl;
+  }
+
+  .rtl-layout [role="tab"] {
+    text-align: center;
+  }
+
+  /* RTL Dropdown and Select Support */
+  .rtl-layout [data-radix-select-content] {
+    direction: rtl;
+  }
+
+  .rtl-layout [data-radix-dropdown-menu-content] {
+    direction: rtl;
   }
 }

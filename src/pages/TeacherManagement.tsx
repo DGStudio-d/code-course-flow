@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 const TeacherManagement = () => {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,7 +50,7 @@ const TeacherManagement = () => {
   };
 
   const handleDeleteTeacher = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this teacher?')) {
+    if (window.confirm(t('admin.teachers.deleteConfirm', 'Are you sure you want to delete this teacher?'))) {
       deleteTeacherMutation.mutate(id);
     }
   };
@@ -68,9 +68,9 @@ const TeacherManagement = () => {
               className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>العودة للوحة الرئيسية</span>
+              <span>{t('admin.teachers.backToDashboard', 'Back to Dashboard')}</span>
             </Button>
-            <h1 className="text-2xl font-bold">إدارة المعلمين</h1>
+            <h1 className="text-2xl font-bold">{t('admin.teachers.title', 'Teacher Management')}</h1>
           </div>
           
           <Button 
@@ -78,14 +78,18 @@ const TeacherManagement = () => {
             onClick={() => setIsCreateDialogOpen(true)}
           >
             <UserPlus className="w-4 h-4" />
-            <span>إضافة معلم جديد</span>
+            <span>{t('admin.teachers.addNew', 'Add New Teacher')}</span>
           </Button>
         </div>
 
         <Tabs defaultValue="list" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="list">قائمة المعلمين</TabsTrigger>
-            <TabsTrigger value="profile">إدارة الملف الشخصي</TabsTrigger>
+          <TabsList className={`grid w-full grid-cols-2 ${isRTL ? 'rtl' : 'ltr'}`}>
+            <TabsTrigger value="list" className={isRTL ? 'text-right' : 'text-left'}>
+              {t('admin.teachers.teachersList', 'Teachers List')}
+            </TabsTrigger>
+            <TabsTrigger value="profile" className={isRTL ? 'text-right' : 'text-left'}>
+              {t('admin.teachers.profileManagement', 'Profile Management')}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="list" className="space-y-6">
