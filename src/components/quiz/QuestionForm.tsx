@@ -2,17 +2,8 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-<<<<<<< HEAD
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   FormControl,
   FormField,
@@ -20,13 +11,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Trash2 } from "lucide-react";
-import { QuizFormData } from "@/types/quiz-form";
-=======
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { QuizFormData, QuestionType } from "@/types/quiz";
->>>>>>> e7bc76cc8bdef738837871ec75f45b334c0bfb02
+import { QuizFormData } from "@/types/quiz";
+
 import OptionsList from "./OptionsList";
 
 interface QuestionFormProps {
@@ -42,7 +31,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   onRemove,
   canRemove,
 }) => {
-  const questionType = form.watch(`questions.${questionIndex}.type`) as QuestionType;
+  const questionType = form.watch(`questions.${questionIndex}.type`);
   const questionOptions = form.watch(`questions.${questionIndex}.options`) || [];
 
   const addOption = () => {
