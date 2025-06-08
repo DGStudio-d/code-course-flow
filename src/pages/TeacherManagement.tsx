@@ -10,9 +10,12 @@ import api from '@/config/axios';
 import { TeacherCreateDialog } from '@/components/admin/teacher/TeacherCreateDialog';
 import { TeachersList } from '@/components/admin/teacher/TeachersList';
 import { TeacherProfile } from '@/components/admin/teacher/TeacherProfile';
+import { useTranslation } from 'react-i18next';
 
 const TeacherManagement = () => {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -55,14 +58,14 @@ const TeacherManagement = () => {
   const teachersList = teachers?.data || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl-layout' : 'ltr-layout'}`} dir={isRTL ? "rtl" : "ltr"}>
       <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
+        <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
             <Button
               variant="ghost"
               onClick={() => navigate('/admin')}
-              className="flex items-center space-x-2"
+              className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
             >
               <ArrowLeft className="w-4 h-4" />
               <span>العودة للوحة الرئيسية</span>
@@ -71,7 +74,7 @@ const TeacherManagement = () => {
           </div>
           
           <Button 
-            className="flex items-center space-x-2"
+            className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
             onClick={() => setIsCreateDialogOpen(true)}
           >
             <UserPlus className="w-4 h-4" />

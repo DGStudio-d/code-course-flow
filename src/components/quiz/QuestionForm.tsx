@@ -2,21 +2,27 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { QuizFormData } from "@/types/quiz";
-
+import { QuizFormData } from "@/types/quiz-form";
 import OptionsList from "./OptionsList";
+
+type QuestionType = "mcq" | "fill" | "true_false";
 
 interface QuestionFormProps {
   form: UseFormReturn<QuizFormData>;
@@ -31,24 +37,36 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   onRemove,
   canRemove,
 }) => {
-  const questionType = form.watch(`questions.${questionIndex}.type`);
-  const questionOptions = form.watch(`questions.${questionIndex}.options`) || [];
+  const questionType = form.watch(
+    `questions.${questionIndex}.type`
+  ) as QuestionType;
+  const questionOptions =
+    form.watch(`questions.${questionIndex}.options`) || [];
 
   const addOption = () => {
-    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    const currentOptions =
+      form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length < 6) {
-      form.setValue(`questions.${questionIndex}.options`, [...currentOptions, ""]);
+      form.setValue(`questions.${questionIndex}.options`, [
+        ...currentOptions,
+        "",
+      ]);
     }
   };
 
   const removeOption = (optionIndex: number) => {
-    const currentOptions = form.getValues(`questions.${questionIndex}.options`) || [];
+    const currentOptions =
+      form.getValues(`questions.${questionIndex}.options`) || [];
     if (currentOptions.length > 2) {
-      const newOptions = currentOptions.filter((_, index) => index !== optionIndex);
+      const newOptions = currentOptions.filter(
+        (_, index) => index !== optionIndex
+      );
       form.setValue(`questions.${questionIndex}.options`, newOptions);
-      
+
       // Clear correct answer if it was the removed option
-      const correctAnswer = form.getValues(`questions.${questionIndex}.correct_answer`);
+      const correctAnswer = form.getValues(
+        `questions.${questionIndex}.correct_answer`
+      );
       if (correctAnswer === currentOptions[optionIndex]) {
         form.setValue(`questions.${questionIndex}.correct_answer`, "");
       }
@@ -58,7 +76,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   const handleTypeChange = (newType: string) => {
     const typedNewType = newType as QuestionType;
     form.setValue(`questions.${questionIndex}.type`, typedNewType);
-    
+
     // Reset options and correct answer when changing type
     if (typedNewType === "fill") {
       form.setValue(`questions.${questionIndex}.options`, []);
@@ -75,7 +93,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     <Card className="border-2">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg">Question {questionIndex + 1}</CardTitle>
+          <CardTitle className="text-lg">
+            Question {questionIndex + 1}
+          </CardTitle>
           {canRemove && (
             <Button
               type="button"
@@ -145,7 +165,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     min="1"
                     max="10"
                     {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value) || 1)
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -200,10 +222,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Input
-                    {...field}
-                    placeholder="Enter the correct answer"
-                  />
+                  <Input {...field} placeholder="Enter the correct answer" />
                 )}
               </FormControl>
               <FormMessage />

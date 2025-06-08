@@ -19,6 +19,7 @@ import {
   Settings,
   LogOut,
   UserPlus,
+  UserCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,9 +37,9 @@ const AdminSidebar = () => {
       icon: LayoutDashboard,
     },
     {
-      title: t("admin.sidebar.users"),
-      url: "/admin/users",
-      icon: Users,
+      title: t("admin.sidebar.students", "Students"),
+      url: "/admin/students",
+      icon: UserCheck,
     },
     {
       title: t("admin.sidebar.teacherManagement"),
