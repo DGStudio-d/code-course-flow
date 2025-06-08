@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { QuizFormData } from "@/types/quiz-form";
+import { useTranslation } from "react-i18next";
 
 interface QuizBasicInfoProps {
   form: UseFormReturn<QuizFormData>;
@@ -27,10 +28,13 @@ interface QuizBasicInfoProps {
 }
 
 const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   return (
-    <Card>
+    <Card className={isRTL ? 'text-right' : 'text-left'}>
       <CardHeader>
-        <CardTitle>🏷️ Quiz Information</CardTitle>
+        <CardTitle>🏷️ {t("admin.quiz.quizInformation", "Quiz Information")}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -39,9 +43,13 @@ const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title (required) *</FormLabel>
+                <FormLabel>{t("admin.quiz.title", "Title")} ({t("common.required", "required")}) *</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter a unique title (max 255 characters)" />
+                  <Input 
+                    {...field} 
+                    placeholder={t("admin.quiz.titlePlaceholder", "Enter a unique title (max 255 characters)")}
+                    className={isRTL ? 'text-right' : 'text-left'} 
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -53,15 +61,15 @@ const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps
             name="language_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Language (required) *</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <FormLabel>{t("admin.quiz.language", "Language")} ({t("common.required", "required")}) *</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value} dir={isRTL ? "rtl" : "ltr"}>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select language" />
+                    <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
+                      <SelectValue placeholder={t("admin.quiz.selectLanguage", "Select language")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {languages?.data?.map((language: any) => (
+                    {!languagesLoading && languages?.data?.map((language: any) => (
                       <SelectItem key={language.id} value={language.id.toString()}>
                         {language.flag} {language.name}
                       </SelectItem>
@@ -78,17 +86,17 @@ const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps
             name="difficulty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Difficulty (required) *</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <FormLabel>{t("admin.quiz.difficulty", "Difficulty")} ({t("common.required", "required")}) *</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value} dir={isRTL ? "rtl" : "ltr"}>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose difficulty" />
+                    <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
+                      <SelectValue placeholder={t("admin.quiz.chooseDifficulty", "Choose difficulty")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="beginner">{t("admin.quiz.beginner", "Beginner")}</SelectItem>
+                    <SelectItem value="intermediate">{t("admin.quiz.intermediate", "Intermediate")}</SelectItem>
+                    <SelectItem value="advanced">{t("admin.quiz.advanced", "Advanced")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -101,14 +109,15 @@ const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps
             name="time_limit"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Time Limit (optional)</FormLabel>
+                <FormLabel>{t("admin.quiz.timeLimit", "Time Limit")} ({t("common.optional", "optional")})</FormLabel>
                 <FormControl>
                   <Input 
                     {...field} 
                     type="number" 
-                    placeholder="Duration in minutes (1-300)" 
+                    placeholder={t("admin.quiz.timeLimitPlaceholder", "Duration in minutes (1-300)")}
                     onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                     value={field.value || ""}
+                    className={isRTL ? 'text-right' : 'text-left'}
                   />
                 </FormControl>
                 <FormMessage />
@@ -122,12 +131,13 @@ const QuizBasicInfo = ({ form, languages, languagesLoading }: QuizBasicInfoProps
           name="description"
           render={({ field }) => (
             <FormItem className="mt-4">
-              <FormLabel>Description (optional)</FormLabel>
+              <FormLabel>{t("admin.quiz.description", "Description")} ({t("common.optional", "optional")})</FormLabel>
               <FormControl>
                 <Textarea 
                   {...field} 
-                  placeholder="Briefly describe your quiz (max 1000 characters)" 
+                  placeholder={t("admin.quiz.descriptionPlaceholder", "Briefly describe your quiz (max 1000 characters)")}
                   rows={3}
+                  className={isRTL ? 'text-right' : 'text-left'}
                 />
               </FormControl>
               <FormMessage />

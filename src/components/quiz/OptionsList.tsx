@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Plus, Trash2 } from "lucide-react";
 import { QuizFormData } from "@/types/quiz-form";
+import { useTranslation } from "react-i18next";
 
 type QuestionType = "mcq" | "fill" | "true_false";
 
@@ -25,11 +26,14 @@ interface OptionsListProps {
 }
 
 const OptionsList = ({ form, questionIndex, options, onAddOption, onRemoveOption }: OptionsListProps) => {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   return (
     <div className="mt-4 space-y-2">
-      <FormLabel>Options (2-6 required) *</FormLabel>
+      <FormLabel>{t("admin.quiz.optionsRequired", "Options (2-6 required)")} *</FormLabel>
       {options.map((_, optionIndex) => (
-        <div key={optionIndex} className="flex gap-2">
+        <div key={optionIndex} className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <FormField
             control={form.control}
             name={`questions.${questionIndex}.options.${optionIndex}`}
@@ -38,7 +42,8 @@ const OptionsList = ({ form, questionIndex, options, onAddOption, onRemoveOption
                 <FormControl>
                   <Input 
                     {...field} 
-                    placeholder={`Option ${optionIndex + 1} (max 200 characters)`} 
+                    placeholder={`${t("admin.quiz.option", "Option")} ${optionIndex + 1} (${t("admin.quiz.maxCharacters", "max 200 characters")})`}
+                    className={isRTL ? 'text-right' : 'text-left'}
                   />
                 </FormControl>
                 <FormMessage />
@@ -63,9 +68,10 @@ const OptionsList = ({ form, questionIndex, options, onAddOption, onRemoveOption
           variant="outline"
           size="sm"
           onClick={onAddOption}
+          className={`flex items-center ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
         >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Option
+          <Plus className="w-4 h-4" />
+          <span>{t("admin.quiz.addOption", "Add Option")}</span>
         </Button>
       )}
     </div>

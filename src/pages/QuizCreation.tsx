@@ -13,11 +13,14 @@ import QuizCreationHeader from "@/components/quiz/QuizCreationHeader";
 import QuizBasicInfo from "@/components/quiz/QuizBasicInfo";
 import QuestionsSection from "@/components/quiz/QuestionsSection";
 import QuizFormActions from "@/components/quiz/QuizFormActions";
+import { useTranslation } from "react-i18next";
 
 const QuizCreation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   const { data: languages, isLoading: languagesLoading } = useQuery({
     queryKey: ["languages"],
@@ -56,18 +59,18 @@ const QuizCreation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-quizzes"] });
       toast({
-        title: "Success",
-        description: "Quiz created successfully",
+        title: t("admin.quiz.success", "Success"),
+        description: t("admin.quiz.created", "Quiz created successfully"),
       });
       navigate("/admin/quizzes");
     },
     onError: (error: any) => {
-      console.log("error handling Quiz creation : ",error)
+      console.log("Quiz creation error:", error);
       toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to create quiz",
+        title: t("admin.quiz.error", "Error"),
+        description: error.response?.data?.message || t("admin.quiz.createFailed", "Failed to create quiz"),
         variant: "destructive",
       });
     },
@@ -86,25 +89,29 @@ const QuizCreation = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <QuizCreationHeader onBack={handleBack} />
+    <div className={`min-h-screen bg-gray-50 ${isRTL ? 'rtl-layout' : 'ltr-layout'}`} dir={isRTL ? "rtl" : "ltr"}>
+      <div className="container mx-auto px-4 py-6">
+        <div className="space-y-6">
+          <QuizCreationHeader onBack={handleBack} />
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <QuizBasicInfo 
-            form={form} 
-            languages={languages} 
-            languagesLoading={languagesLoading} 
-          />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <QuizBasicInfo 
+                form={form} 
+                languages={languages} 
+                languagesLoading={languagesLoading} 
+              />
 
-          <QuestionsSection form={form} />
+              <QuestionsSection form={form} />
 
-          <QuizFormActions 
-            onCancel={handleCancel}
-            isSubmitting={createQuizMutation.isPending}
-          />
-        </form>
-      </Form>
+              <QuizFormActions 
+                onCancel={handleCancel}
+                isSubmitting={createQuizMutation.isPending}
+              />
+            </form>
+          </Form>
+        </div>
+      </div>
     </div>
   );
 };
