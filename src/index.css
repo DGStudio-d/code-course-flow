@@ -127,4 +127,66 @@
     margin-right: calc(0.5rem * var(--tw-space-x-reverse));
     margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
   }
+
+  /* Enhanced RTL Support for Admin Dashboard */
+  .rtl-layout .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-layout .text-right {
+    text-align: right;
+  }
+
+  .rtl-layout .text-left {
+    text-align: left;
+  }
+
+  /* RTL Table Support */
+  .rtl-layout table {
+    direction: rtl;
+  }
+
+  .rtl-layout th,
+  .rtl-layout td {
+    text-align: right;
+  }
+
+  /* RTL Form Support */
+  .rtl-layout input,
+  .rtl-layout textarea,
+  .rtl-layout select {
+    text-align: right;
+  }
+
+  .rtl-layout .pr-8 {
+    padding-right: 2rem;
+  }
+
+  .rtl-layout .pl-8 {
+    padding-left: 2rem;
+  }
+
+  .rtl-layout .pr-3 {
+    padding-right: 0.75rem;
+  }
+
+  .rtl-layout .pl-3 {
+    padding-left: 0.75rem;
+  }
+
+  .rtl-layout .mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .rtl-layout .ml-2 {
+    margin-left: 0.5rem;
+  }
+
+  .rtl-layout .mr-auto {
+    margin-right: auto;
+  }
+
+  .rtl-layout .ml-auto {
+    margin-left: auto;
+  }
 }
