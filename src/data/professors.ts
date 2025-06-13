@@ -1,36 +1,26 @@
-
-export interface Professor {
-  id: string;
-  name: string;
-  title: string;
-  language: string;
-  image: string;
-  description: string;
-}
-
-export const professors: Professor[] = [
+export const professors = [
   {
-    id: "1",
-    name: "أحمد محمد",
+    id: 1,
+    name: "د. أحمد محمد",
     title: "أستاذ اللغة الإنجليزية",
-    language: "English",
-    image: "/placeholder.svg",
-    description: "أستاذ محنك في تدريس اللغة الإنجليزية مع خبرة 10 سنوات"
+    language: "الإنجليزية",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
+    description: "خبرة 15 عامًا في تدريس اللغة الإنجليزية للناطقين بالعربية"
   },
   {
-    id: "2",
-    name: "فاطمة علي",
+    id: 2,
+    name: "د. فاطمة علي",
     title: "أستاذة اللغة الفرنسية",
-    language: "French",
-    image: "/placeholder.svg",
-    description: "متخصصة في تدريس اللغة الفرنسية للمبتدئين والمتقدمين"
+    language: "الفرنسية",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612c1c8?w=300&h=300&fit=crop&crop=face",
+    description: "متخصصة في تعليم الفرنسية والثقافة الفرنسية"
   },
   {
-    id: "3",
-    name: "محمد خالد",
+    id: 3,
+    name: "د. محمد خالد",
     title: "أستاذ اللغة الألمانية",
-    language: "German",
-    image: "/placeholder.svg",
-    description: "خبير في تدريس اللغة الألمانية مع شهادات دولية"
+    language: "الألمانية",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+    description: "خبير في تدريس الألمانية للأعمال والأكاديمية"
   }
 ];

@@ -1,4 +1,3 @@
-
 import Hero from "@/components/Hero";
 import LanguageCard from "@/components/LanguageCard";
 import TeacherCarousel from "@/components/TeacherCarousel";
@@ -16,16 +15,13 @@ const Index = () => {
   const languages = useSelector((state: RootState) => state.appData.languages) as Language[];
   const isRTL = i18n.language === "ar";
 
-  console.log("Languages from store:", languages);
-  console.log("Is loading:", isLoading);
-
   // Mock teachers data to prevent runtime error
   const mockTeachers = [
     {
       id: "1",
       name: "أحمد محمد علي",
       specialization: "معلم اللغة الإنجليزية",
-      avatar: "/placeholder.svg",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
       rating: 4.9,
       experience: 8,
       testimonial: "تعليم اللغة الإنجليزية بطرق تفاعلية ومبتكرة لضمان أفضل النتائج للطلاب"
@@ -34,7 +30,7 @@ const Index = () => {
       id: "2", 
       name: "فاطمة أحمد",
       specialization: "معلمة اللغة الفرنسية",
-      avatar: "/placeholder.svg",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612c1c8?w=300&h=300&fit=crop&crop=face",
       rating: 4.8,
       experience: 6,
       testimonial: "أسعى لجعل تعلم الفرنسية تجربة ممتعة ومثمرة من خلال الأنشطة التفاعلية"
@@ -43,7 +39,7 @@ const Index = () => {
       id: "3",
       name: "محمد خالد",
       specialization: "معلم اللغة الألمانية", 
-      avatar: "/placeholder.svg",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
       rating: 4.7,
       experience: 10,
       testimonial: "خبرة واسعة في تدريس الألمانية للمبتدئين والمتقدمين بأساليب حديثة"
@@ -121,7 +117,7 @@ const Index = () => {
   const displayLanguages = languages && languages.length > 0 ? languages : fallbackLanguages;
 
   return (
-    <div className={`min-h-screen ${isRTL ? 'rtl-layout' : 'ltr-layout'}`} dir={isRTL ? "rtl" : "ltr"}>
+    <div className="min-h-screen" dir={isRTL ? "rtl" : "ltr"}>
       <Header />
       <Hero />
       
@@ -130,16 +126,16 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className={`text-center mb-16 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              {t("languages.title")}
+              {t("languages.title", "اكتشف اللغات المتاحة")}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t("languages.subtitle")}
+              {t("languages.subtitle", "اختر اللغة التي تريد تعلمها مع أفضل المعلمين المتخصصين")}
             </p>
           </div>
           
           {isLoading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="text-lg text-gray-600">{t("admin.loading")}</div>
+              <div className="text-lg text-gray-600">{t("admin.loading", "جاري التحميل...")}</div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -160,10 +156,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className={`text-center mb-16 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              {t("teachers.title")}
+              {t("teachers.title", "تعرف على أساتذتنا المتميزين")}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t("teachers.subtitle")}
+              {t("teachers.subtitle", "فريق من المعلمين المؤهلين والمتخصصين في تعليم اللغات بأحدث الطرق التفاعلية")}
             </p>
           </div>
           <TeacherCarousel teachers={mockTeachers} />

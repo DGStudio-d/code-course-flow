@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
@@ -14,10 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const HeaderAuthSection = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   const handleLogout = () => {
     logout.mutate();
@@ -45,24 +47,24 @@ const HeaderAuthSection = () => {
   };
 
   return (
-    <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+    <div className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
       <LanguageSwitcher />
       {isAuthenticated ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2 h-10">
+            <Button variant="ghost" size="sm" className={`flex items-center h-10 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
               <Avatar className="w-8 h-8">
                 <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
                   {user?.name ? getUserInitials(user.name) : 'U'}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start">
+              <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
                 <span className="text-sm font-medium">{user?.name || 'User'}</span>
                 <span className="text-xs text-gray-500 capitalize">{user?.role?.name}</span>
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-56">
             <DropdownMenuLabel>
               {user?.name}
               <div className="text-xs text-gray-500 capitalize">{user?.role?.name}</div>
@@ -70,21 +72,21 @@ const HeaderAuthSection = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link to={getUserDashboardLink()}>
-                Dashboard
+                {t("header.dashboard", "لوحة التحكم")}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              <LogOut className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {t("header.logout", "تسجيل الخروج")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
         <Button variant="ghost" size="sm" asChild>
           <Link to="/auth">
-            <User className="w-4 h-4 ml-2" />
-            تسجيل الدخول
+            <User className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+            {t("header.login", "تسجيل الدخول")}
           </Link>
         </Button>
       )}

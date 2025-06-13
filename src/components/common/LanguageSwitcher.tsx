@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Globe } from 'lucide-react';
 import { useLanguage, SupportedLanguage } from '@/contexts/LanguageContext';
@@ -11,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 const LanguageSwitcher: React.FC = () => {
-  const { language, setLanguage, t, dir } = useLanguage();
+  const { language, setLanguage, dir } = useLanguage();
 
   const languageOptions: { code: SupportedLanguage, name: string, flag: string, isRtl: boolean }[] = [
     { code: 'ar', name: 'العربية', flag: '🇸🇦', isRtl: true },

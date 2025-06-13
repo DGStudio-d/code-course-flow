@@ -1,18 +1,18 @@
-
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const HeaderNavigation = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   const navigation = [  
-    { name: t("header.home"), href: "/" },
-    { name: t("header.teachers"), href: "/teachers" },
-    { name: t("header.contact"), href: "/contact" },
+    { name: t("header.home", "الرئيسية"), href: "/" },
+    { name: t("header.teachers", "المعلمون"), href: "/teachers" },
+    { name: t("header.contact", "اتصل بنا"), href: "/contact" },
   ];
 
   return (
-    <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+    <nav className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
       {navigation.map((item) => (
         <Link
           key={item.name}

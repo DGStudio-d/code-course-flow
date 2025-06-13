@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
@@ -12,14 +11,15 @@ interface HeaderMobileMenuProps {
 }
 
 const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
+  const isRTL = i18n.language === "ar";
 
   const navigation = [  
-    { name: t("header.home"), href: "/" },
-    { name: t("header.teachers"), href: "/teachers" },
-    { name: t("header.contact"), href: "/contact" },
+    { name: t("header.home", "الرئيسية"), href: "/" },
+    { name: t("header.teachers", "المعلمون"), href: "/teachers" },
+    { name: t("header.contact", "اتصل بنا"), href: "/contact" },
   ];
 
   const handleLogout = () => {
@@ -41,13 +41,13 @@ const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) 
   if (!isMenuOpen) return null;
 
   return (
-    <div className="md:hidden py-4 border-t border-green-100">
+    <div className="md:hidden py-4 border-t border-green-100" dir={isRTL ? "rtl" : "ltr"}>
       <nav className="flex flex-col space-y-4">
         {navigation.map((item) => (
           <Link
             key={item.name}
             to={item.href}
-            className="text-gray-700 hover:text-primary-600 font-medium py-2"
+            className={`text-gray-700 hover:text-primary-600 font-medium py-2 ${isRTL ? 'text-right' : 'text-left'}`}
             onClick={() => setIsMenuOpen(false)}
           >
             {item.name}
@@ -64,8 +64,8 @@ const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) 
                 asChild
               >
                 <Link to={getUserDashboardLink()}>
-                  <User className="w-4 h-4 mr-2" />
-                  Dashboard ({user?.role?.name})
+                  <User className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                  {t("header.dashboard", "لوحة التحكم")} ({user?.role?.name})
                 </Link>
               </Button>
               <Button
@@ -74,8 +74,8 @@ const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) 
                 className="w-full justify-start text-red-600"
                 onClick={handleLogout}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                <LogOut className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                {t("header.logout", "تسجيل الخروج")}
               </Button>
             </>
           ) : (
@@ -87,8 +87,8 @@ const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) 
                 asChild
               >
                 <Link to="/auth">
-                  <User className="w-4 h-4 ml-2" />
-                  تسجيل الدخول
+                  <User className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                  {t("header.login", "تسجيل الدخول")}
                 </Link>
               </Button>
               <Button
@@ -96,7 +96,7 @@ const HeaderMobileMenu = ({ isMenuOpen, setIsMenuOpen }: HeaderMobileMenuProps) 
                 className="w-full bg-green-gradient hover:opacity-90"
                 onClick={() => navigate("/inscription")}
               >
-                إنشاء حساب
+                {t("button.register", "إنشاء حساب")}
               </Button>
             </>
           )}
