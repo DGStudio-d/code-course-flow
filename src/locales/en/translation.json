@@ -212,7 +212,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "loading": "Loading...",
-    "notSpecified": "Not specified"
+    "notSpecified": "Not specified",
+    "error": "Error"
   },
   "header": {
     "home": "Home",
@@ -221,7 +222,9 @@
     "inscription": "Registration",
     "contact": "Contact Us",
     "teachers": "Teachers",
-    "login": "Login"
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard"
   },
   "nav": {
     "home": "Home",
@@ -274,7 +277,10 @@
     "register": "Register Now",
     "password_mismatch": "Passwords do not match",
     "success_title": "Message Sent Successfully",
-    "success_description": "We will contact you shortly"
+    "success_description": "We will contact you shortly",
+    "type": "Study Type",
+    "individual": "Individual",
+    "group": "Group"
   },
   "contact": {
     "title": "Contact Us",
@@ -289,10 +295,16 @@
   },
   "languages": {
     "title": "Discover Available Languages",
-    "subtitle": "Choose the language you want to learn with the best specialized teachers"
+    "subtitle": "Choose the language you want to learn with the best specialized teachers",
+    "available": {
+      "title": "Available Languages",
+      "subtitle": "Choose the language you want to learn and explore new cultures with the best specialized teachers",
+      "viewAll": "View All Languages"
+    }
   },
   "teachers": {
     "title": "Meet Our Distinguished Teachers",
-    "subtitle": "A team of qualified teachers specialized in language teaching using the latest interactive methods"
+    "subtitle": "A team of qualified teachers specialized in language teaching using the latest interactive methods",
+    "teacher": "teacher"
   }
 }

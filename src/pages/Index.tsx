@@ -1,6 +1,7 @@
 import Hero from "@/components/Hero";
 import LanguageCard from "@/components/LanguageCard";
 import TeacherCarousel from "@/components/TeacherCarousel";
+import AvailableLanguagesSection from "@/components/AvailableLanguagesSection";
 import Header from "@/components/Header";
 import Footer from "@/components/common/Footer";
 import { useTranslation } from "react-i18next";
@@ -121,7 +122,10 @@ const Index = () => {
       <Header />
       <Hero />
       
-      {/* Languages Section */}
+      {/* Modern Available Languages Section */}
+      <AvailableLanguagesSection />
+      
+      {/* Original Languages Section (Optional - can be removed) */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className={`text-center mb-16 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>

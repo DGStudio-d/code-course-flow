@@ -212,7 +212,8 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "loading": "Cargando...",
-    "notSpecified": "No especificado"
+    "notSpecified": "No especificado",
+    "error": "Error"
   },
   "header": {
     "home": "Inicio",
@@ -221,7 +222,9 @@
     "inscription": "Inscripción",
     "contact": "Contacto",
     "teachers": "Profesores",
-    "login": "Iniciar Sesión"
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "dashboard": "Panel de Control"
   },
   "nav": {
     "home": "Inicio",
@@ -274,7 +277,10 @@
     "register": "Registrarse Ahora",
     "password_mismatch": "Las contraseñas no coinciden",
     "success_title": "Mensaje Enviado Exitosamente",
-    "success_description": "Nos pondremos en contacto contigo pronto"
+    "success_description": "Nos pondremos en contacto contigo pronto",
+    "type": "Tipo de Estudio",
+    "individual": "Individual",
+    "group": "Grupo"
   },
   "contact": {
     "title": "Contáctanos",
@@ -289,10 +295,16 @@
   },
   "languages": {
     "title": "Descubre los Idiomas Disponibles",
-    "subtitle": "Elige el idioma que quieres aprender con los mejores profesores especializados"
+    "subtitle": "Elige el idioma que quieres aprender con los mejores profesores especializados",
+    "available": {
+      "title": "Idiomas Disponibles",
+      "subtitle": "Elige el idioma que quieres aprender y explora nuevas culturas con los mejores profesores especializados",
+      "viewAll": "Ver Todos los Idiomas"
+    }
   },
   "teachers": {
     "title": "Conoce a Nuestros Distinguidos Profesores",
-    "subtitle": "Un equipo de profesores calificados especializados en la enseñanza de idiomas usando los métodos interactivos más modernos"
+    "subtitle": "Un equipo de profesores calificados especializados en la enseñanza de idiomas usando los métodos interactivos más modernos",
+    "teacher": "profesor"
   }
 }
