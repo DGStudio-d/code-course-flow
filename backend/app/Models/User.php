@@ -99,4 +99,9 @@ class User extends Authenticatable
     {
         return $this->role === 'student';
     }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
+    }
 }

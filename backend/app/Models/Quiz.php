@@ -16,6 +16,9 @@ class Quiz extends Model
     protected $fillable = [
         'title',
         'description',
+        'proficiency_level',
+        'correction_mode',
+        'source_document_path',
         'program_id',
         'teacher_id',
         'total_questions',
@@ -39,6 +42,7 @@ class Quiz extends Model
         'available_from' => 'datetime',
         'available_until' => 'datetime',
         'is_active' => 'boolean',
+        'improvement_suggestions' => 'array',
     ];
 
     public function program(): BelongsTo
@@ -61,8 +65,18 @@ class Quiz extends Model
         return $this->hasMany(QuizSubmissions::class);
     }
 
+    public function corrections(): HasMany
+    {
+        return $this->hasMany(QuizCorrections::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeByLevel($query, $level)
+    {
+        return $query->where('proficiency_level', $level);
     }
 }

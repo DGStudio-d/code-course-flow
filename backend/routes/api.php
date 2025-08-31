@@ -12,6 +12,7 @@ use App\Http\Controllers\API\MediaController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\EnrollmentController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\AnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,22 +80,47 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         });
         
         // Quiz routes for students
+        Route::prefix('student')->group(function () {
+            Route::get('quizzes', [QuizController::class, 'studentQuizzes']);
+        });
+        
         Route::prefix('quizzes')->group(function () {
             Route::get('{quiz}', [QuizController::class, 'show']);
             Route::post('{quiz}/start', [QuizController::class, 'start']);
             Route::post('{quiz}/submit', [QuizController::class, 'submit']);
             Route::get('submissions/{submission}/results', [QuizController::class, 'results']);
+            
+            // Correction routes for students
+            Route::get('submissions/{submission}/corrections', [\App\Http\Controllers\API\CorrectionController::class, 'getSubmissionCorrections']);
+            Route::get('submissions/{submission}/questions/{question}/correction', [\App\Http\Controllers\API\CorrectionController::class, 'getQuestionCorrection']);
         });
         
         // Live sessions
         Route::post('live-sessions/{session}/join', [LiveSessionsController::class, 'join']);
+        
+        // Student analytics (for their own data)
+        Route::prefix('analytics')->group(function () {
+            Route::get('my-performance', function (Request $request) {
+                return app(AnalyticsController::class)->studentPerformance($request, $request->user()->id);
+            });
+            Route::get('my-trends', function (Request $request) {
+                return app(AnalyticsController::class)->studentTrends($request, $request->user()->id);
+            });
+        });
     });
     
     // Teacher routes
-    Route::middleware(['role:teacher','role:admin'])->prefix('teacher')->group(function () {
+    Route::middleware('role:teacher,admin')->prefix('teacher')->group(function () {
         Route::apiResource('programs', ProgramsController::class)->except(['index', 'show']);
         Route::apiResource('live-sessions', LiveSessionsController::class)->except(['index', 'show']);
         Route::apiResource('quizzes', QuizController::class)->except(['show']);
+        
+        // Document upload and quiz creation
+        Route::prefix('quizzes')->group(function () {
+            Route::post('upload-document', [QuizController::class, 'uploadDocument']);
+            Route::post('create-from-document', [QuizController::class, 'createFromDocument']);
+            Route::get('proficiency-levels', [QuizController::class, 'getProficiencyLevels']);
+        });
         
         // Quiz questions management
         Route::prefix('quizzes/{quiz}')->group(function () {
@@ -105,9 +131,29 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::delete('questions/{question}', [QuizQuestionsController::class, 'destroy']);
         });
         
+        // Correction management for teachers
+        Route::prefix('corrections')->group(function () {
+            Route::post('submissions/{submission}/generate', [\App\Http\Controllers\API\CorrectionController::class, 'generateCorrections']);
+            Route::post('submissions/{submission}/re-evaluate', [\App\Http\Controllers\API\CorrectionController::class, 'reEvaluateSubmission']);
+            Route::put('{correction}', [\App\Http\Controllers\API\CorrectionController::class, 'updateCorrection']);
+            Route::get('quizzes/{quiz}/stats', [\App\Http\Controllers\API\CorrectionController::class, 'getQuizCorrectionStats']);
+        });
+        
         Route::get('students', [UserController::class, 'teacherStudents']);
         Route::get('enrollments', [EnrollmentController::class, 'teacherEnrollments']);
         Route::get('analytics', [DashboardController::class, 'teacherAnalytics']);
+        
+        // Teacher analytics routes
+        Route::prefix('analytics')->group(function () {
+            Route::get('students/{student}/performance', [AnalyticsController::class, 'studentPerformance']);
+            Route::get('students/{student}/trends', [AnalyticsController::class, 'studentTrends']);
+            Route::get('programs/{program}/class', [AnalyticsController::class, 'classAnalytics']);
+            Route::get('programs/{program}/comparison', [AnalyticsController::class, 'classComparison']);
+            Route::get('programs/{program}/levels/{level}', [AnalyticsController::class, 'levelAnalytics']);
+            Route::get('programs/{program}/dashboard', [AnalyticsController::class, 'dashboardData']);
+            Route::get('programs/{program}/export', [AnalyticsController::class, 'exportReport']);
+            Route::get('quizzes/{quiz}', [AnalyticsController::class, 'quizAnalytics']);
+        });
     });
     
     // Admin routes
@@ -146,6 +192,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         
         Route::get('stats', [DashboardController::class, 'adminStats']);
         Route::get('analytics', [DashboardController::class, 'adminAnalytics']);
+        
+        // Admin analytics routes (full access)
+        Route::prefix('analytics')->group(function () {
+            Route::get('students/{student}/performance', [AnalyticsController::class, 'studentPerformance']);
+            Route::get('students/{student}/trends', [AnalyticsController::class, 'studentTrends']);
+            Route::get('programs/{program}/class', [AnalyticsController::class, 'classAnalytics']);
+            Route::get('programs/{program}/comparison', [AnalyticsController::class, 'classComparison']);
+            Route::get('programs/{program}/levels/{level}', [AnalyticsController::class, 'levelAnalytics']);
+            Route::get('programs/{program}/dashboard', [AnalyticsController::class, 'dashboardData']);
+            Route::get('programs/{program}/export', [AnalyticsController::class, 'exportReport']);
+            Route::get('quizzes/{quiz}', [AnalyticsController::class, 'quizAnalytics']);
+        });
         
         // Payment verification
         Route::prefix('payments')->group(function () {

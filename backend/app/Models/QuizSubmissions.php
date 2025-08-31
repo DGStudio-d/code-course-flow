@@ -51,4 +51,9 @@ class QuizSubmissions extends Model
     {
         return $this->hasMany(SubmissionAnswers::class, 'submission_id');
     }
+
+    public function corrections(): HasMany
+    {
+        return $this->hasMany(QuizCorrections::class, 'submission_id');
+    }
 }

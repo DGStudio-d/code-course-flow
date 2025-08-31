@@ -768,6 +768,405 @@ const translations: Translations = {
     en: "Extensive teaching experience",
     es: "Amplia experiencia docente",
   },
+  // Quiz translations
+  "quiz.availableQuizzes": {
+    ar: "الاختبارات المتاحة",
+    en: "Available Quizzes",
+    es: "Cuestionarios Disponibles",
+  },
+  "quiz.searchPlaceholder": {
+    ar: "البحث في الاختبارات...",
+    en: "Search quizzes...",
+    es: "Buscar cuestionarios...",
+  },
+  "quiz.available": {
+    ar: "متاح",
+    en: "Available",
+    es: "Disponible",
+  },
+  "quiz.unavailable": {
+    ar: "غير متاح",
+    en: "Unavailable",
+    es: "No disponible",
+  },
+  "quiz.questions": {
+    ar: "سؤال",
+    en: "questions",
+    es: "preguntas",
+  },
+  "quiz.minutes": {
+    ar: "دقيقة",
+    en: "minutes",
+    es: "minutos",
+  },
+  "quiz.unlimited": {
+    ar: "غير محدود",
+    en: "Unlimited",
+    es: "Ilimitado",
+  },
+  "quiz.passingScore": {
+    ar: "للنجاح",
+    en: "to pass",
+    es: "para aprobar",
+  },
+  "quiz.attempts": {
+    ar: "محاولة",
+    en: "attempts",
+    es: "intentos",
+  },
+  "quiz.previousAttempts": {
+    ar: "المحاولات السابقة:",
+    en: "Previous attempts:",
+    es: "Intentos anteriores:",
+  },
+  "quiz.attempt": {
+    ar: "المحاولة",
+    en: "Attempt",
+    es: "Intento",
+  },
+  "quiz.startQuiz": {
+    ar: "بدء الاختبار",
+    en: "Start Quiz",
+    es: "Iniciar Cuestionario",
+  },
+  "quiz.attemptsExhausted": {
+    ar: "تم استنفاد المحاولات",
+    en: "Attempts exhausted",
+    es: "Intentos agotados",
+  },
+  "quiz.results": {
+    ar: "النتائج",
+    en: "Results",
+    es: "Resultados",
+  },
+  "quiz.noQuizzesAvailable": {
+    ar: "لا توجد اختبارات متاحة حالياً",
+    en: "No quizzes available currently",
+    es: "No hay cuestionarios disponibles actualmente",
+  },
+  "quiz.notFound": {
+    ar: "الاختبار غير موجود",
+    en: "Quiz not found",
+    es: "Cuestionario no encontrado",
+  },
+  "quiz.backToQuizzes": {
+    ar: "العودة إلى الاختبارات",
+    en: "Back to Quizzes",
+    es: "Volver a Cuestionarios",
+  },
+  "quiz.questionsCount": {
+    ar: "عدد الأسئلة",
+    en: "Number of Questions",
+    es: "Número de Preguntas",
+  },
+  "quiz.passingGrade": {
+    ar: "درجة النجاح",
+    en: "Passing Grade",
+    es: "Calificación de Aprobación",
+  },
+  "quiz.timeLimit": {
+    ar: "المدة الزمنية",
+    en: "Time Limit",
+    es: "Límite de Tiempo",
+  },
+  "quiz.attemptsAllowed": {
+    ar: "محاولة متاحة",
+    en: "attempts allowed",
+    es: "intentos permitidos",
+  },
+  "quiz.importantInstructions": {
+    ar: "تعليمات مهمة:",
+    en: "Important Instructions:",
+    es: "Instrucciones Importantes:",
+  },
+  "quiz.instruction1": {
+    ar: "• اقرأ كل سؤال بعناية قبل الإجابة",
+    en: "• Read each question carefully before answering",
+    es: "• Lee cada pregunta cuidadosamente antes de responder",
+  },
+  "quiz.instruction2": {
+    ar: "• يمكنك التنقل بين الأسئلة والعودة لتعديل إجاباتك",
+    en: "• You can navigate between questions and return to modify your answers",
+    es: "• Puedes navegar entre preguntas y volver para modificar tus respuestas",
+  },
+  "quiz.instruction3": {
+    ar: "• لديك {minutes} دقيقة لإكمال الاختبار",
+    en: "• You have {minutes} minutes to complete the quiz",
+    es: "• Tienes {minutes} minutos para completar el cuestionario",
+  },
+  "quiz.instruction4": {
+    ar: "• تأكد من الإجابة على جميع الأسئلة قبل التسليم",
+    en: "• Make sure to answer all questions before submitting",
+    es: "• Asegúrate de responder todas las preguntas antes de enviar",
+  },
+  "quiz.instruction5": {
+    ar: "• لا يمكن العودة للاختبار بعد التسليم",
+    en: "• You cannot return to the quiz after submission",
+    es: "• No puedes volver al cuestionario después de enviarlo",
+  },
+  "quiz.startQuizButton": {
+    ar: "بدء الاختبار",
+    en: "Start Quiz",
+    es: "Iniciar Cuestionario",
+  },
+  "quiz.starting": {
+    ar: "جاري البدء...",
+    en: "Starting...",
+    es: "Iniciando...",
+  },
+  "quiz.question": {
+    ar: "السؤال",
+    en: "Question",
+    es: "Pregunta",
+  },
+  "quiz.of": {
+    ar: "من",
+    en: "of",
+    es: "de",
+  },
+  "quiz.answered": {
+    ar: "مجاب",
+    en: "answered",
+    es: "respondidas",
+  },
+  "quiz.points": {
+    ar: "نقطة",
+    en: "points",
+    es: "puntos",
+  },
+  "quiz.previousQuestion": {
+    ar: "السؤال السابق",
+    en: "Previous Question",
+    es: "Pregunta Anterior",
+  },
+  "quiz.nextQuestion": {
+    ar: "السؤال التالي",
+    en: "Next Question",
+    es: "Siguiente Pregunta",
+  },
+  "quiz.submitQuiz": {
+    ar: "تسليم الاختبار",
+    en: "Submit Quiz",
+    es: "Enviar Cuestionario",
+  },
+  "quiz.confirmSubmission": {
+    ar: "تأكيد التسليم",
+    en: "Confirm Submission",
+    es: "Confirmar Envío",
+  },
+  "quiz.submissionConfirmation": {
+    ar: "هل أنت متأكد من تسليم الاختبار؟ لقد أجبت على {answered} من {total} أسئلة. لا يمكن العودة للاختبار بعد التسليم.",
+    en: "Are you sure you want to submit the quiz? You have answered {answered} out of {total} questions. You cannot return to the quiz after submission.",
+    es: "¿Estás seguro de que quieres enviar el cuestionario? Has respondido {answered} de {total} preguntas. No puedes volver al cuestionario después del envío.",
+  },
+  "quiz.reviewAnswers": {
+    ar: "مراجعة الإجابات",
+    en: "Review Answers",
+    es: "Revisar Respuestas",
+  },
+  "quiz.writeAnswerHere": {
+    ar: "اكتب إجابتك هنا...",
+    en: "Write your answer here...",
+    es: "Escribe tu respuesta aquí...",
+  },
+  // Quiz Results
+  "quiz.quizResults": {
+    ar: "نتائج الاختبار",
+    en: "Quiz Results",
+    es: "Resultados del Cuestionario",
+  },
+  "quiz.passed": {
+    ar: "نجحت في الاختبار!",
+    en: "You passed the quiz!",
+    es: "¡Aprobaste el cuestionario!",
+  },
+  "quiz.failed": {
+    ar: "لم تنجح في الاختبار",
+    en: "You did not pass the quiz",
+    es: "No aprobaste el cuestionario",
+  },
+  "quiz.scoreEarned": {
+    ar: "النقاط المحصلة",
+    en: "Score Earned",
+    es: "Puntuación Obtenida",
+  },
+  "quiz.correctAnswers": {
+    ar: "إجابات صحيحة",
+    en: "Correct Answers",
+    es: "Respuestas Correctas",
+  },
+  "quiz.timeTaken": {
+    ar: "الوقت المستغرق",
+    en: "Time Taken",
+    es: "Tiempo Tomado",
+  },
+  "quiz.requiredGrade": {
+    ar: "المطلوبة",
+    en: "Required",
+    es: "Requerida",
+  },
+  "quiz.detailedResults": {
+    ar: "تفاصيل الإجابات",
+    en: "Detailed Results",
+    es: "Resultados Detallados",
+  },
+  "quiz.yourAnswer": {
+    ar: "إجابتك",
+    en: "Your Answer",
+    es: "Tu Respuesta",
+  },
+  "quiz.correctAnswer": {
+    ar: "الإجابة الصحيحة",
+    en: "Correct Answer",
+    es: "Respuesta Correcta",
+  },
+  "quiz.explanation": {
+    ar: "التفسير:",
+    en: "Explanation:",
+    es: "Explicación:",
+  },
+  "quiz.retryQuiz": {
+    ar: "إعادة المحاولة",
+    en: "Retry Quiz",
+    es: "Reintentar Cuestionario",
+  },
+  "quiz.resultsNotAvailable": {
+    ar: "النتائج غير متاحة",
+    en: "Results not available",
+    es: "Resultados no disponibles",
+  },
+  // Student Dashboard
+  "student.dashboard": {
+    ar: "لوحة تحكم الطالب",
+    en: "Student Dashboard",
+    es: "Panel del Estudiante",
+  },
+  "student.welcome": {
+    ar: "مرحباً بك في منصة التعلم",
+    en: "Welcome to the learning platform",
+    es: "Bienvenido a la plataforma de aprendizaje",
+  },
+  "student.quizzes": {
+    ar: "الاختبارات",
+    en: "Quizzes",
+    es: "Cuestionarios",
+  },
+  "student.quizzesDesc": {
+    ar: "عرض الاختبارات المتاحة وإجراء الاختبارات",
+    en: "View available quizzes and take quizzes",
+    es: "Ver cuestionarios disponibles y realizar cuestionarios",
+  },
+  "student.programs": {
+    ar: "البرامج",
+    en: "Programs",
+    es: "Programas",
+  },
+  "student.programsDesc": {
+    ar: "عرض البرامج المسجل بها",
+    en: "View enrolled programs",
+    es: "Ver programas inscritos",
+  },
+  "student.liveSessions": {
+    ar: "الجلسات المباشرة",
+    en: "Live Sessions",
+    es: "Sesiones en Vivo",
+  },
+  "student.liveSessionsDesc": {
+    ar: "الانضمام إلى الجلسات المباشرة",
+    en: "Join live sessions",
+    es: "Unirse a sesiones en vivo",
+  },
+  "student.resultsDesc": {
+    ar: "عرض نتائج الاختبارات والتقييمات",
+    en: "View quiz results and assessments",
+    es: "Ver resultados de cuestionarios y evaluaciones",
+  },
+  "student.recentActivity": {
+    ar: "النشاط الأخير",
+    en: "Recent Activity",
+    es: "Actividad Reciente",
+  },
+  "student.noRecentActivity": {
+    ar: "لا يوجد نشاط حديث",
+    en: "No recent activity",
+    es: "No hay actividad reciente",
+  },
+  "student.quickLinks": {
+    ar: "روابط سريعة",
+    en: "Quick Links",
+    es: "Enlaces Rápidos",
+  },
+  "student.availableQuizzes": {
+    ar: "الاختبارات المتاحة",
+    en: "Available Quizzes",
+    es: "Cuestionarios Disponibles",
+  },
+  "student.myPrograms": {
+    ar: "برامجي",
+    en: "My Programs",
+    es: "Mis Programas",
+  },
+  "student.statistics": {
+    ar: "الإحصائيات",
+    en: "Statistics",
+    es: "Estadísticas",
+  },
+  "student.completedQuizzes": {
+    ar: "الاختبارات المكتملة",
+    en: "Completed Quizzes",
+    es: "Cuestionarios Completados",
+  },
+  "student.enrolledPrograms": {
+    ar: "البرامج المسجل بها",
+    en: "Enrolled Programs",
+    es: "Programas Inscritos",
+  },
+  "student.averageGrade": {
+    ar: "متوسط الدرجات",
+    en: "Average Grade",
+    es: "Calificación Promedio",
+  },
+  "student.goTo": {
+    ar: "الانتقال",
+    en: "Go to",
+    es: "Ir a",
+  },
+  // Toast messages
+  "toast.quizStarted": {
+    ar: "تم بدء الاختبار",
+    en: "Quiz started",
+    es: "Cuestionario iniciado",
+  },
+  "toast.quizStartedDesc": {
+    ar: "بدأ الاختبار بنجاح. حظاً موفقاً!",
+    en: "Quiz started successfully. Good luck!",
+    es: "Cuestionario iniciado con éxito. ¡Buena suerte!",
+  },
+  "toast.quizSubmitted": {
+    ar: "تم تسليم الاختبار",
+    en: "Quiz submitted",
+    es: "Cuestionario enviado",
+  },
+  "toast.quizSubmittedDesc": {
+    ar: "تم تسليم الاختبار بنجاح",
+    en: "Quiz submitted successfully",
+    es: "Cuestionario enviado con éxito",
+  },
+  "toast.error": {
+    ar: "خطأ",
+    en: "Error",
+    es: "Error",
+  },
+  "toast.quizStartError": {
+    ar: "حدث خطأ أثناء بدء الاختبار",
+    en: "An error occurred while starting the quiz",
+    es: "Ocurrió un error al iniciar el cuestionario",
+  },
+  "toast.quizSubmitError": {
+    ar: "حدث خطأ أثناء تسليم الاختبار",
+    en: "An error occurred while submitting the quiz",
+    es: "Ocurrió un error al enviar el cuestionario",
+  },
 };
 
 interface LanguageContextType {

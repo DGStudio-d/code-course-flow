@@ -139,6 +139,27 @@ export const deleteQuiz = async (id: string): Promise<ApiResponse<any>> => {
   return response.data;
 };
 
+// Student Quiz APIs
+export const fetchStudentQuizzes = async (params?: any): Promise<PaginatedResponse<any>> => {
+  const response = await axios.get('/student/quizzes', { params });
+  return response.data;
+};
+
+export const startQuiz = async (quizId: string): Promise<ApiResponse<any>> => {
+  const response = await axios.post(`/quizzes/${quizId}/start`);
+  return response.data;
+};
+
+export const submitQuiz = async (quizId: string, submissionData: any): Promise<ApiResponse<any>> => {
+  const response = await axios.post(`/quizzes/${quizId}/submit`, submissionData);
+  return response.data;
+};
+
+export const fetchQuizResults = async (submissionId: string): Promise<ApiResponse<any>> => {
+  const response = await axios.get(`/quizzes/submissions/${submissionId}/results`);
+  return response.data;
+};
+
 // Student management APIs
 export const fetchPendingStudents = async (): Promise<ApiResponse<User[]>> => {
   const response = await axios.get('/admin/students/pending');

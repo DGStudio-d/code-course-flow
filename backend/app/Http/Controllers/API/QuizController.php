@@ -6,20 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizSubmissions;
 use App\Models\SubmissionAnswers;
+use App\Models\QuizQuestions;
+use App\Models\QuizOptions;
 use App\Models\Enrollment;
 use App\Http\Resources\QuizResource;
 use App\Http\Resources\QuizSubmissionResource;
+use App\Services\DocumentParserService;
+use App\Exceptions\DocumentParsingException;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class QuizController extends Controller
 {
+    protected DocumentParserService $documentParser;
+
+    public function __construct(DocumentParserService $documentParser)
+    {
+        $this->documentParser = $documentParser;
+    }
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
         
-        if (!$user->is_teacher) {
+        if (!$user->isTeacher()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -39,6 +51,59 @@ class QuizController extends Controller
         ]);
     }
 
+    public function studentQuizzes(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        // Get quizzes from programs the student is enrolled in
+        $enrollments = Enrollment::where('student_id', $user->id)
+                                ->where('status', 'active')
+                                ->pluck('program_id');
+
+        $query = Quiz::with(['program'])
+                    ->whereIn('program_id', $enrollments)
+                    ->where('is_active', true);
+
+        // Filter by proficiency level if provided
+        if ($request->has('level') && !empty($request->level)) {
+            $query->byLevel($request->level);
+        }
+
+        // Filter by student's assigned level if they have one
+        if ($user->student && $user->student->proficiency_level) {
+            $query->where(function ($q) use ($user) {
+                $q->where('proficiency_level', $user->student->proficiency_level)
+                  ->orWhereNull('proficiency_level');
+            });
+        }
+
+        $quizzes = $query->latest()->get();
+
+        // Add attempt information for each quiz
+        $quizzesWithAttempts = $quizzes->map(function ($quiz) use ($user) {
+            $attempts = QuizSubmissions::where('quiz_id', $quiz->id)
+                                     ->where('student_id', $user->id)
+                                     ->orderBy('attempt_number')
+                                     ->get();
+
+            $quiz->attempts = $attempts;
+            $quiz->can_take_quiz = $attempts->count() < $quiz->max_attempts;
+            
+            // Add level compatibility warning
+            if ($user->student && $user->student->proficiency_level && 
+                $quiz->proficiency_level && 
+                $this->isLevelAboveStudent($quiz->proficiency_level, $user->student->proficiency_level)) {
+                $quiz->level_warning = true;
+            }
+            
+            return $quiz;
+        });
+
+        return response()->json([
+            'data' => QuizResource::collection($quizzesWithAttempts)
+        ]);
+    }
+
     public function show(string $id): JsonResponse
     {
         $user = auth()->user();
@@ -47,7 +112,7 @@ class QuizController extends Controller
                    ->findOrFail($id);
 
         // Check if user is enrolled in the program
-        if ($user->is_student) {
+        if ($user->isStudent()) {
             $enrollment = Enrollment::where('student_id', $user->id)
                                    ->where('program_id', $quiz->program_id)
                                    ->first();
@@ -83,13 +148,15 @@ class QuizController extends Controller
     {
         $user = $request->user();
         
-        if (!$user->is_teacher) {
+        if (!$user->isTeacher()) {
             return response()->json(['message' => 'Only teachers can create quizzes'], 403);
         }
 
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'sometimes|string',
+            'proficiency_level' => 'sometimes|in:A1,A2,B1,B2,C1,C2',
+            'correction_mode' => 'sometimes|in:immediate,end_of_quiz,manual',
             'program_id' => 'required|exists:programs,id',
             'time_limit_minutes' => 'sometimes|integer|min:5|max:480',
             'passing_score' => 'required|integer|min:0|max:100',
@@ -123,13 +190,15 @@ class QuizController extends Controller
         $user = $request->user();
         
         // Check authorization
-        if ($user->is_teacher && $quiz->teacher_id !== $user->id) {
+        if ($user->isTeacher() && $quiz->teacher_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $request->validate([
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
+            'proficiency_level' => 'sometimes|in:A1,A2,B1,B2,C1,C2',
+            'correction_mode' => 'sometimes|in:immediate,end_of_quiz,manual',
             'time_limit_minutes' => 'sometimes|integer|min:5|max:480',
             'passing_score' => 'sometimes|integer|min:0|max:100',
             'shuffle_questions' => 'sometimes|boolean',
@@ -153,7 +222,7 @@ class QuizController extends Controller
         $user = auth()->user();
         
         // Check authorization
-        if ($user->is_teacher && $quiz->teacher_id !== $user->id) {
+        if ($user->isTeacher() && $quiz->teacher_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -311,5 +380,217 @@ class QuizController extends Controller
         return response()->json([
             'data' => new QuizSubmissionResource($submission),
         ]);
+    }
+
+    /**
+     * Upload and parse a document to create a quiz
+     */
+    public function uploadDocument(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        if (!$user->isTeacher()) {
+            return response()->json(['message' => 'Only teachers can upload documents'], 403);
+        }
+
+        $request->validate([
+            'document' => 'required|file|mimes:docx|max:10240', // 10MB max
+            'program_id' => 'required|exists:programs,id',
+        ]);
+
+        // Verify teacher owns the program
+        $program = \App\Models\Programs::findOrFail($request->program_id);
+        if ($program->teacher_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        try {
+            $file = $request->file('document');
+            
+            // Parse the document
+            $parsedData = $this->documentParser->parseDocument($file);
+            
+            // Store the document
+            $documentPath = $file->store('quiz-documents', 'private');
+            
+            // Create quiz preview data
+            $quizPreview = [
+                'title' => $parsedData->title,
+                'proficiency_level' => $parsedData->level,
+                'source_document_path' => $documentPath,
+                'program_id' => $request->program_id,
+                'total_questions' => count($parsedData->questions),
+                'questions' => $parsedData->questions,
+                'metadata' => $parsedData->metadata,
+            ];
+
+            return response()->json([
+                'message' => 'Document parsed successfully',
+                'data' => $quizPreview,
+            ]);
+
+        } catch (DocumentParsingException $e) {
+            return response()->json([
+                'message' => 'Document parsing failed',
+                'error' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Document upload failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'message' => 'Document upload failed',
+                'error' => 'An unexpected error occurred'
+            ], 500);
+        }
+    }
+
+    /**
+     * Create quiz from parsed document data
+     */
+    public function createFromDocument(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        
+        if (!$user->isTeacher()) {
+            return response()->json(['message' => 'Only teachers can create quizzes'], 403);
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'sometimes|string',
+            'proficiency_level' => 'sometimes|in:A1,A2,B1,B2,C1,C2',
+            'correction_mode' => 'sometimes|in:immediate,end_of_quiz,manual',
+            'source_document_path' => 'required|string',
+            'program_id' => 'required|exists:programs,id',
+            'time_limit_minutes' => 'sometimes|integer|min:5|max:480',
+            'passing_score' => 'required|integer|min:0|max:100',
+            'shuffle_questions' => 'sometimes|boolean',
+            'show_results_immediately' => 'sometimes|boolean',
+            'max_attempts' => 'required|integer|min:1|max:10',
+            'available_from' => 'sometimes|date',
+            'available_until' => 'sometimes|date|after:available_from',
+            'questions' => 'required|array|min:1',
+            'questions.*.text' => 'required|string',
+            'questions.*.type' => 'required|in:multiple_choice,true_false,fill_blank,short_answer,essay',
+            'questions.*.options' => 'sometimes|array',
+            'questions.*.correct_answer' => 'required',
+            'questions.*.explanation' => 'sometimes|string',
+            'questions.*.points' => 'required|integer|min:1',
+        ]);
+
+        // Verify teacher owns the program
+        $program = \App\Models\Programs::findOrFail($request->program_id);
+        if ($program->teacher_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            // Create the quiz
+            $quiz = Quiz::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'proficiency_level' => $request->proficiency_level,
+                'correction_mode' => $request->correction_mode ?? 'end_of_quiz',
+                'source_document_path' => $request->source_document_path,
+                'program_id' => $request->program_id,
+                'teacher_id' => $user->id,
+                'total_questions' => count($request->questions),
+                'time_limit_minutes' => $request->time_limit_minutes,
+                'passing_score' => $request->passing_score,
+                'shuffle_questions' => $request->shuffle_questions ?? false,
+                'show_results_immediately' => $request->show_results_immediately ?? true,
+                'max_attempts' => $request->max_attempts,
+                'available_from' => $request->available_from,
+                'available_until' => $request->available_until,
+                'is_active' => true,
+            ]);
+
+            // Create questions and options
+            foreach ($request->questions as $questionData) {
+                $question = QuizQuestions::create([
+                    'quiz_id' => $quiz->id,
+                    'question' => $questionData['text'],
+                    'type' => $questionData['type'],
+                    'points' => $questionData['points'],
+                    'explanation' => $questionData['explanation'] ?? null,
+                ]);
+
+                // Create options for multiple choice and true/false questions
+                if (in_array($questionData['type'], ['multiple_choice', 'true_false']) && 
+                    isset($questionData['options'])) {
+                    
+                    foreach ($questionData['options'] as $index => $optionText) {
+                        $isCorrect = false;
+                        
+                        // Determine if this option is correct
+                        if (is_string($questionData['correct_answer'])) {
+                            $isCorrect = $optionText === $questionData['correct_answer'];
+                        } elseif (is_array($questionData['correct_answer'])) {
+                            $isCorrect = in_array($optionText, $questionData['correct_answer']);
+                        }
+
+                        QuizOptions::create([
+                            'question_id' => $question->id,
+                            'option_text' => $optionText,
+                            'is_correct' => $isCorrect,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Quiz created successfully from document',
+                'data' => new QuizResource($quiz->load('program', 'questions.options'))
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Quiz creation from document failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to create quiz from document'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get available proficiency levels
+     */
+    public function getProficiencyLevels(): JsonResponse
+    {
+        $levels = [
+            ['value' => 'A1', 'label' => 'A1 - Beginner'],
+            ['value' => 'A2', 'label' => 'A2 - Elementary'],
+            ['value' => 'B1', 'label' => 'B1 - Intermediate'],
+            ['value' => 'B2', 'label' => 'B2 - Upper Intermediate'],
+            ['value' => 'C1', 'label' => 'C1 - Advanced'],
+            ['value' => 'C2', 'label' => 'C2 - Proficient'],
+        ];
+
+        return response()->json([
+            'data' => $levels
+        ]);
+    }
+
+    /**
+     * Check if a quiz level is above student's level
+     */
+    private function isLevelAboveStudent(string $quizLevel, string $studentLevel): bool
+    {
+        $levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+        $quizIndex = array_search($quizLevel, $levels);
+        $studentIndex = array_search($studentLevel, $levels);
+        
+        return $quizIndex !== false && $studentIndex !== false && $quizIndex > $studentIndex;
     }
 }
