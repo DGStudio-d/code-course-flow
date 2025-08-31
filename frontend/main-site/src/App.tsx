@@ -27,6 +27,12 @@ import CreateQuiz from "./pages/admin/CreateQuiz";
 import QuizQuestions from "./pages/admin/QuizQuestions";
 import StudentsManagement from "./pages/admin/StudentsManagement";
 
+// Student pages
+import StudentDashboard from "./pages/student/StudentDashboard";
+import QuizList from "./pages/student/QuizList";
+import TakeQuiz from "./pages/student/TakeQuiz";
+import QuizResults from "./pages/student/QuizResults";
+
 import WhatsAppFloatButton from "./components/home/FloatButtonWhatsapp";
 
 const queryClient = new QueryClient();
@@ -62,8 +68,19 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/quizzes" element={<QuizManagement />} />
             <Route path="/admin/quizzes/create" element={<CreateQuiz />} />
-            <Route path="/admin/quizzes/:quizId/questions" element={<QuizQuestions />} />
+            <Route
+              path="/admin/quizzes/:quizId/questions"
+              element={<QuizQuestions />}
+            />
             <Route path="/admin/students" element={<StudentsManagement />} />
+
+            {/* Student routes */}
+            <Route path="/student" element={<StudentDashboard />} />
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/quizzes" element={<QuizList />} />
+            <Route path="/student/quiz/:quizId" element={<TakeQuiz />} />
+            <Route path="/student/quiz/:quizId/results" element={<QuizResults />} />
+            <Route path="/student/quiz/:quizId/results/:submissionId" element={<QuizResults />} />
 
             {/* 404 route */}
             <Route path="*" element={<NotFound />} />

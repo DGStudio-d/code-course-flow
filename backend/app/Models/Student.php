@@ -20,11 +20,14 @@ class Student extends Model
         'bio',
         'skills',
         'level',
+        'learning_goals',
+        'preferred_schedule',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
         'skills' => 'array',
+        'preferred_schedule' => 'array',
     ];
 
     public function user(): BelongsTo
